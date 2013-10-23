@@ -1,0 +1,38 @@
+runXCMS_peakDetection <- function (settings){
+
+# run XCMS peak detection
+#
+#  source("runXCMS_peakDetection.R")
+#  xset=runXCMS_peakDetection(path, XCMSsettings)
+#
+# library(xcms)
+
+
+
+## temporary settings for XCMS
+settings.temp <- settings
+
+
+
+## ------------ Run XCMS ---------------------------------
+## matched filtero centWave 
+
+if (settings.temp$method == "matchedFilter") {
+  param <- c("files","step","fwhm", "snthresh", "max", "nSlaves")
+  }
+else{
+  param <- c("files","step", "peakwidth", "prefilter", "ppm")
+}
+
+xset <- do.call(xcmsSet, settings.temp[param])
+
+
+## -- Cut the first 20 seconds of the chhromatography to avoid alignment problems
+
+# th
+idx <-  xset@peaks[,"rt"] > 24
+xset@peaks <- xset@peaks[idx,]
+
+return(xset)
+}
+

@@ -1,0 +1,10 @@
+Package: metaMSdata
+Type: Package
+Title: Example CDF data for the metaMS package
+Version: 0.1.0
+Date: 2013-08-26
+Author: Pietro Franceschi and Ron Wehrens
+Maintainer: Ron Wehrens <ron.wehrens@fmach.it> and Pietro Franceschi <pietro.franceschi@fmach.it>
+Description: Example CDF data for the metaMS package
+License: GPL (>= 2)
+LazyLoad: yes

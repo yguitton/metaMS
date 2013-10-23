@@ -1,0 +1,41 @@
+\name{readStdInfo}
+\alias{readStdInfo}
+\title{Read information of injections of standards from a csv file}
+\description{
+  The csv contains all information necessary to process a series of
+  injections of standards. Required fields: \code{Name}, \code{RTman},
+  \code{monoMW}, \code{stdFile}, and an identifier such as \code{CAS} or
+  \code{ChemspiderID}. At the moment, the system is completely based on
+  \code{CAS}, although this may change in the future.}
+\usage{
+readStdInfo(stdInfo, InputDir, validation = "NIST", filetype = "cdf")
+}
+\arguments{
+  \item{stdInfo}{Input file in csv format, containing information on
+    standards.}
+  \item{InputDir}{Location of input files (cdf or mzxml format).}
+  \item{validation}{If NULL, also standards for which no validation is
+    possible will be returned.}
+  \item{filetype}{Filetype(s) of the data files in InputDir. If
+    injections in stdInfo are given with filetypes, these will have
+    preference.}
+}
+\details{In addition to reading all information on the chemical
+  standards (whcih will eventually be transferred into an in-house
+  database), the function checks whether some input files are
+  unavailable, and whether some data files are not used. In the first
+  case, an error is returned, in the second case a warning.}
+\examples{
+if (require(metaMSdata)) {
+  ## this will lead to the completed version of the R object that is also
+  ## available by typing "data(threeStdsInfo)", now containing the
+  ## directory information that is not available in the RData object.
+
+  input.file <- list.files(system.file("CDF_GC", package = "metaMSdata"),
+                           pattern = "csv", full.names = TRUE)
+  threeStdsInfo <- readStdInfo(input.file,
+                               system.file("CDF_GC", package = "metaMSdata"))
+}
+  }
+\author{Ron Wehrens}
+\keyword{manip}

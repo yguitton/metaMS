@@ -1,0 +1,42 @@
+\name{processStandards}
+\alias{processStandards}
+\title{Process input files containing raw data for pure standards.}
+\description{Peak picking and further processing for raw data of pure
+  standards.} 
+\usage{processStandards(stdInfo, settings, polarity = NULL)}
+\arguments{
+  \item{stdInfo}{Object describing the pure standards: a data.frame
+    containing, e.g., the name of the file, the name of the standard,
+    descriptors like CAS or Chemspider IDs, etcetera.}
+  \item{settings}{
+Settings used for peak picking present in the PeakPicking element of the XCMS settings list.
+}
+  \item{polarity}{
+Polarity of the analysis (used for CAMERA), "positive" or "negative" 
+}
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+A list of CAMERA objects resulting from the analysis of the standard injections listed in the \code{stdInfo} table.
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{
+Ron Wehrens and Pietro Franceschi
+}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+%% ~~objects to See Also as \code{\link{help}}, ~~~
+}
+\examples{
+}
+\keyword{ ~kwd1 }
+\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

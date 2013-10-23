@@ -1,0 +1,180 @@
+\name{matchSamples2Samples}
+\alias{matchSamples2Samples}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Subfunction GC-MS processing (annotGCfunc.R)
+}
+\description{
+two patterns from different xset.nist that have the same annotation
+will be the same variable. However, for patterns without annotation
+similar relations can exist. We seek patterns in different files,
+eluting within a given time window with a given spectral
+similarity. 
+
+This function returns a list of two things: the first element is a
+nist object containing the pseudospectra that are found in multiple
+samples, and the second is an object like the one returned by
+matchSamples2DB, a nested list containing for each pattern in each
+sample either nothing or the index of the spectrum as it is found
+in the DB. The plotIt argument is used for debugging purposes, can
+be removed later, as can be the optional graphical arguments
+provided by the ellipses.
+
+For larger data sets, the corresponding yes-no matrix will be way
+too large (the 2007 grape metabolome leads to a 36734x36734
+matrix), but it is very sparse. If argument annotations equals
+NULL, this function will only return the spectra that are found in
+several patterns and not the annotations.
+}
+\usage{
+matchSamples2Samples(xset.msp.scaled, xset.msp, annotations = lapply(xset.msp.scaled, function(x) makeAnnotation(0)), settingsList)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{xset.msp.scaled}{
+%%     ~~Describe \code{xset.nist} here~~
+}
+  \item{xset.msp}{
+%%     ~~Describe \code{xset.nist} here~~
+}
+  \item{annotations}{
+%%     ~~Describe \code{annotations} here~~
+}
+  \item{settingsList}{
+%%     ~~Describe \code{settingsList} here~~
+}
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+%%  ~Describe the value returned
+%%  If it is a LIST, use
+%%  \item{comp1 }{Description of 'comp1'}
+%%  \item{comp2 }{Description of 'comp2'}
+%% ...
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{
+%%  ~~who you are~~
+}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+%% ~~objects to See Also as \code{\link{help}}, ~~~
+}
+\examples{
+##---- Should be DIRECTLY executable !! ----
+##-- ==>  Define data, use random,
+##--	or do  help(data=index)  for the standard data sets.
+
+## The function is currently defined as
+function (xset.nist, annotations = NULL, settingsList, plotIt = FALSE, 
+    ...) 
+{
+    if (!is.null(annotations)) {
+        noannot.idx <- mapply(function(x, y) which(sapply(y, 
+            length) == 0), xset.nist, annotations)
+        xset.work <- xset.work.orig <- mapply(function(x, y) x[y], 
+            xset.nist, noannot.idx)
+    }
+    else {
+        xset.work <- xset.work.orig <- xset.nist
+    }
+    scalefun <- function(X) {
+        huhn <- sqrt(X[, 1] * X[, 2])
+        result <- cbind(X[, 1], huhn/sqrt(sum(huhn^2)), X[, 3])
+        colnames(result) <- c(colnames(X)[1:2], "rt")
+        result
+    }
+    xset.work <- lapply(xset.work, function(x) lapply(x, scalefun))
+    npatterns <- sum(sapply(xset.work, length))
+    cumpatterns <- c(0, cumsum(sapply(xset.work, length)))
+    pattern.match.result <- Matrix(0, npatterns, npatterns, sparse = TRUE)
+    for (i in 1:(length(xset.work) - 1)) {
+        for (j in (i + 1):length(xset.work)) {
+            matchmat <- match.unannot.patterns(xset.work[[i]], 
+                xset.work[[j]], rt.width = settingsList$rt.width, 
+                simthresh = settingsList$simthresh)
+            if (length(matchmat) > 0) {
+                for (k in 1:nrow(matchmat)) pattern.match.result[cumpatterns[i] + 
+                  matchmat[k, "ID1"], cumpatterns[j] + matchmat[k, 
+                  "ID2"]] <- 1
+            }
+        }
+    }
+    pattern.match.result <- pattern.match.result + t(pattern.match.result)
+    pattern.match.result[pattern.match.result > 1] <- 1
+    grow.clust <- function(seed, pmr) unique(c(unlist(apply(pmr[seed, 
+        , drop = FALSE], 1, function(x) which(x > 0)))))
+    pmr.classes <- rep(0, npatterns)
+    current.cl <- 1
+    while (length(seed <- which(pmr.classes == 0)) > 0) {
+        seed <- min(seed)
+        clstr <- c(seed, grow.clust(seed, pattern.match.result))
+        nel <- length(clstr)
+        if (nel == 1) {
+            pmr.classes[seed] <- -1
+        }
+        else {
+            while (length(clstr <- grow.clust(clstr, pattern.match.result)) > 
+                nel) nel <- length(clstr)
+            pmr.classes[clstr] <- current.cl
+            current.cl <- current.cl + 1
+        }
+    }
+    bigClusters <- which(table(pmr.classes[pmr.classes > 0]) >= 
+        settingsList$min.class.size)
+    if (length(bigClusters) == 0) {
+        return(list(annotations = annotations, unknowns = NULL))
+    }
+    else {
+        pmr.classes[!(pmr.classes \%in\% bigClusters)] <- -1
+        pmr.classes[pmr.classes > 0] <- as.integer(factor(pmr.classes[pmr.classes > 
+            0]))
+        clusters <- 1:max(pmr.classes)
+        pspc.DB <- vector(length(clusters), mode = "list")
+        for (cl in seq(along = clusters)) {
+            p.idx <- which(pmr.classes == clusters[cl])
+            sample.idx <- apply(outer(p.idx, cumpatterns[-1], 
+                "<="), 1, function(x) which(x)[1])
+            spec.idx <- p.idx - cumpatterns[sample.idx]
+            central.idx <- which.max(rowSums(pattern.match.result[p.idx, 
+                p.idx]))
+            pspc.DB[[cl]] <- xset.work.orig[[sample.idx[central.idx]]][[spec.idx[central.idx]]]
+            if (plotIt) {
+                sa.id <- sample.idx[central.idx]
+                sp.id <- spec.idx[central.idx]
+                plotPseudoSpectrum(xset.work[[sa.id]][[sp.id]], 
+                  main = paste("Cluster ", cl, " (", length(p.idx), 
+                    " members)", sep = ""))
+                readline("Hit me to continue...")
+            }
+            if (!is.null(annotations)) {
+                for (ii in seq(along = sample.idx)) {
+                  for (jj in spec.idx[sample.idx[ii] == sample.idx]) {
+                    fullspec.idx <- noannot.idx[[sample.idx[ii]]][[jj]]
+                    annotations[[sample.idx[ii]]][[fullspec.idx]] <- -cl
+                  }
+                }
+            }
+        }
+    }
+    if (!is.null(annotations)) {
+        list(annotations = annotations, unknowns = pspc.DB)
+    }
+    else {
+        list(unknowns = pspc.DB)
+    }
+  }
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
+\keyword{ ~kwd1 }
+\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

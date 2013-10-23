@@ -1,0 +1,12 @@
+Package: metaMS
+Type: Package
+Title: Mass spectrometry annotation pipeline
+Version: 0.8.3
+Date: 2013-09-12
+Author: Pietro Franceschi and Ron Wehrens, with contributions from Matthias Scholz and Nir Shahaf
+Maintainer: Ron Wehrens <ron.wehrens@fmach.it> and Pietro Franceschi <pietro.franceschi@fmach.it>
+Depends: tools, xcms (>= 1.35), CAMERA, robustbase, Matrix
+Suggests: metaMSdata
+Description: Mass spectrometry processing and compound annotation pipeline. 
+License: GPL (>= 2)
+LazyLoad: yes
