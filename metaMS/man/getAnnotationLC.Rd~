@@ -1,0 +1,148 @@
+\name{getAnnotationLC}
+\alias{getAnnotationLC}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+get LC annotation
+}
+\description{
+Main function of LC-MS compound annotation.
+}
+\usage{
+getAnnotationLC(xset)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{xset}{
+%%     ~~Describe \code{xset} here~~
+}
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+%%  ~Describe the value returned
+%%  If it is a LIST, use
+%%  \item{comp1 }{Description of 'comp1'}
+%%  \item{comp2 }{Description of 'comp2'}
+%% ...
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{
+%%  ~~who you are~~
+}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+%% ~~objects to See Also as \code{\link{help}}, ~~~
+}
+\examples{
+##---- Should be DIRECTLY executable !! ----
+##-- ==>  Define data, use random,
+##--	or do  help(data=index)  for the standard data sets.
+
+## The function is currently defined as
+function (xset) 
+{
+    library(CAMERA)
+    if (class(xset) == "xcmsSet") 
+        stop("(getAnnotationLC): please run CAMERA before Compound Annotation")
+    pol <- getPolarity(xset)
+    pol <- substr(pol, 1, 3)
+    intrumentCode <- getInstrument(xset)
+    if (intrumentCode == "Synapt-QTOF-NP") {
+        iCode <- "NP"
+    }
+    else if (intrumentCode == "Synapt-QTOF-RP") {
+        iCode <- "RP"
+    }
+    else {
+        txt = as.character(paste(c("\n\nError in getAnnotationLC.R: cannot detect NP or RP for LC compound annotation\n-- Detected instrument: ", 
+            intrumentCode), collapse = ""))
+        write(txt, file = "process_info.txt", append = TRUE)
+        stop(txt)
+    }
+    pt = getPeaklist(xset, "maxo")
+    e = length(pt)
+    ptData = pt[9:(e - 3)]
+    maxInt = apply(ptData, 1, max)
+    cn = colnames(pt)
+    IDmz = which(cn == "mz")
+    IDrt = which(cn == "rt")
+    peakSet = pt[, c(IDmz, IDrt)]
+    peakSet$rt = peakSet$rt/60
+    peakSet$I <- maxInt
+    v = AnnotateTable(peakSet, pol, iCode)
+    peakTable = getPeaklist(xset, "into")
+    peakTable$rt = peakTable$rt/60
+    peakTable$compounds = ""
+    peakTable$chemspider = ""
+    for (n in 1:nrow(peakTable)) {
+        IDs <- which(v$feature == n)
+        if (length(IDs) == 1) {
+            peakTable$compounds[n] <- as.character(v$compound[IDs[1]])
+        }
+        else if (length(IDs) > 1) {
+            s = ""
+            for (i in 1:length(IDs)) {
+                sName = as.character(v$compound[IDs[i]])
+                if (i == 1) {
+                  s <- paste(c(s, sName), collapse = "")
+                }
+                if (i > 1) {
+                  s <- paste(c(s, " ::OR:: ", sName), collapse = "")
+                }
+            }
+            peakTable$compounds[n] <- s
+        }
+        if (length(IDs) == 1) {
+            peakTable$chemspider[n] <- as.character(v$ID[IDs[1]])
+        }
+        else if (length(IDs) > 1) {
+            s = ""
+            for (i in 1:length(IDs)) {
+                sName = as.character(v$ID[IDs[i]])
+                if (i == 1) {
+                  s <- paste(c(s, sName), collapse = "")
+                }
+                if (i > 1) {
+                  s <- paste(c(s, " ", sName), collapse = "")
+                }
+            }
+            peakTable$chemspider[n] <- s
+        }
+    }
+    e = length(peakTable)
+    id1 <- which(colnames(peakTable) == "compounds")
+    id2 <- which(colnames(peakTable) == "chemspider")
+    id3 <- which(colnames(peakTable) == "isotopes")
+    id4 <- which(colnames(peakTable) == "adduct")
+    id5 <- which(colnames(peakTable) == "pcgroup")
+    id6 <- which(colnames(peakTable) == "rt")
+    id7 <- which(colnames(peakTable) == "mz")
+    e <- which(colnames(peakTable) == "isotopes") - 1
+    peakTable = peakTable[, c(id1, id2, id3, id4, id5, id6, id7, 
+        9:e)]
+    sortidx <- order(peakTable$rt)
+    peakTable = peakTable[sortidx, ]
+    peakTable <- data.frame(peakTable, row.names = NULL)
+    cn = colnames(peakTable)
+    id = which(cn == "pcgroup")
+    cn[id] = "cameraGroup"
+    id = which(cn == "adduct")
+    cn[id] = "adducts"
+    colnames(peakTable) <- cn
+    peakTable$cameraGroup <- as.numeric(peakTable$cameraGroup)
+    colnames(peakTable) <- getShortSampleNames(colnames(peakTable))
+    return(peakTable)
+  }
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
+\keyword{ ~kwd1 }
+\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

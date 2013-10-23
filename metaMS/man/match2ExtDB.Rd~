@@ -1,0 +1,145 @@
+\name{match2ExtDB}
+\alias{match2ExtDB}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+%%  ~~function to do ... ~~
+}
+\description{
+%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+}
+\usage{
+match2ExtDB(totalXset, extDB, settings)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{totalXset}{
+%%     ~~Describe \code{totalXset} here~~
+}
+  \item{extDB}{
+%%     ~~Describe \code{extDB} here~~
+}
+  \item{settings}{
+%%     ~~Describe \code{settings} here~~
+}
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+%%  ~Describe the value returned
+%%  If it is a LIST, use
+%%  \item{comp1 }{Description of 'comp1'}
+%%  \item{comp2 }{Description of 'comp2'}
+%% ...
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{
+%%  ~~who you are~~
+}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+%% ~~objects to See Also as \code{\link{help}}, ~~~
+}
+\examples{
+##---- Should be DIRECTLY executable !! ----
+##-- ==>  Define data, use random,
+##--	or do  help(data=index)  for the standard data sets.
+
+## The function is currently defined as
+function (totalXset, extDB, settings) 
+{
+    DBobj <- vector(0, mode = "list")
+    for (f.idx in 1:length(totalXset)) {
+        injection <- totalXset[[f.idx]]
+        cnames <- injection$info[, 1]
+        for (c.idx in 1:length(cnames)) {
+            cas.idx <- which(sapply(extDB, function(x, y) x$CASNO == 
+                y, injection$info[c.idx, "CAS"]))
+            if (length(cas.idx) == 0) {
+                printWarning("No matching CAS number found for", 
+                  injection$info[c.idx, "Name"], "\nPlease check and perhaps update table.")
+            }
+            else {
+                MWs <- sapply(extDB[cas.idx], function(x) x$MW)
+                MW <- unique(MWs)
+                if (length(MW) > 1) {
+                  printWarning("More than one MW value for ", 
+                    injection$info[c.idx, "Name"], ", CAS ", 
+                    injection$info[c.idx, "CAS"], "\n\tcomparing value in table with the most common one.")
+                  MW <- which.max(tabulate(MWs))
+                }
+                if (length(MW) == 0) {
+                  printWarning("No MW value in external DB for CAS", 
+                    injection$info[c.idx, "CAS"])
+                }
+                if (MW != round(injection$info[c.idx, "monoMW"])) {
+                  printWarning("Ext DB MW (", MW, ") does not agree with MW from table (", 
+                    round(injection$info[c.idx, "monoMW"]), ") for ", 
+                    injection$info[c.idx, "Name"], ", CAS ", 
+                    injection$info[c.idx, "CAS"])
+                }
+            }
+            MW <- injection$info[c.idx, "monoMW"]
+            psp2 <- to.msp(injection$xset, file = NULL, settings = settings)
+            psp2 <- lapply(psp2, function(x) x[order(x[, "mz"]), 
+                , drop = FALSE])
+            psp2 <- lapply(psp2, function(x) x[x[, "mz"] < MW + 
+                4, , drop = FALSE])
+            psp2 <- psp2[sapply(psp2, nrow) >= settings$minfeat]
+            psp2 <- lapply(psp2, function(x) cbind(x[, 1:2], 
+                rt = round(x[, 3], 2)))
+            rtrange <- injection$info$RT[c.idx] + c(-settings$rttol, 
+                settings$rttol)
+            rts <- sapply(psp2, function(x) mean(x[, 3]))
+            idx <- which(rts < max(rtrange) & rts > min(rtrange))
+            psp2 <- psp2[idx]
+            if (length(idx) > 0) {
+                if (length(cas.idx) > 0) {
+                  psp2 <- lapply(psp2, function(x) cbind(round(x[, 
+                    1]), x[, -1]))
+                  match.results <- sapply(psp2, matchExpSpec, 
+                    extDB[cas.idx], plotIt = FALSE, DB.treated = TRUE)
+                  if (is.matrix(match.results)) {
+                    best.match <- round(apply(match.results, 
+                      2, max), 4)
+                  }
+                  else {
+                    if (length(idx) > 1) {
+                      best.match <- round(match.results, 4)
+                    }
+                    else {
+                      best.match <- round(max(match.results), 
+                        4)
+                    }
+                  }
+                }
+            }
+            if (length(psp2) > 0) {
+                output.info <- injection$info[c.idx, ]
+                output.df <- as.data.frame(output.info, stringsAsFactors = FALSE)
+                output.df <- cbind(output.df[rep(1, length(psp2)), 
+                  ], bestDBmatch = best.match)
+                msp.obj <- construct.msp(psp2, output.df)
+                DBobj <- c(DBobj, msp.obj[best.match > settings$DBthreshold])
+            }
+            else {
+                printWarning("No pattern found matching all criteria for", 
+                  injection$info[c.idx, "Name"], "- CAS number", 
+                  injection$info[c.idx, "CAS"])
+            }
+        }
+    }
+    DBobj
+  }
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
+\keyword{ ~kwd1 }
+\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

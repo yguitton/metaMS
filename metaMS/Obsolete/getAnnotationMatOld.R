@@ -1,0 +1,67 @@
+## Function getAnnotationMat obtains relative intensities for features
+## in individual samples. A robust linear regression is performed
+## when the number of common features is five or larger; for 2-4 peaks
+## a weighted linear regression is used, and if only one peak is in
+## common the intensity ratio for this peak is used. As a reference either the
+## stdDB patterns are used, or the first file in which a particular
+## unknown is found.
+
+getAnnotationMatOld <- function(exp.msp, pspectra, allMatches,
+                             plotIt = FALSE, verbose = FALSE) {
+  allAnnotations <- sort(unique(unlist(allMatches$annotations)))
+  allAnnotations <- c(allAnnotations[allAnnotations > 0],
+                      rev(allAnnotations[allAnnotations < 0]))
+  result <- matrix(0, length(allAnnotations), length(exp.msp))
+  colnames(result) <- names(exp.msp)
+
+  pspec.names <- sapply(pspectra, function(x) x$Name)
+  
+  oldWarn <- options('warn')$warn
+  options(warn=2)
+  
+  for (j in seq(along = allAnnotations)) {
+    if (verbose)
+      printInfo("Working on annotation", pspec.names[j])
+    
+    hits <- which(sapply(allMatches$annotations,
+                         function(x) allAnnotations[j] %in% unlist(x)))
+    ## the next statement cannot check for equality but has to use
+    ## %in% since more than one annotation can be present
+    hit.ids <- sapply(allMatches$annotations,
+                      function(x)
+                      which(sapply(x,
+                                   function(y)
+                                   length(y) > 0 &&
+                                   allAnnotations[j] %in% y)))
+    
+    refpat <- pspectra[[ j ]]$pspectrum
+    
+    for (k in hits) {   ## we are only allowing one annotation!
+      pat <- exp.msp[[k]][[ hit.ids[[k]][1] ]]
+      
+      if (verbose)
+          printInfo("Hit", k)
+      
+      if (plotIt) {
+        plot(refpat[,1], 100*refpat[,2] / max(refpat[,2]),
+             xlab = "m/z", ylab = "I (normalized)",
+             type = "h", col = 2, lwd = 2, main = pspec.names[j])
+        points(pat[,1], 100*pat[,2] / max(pat[,2]), type = "h", col = 4)
+        legend("topleft", legend = c("Reference", names(exp.msp)[k]),
+               lwd = c(2,1), col = c(2,4), bty = "n")
+        readline("Hit return to continue...")
+      }
+      
+      result[j, k] <- relInt(pat, refpat)
+      
+      if (verbose)
+          printInfo("\trelative Intensity", result[j,k])
+      
+    }
+  }
+  
+  options(warn=oldWarn)
+
+  result
+}
+

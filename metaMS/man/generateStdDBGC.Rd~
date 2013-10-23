@@ -1,0 +1,47 @@
+\name{generateStdDBGC}
+\alias{generateStdDBGC}
+\title{Convert an msp object into a GC database object}
+\description{
+This function is not meant to be called directly by the user - use
+createSTDdbGC instead.}
+\usage{
+generateStdDBGC(totalXset, settings, extDB = NULL, manualDB = NULL)
+}
+\arguments{
+  \item{totalXset}{
+%%     ~~Describe \code{totalXset} here~~
+}
+  \item{settings}{
+%%     ~~Describe \code{settings} here~~
+}
+  \item{extDB}{
+%%     ~~Describe \code{extDB} here~~
+}
+  \item{manualDB}{
+%%     ~~Describe \code{manualDB} here~~
+}
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+%%  ~Describe the value returned
+%%  If it is a LIST, use
+%%  \item{comp1 }{Description of 'comp1'}
+%%  \item{comp2 }{Description of 'comp2'}
+%% ...
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{Ron Wehrens}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{\code{\link{createSTDdbGC}}}
+\examples{
+}
+\keyword{manip}

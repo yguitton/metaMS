@@ -1,0 +1,5 @@
+0.8.2: first version released for beta testing, Sept 24, 2013
+
+0.8.3: - fixed bugs in man pages of createSTDdbGC and msp
+       - fixed bug in matchSamples2DB: also if monoMW is absent a
+       	 correct annotation can now be obtained

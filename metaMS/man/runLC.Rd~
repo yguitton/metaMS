@@ -1,0 +1,104 @@
+\name{runLC}
+\alias{runLC}
+
+\title{
+Wrapper for processing of LC-MS data files
+}
+\description{
+Main function of the pipeline for LC-MS data processing. It includes
+XCMS peak detection, grouping and alignment, CAMERA and feature
+annotation by comparison to a database of standards. The function also calculates the mass tolerance
+on the bases of the ion intensity and ion mass.
+}
+\usage{
+runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL, polarity = "positive", 
+      errf = NULL, runCAMERA = TRUE, returnXset = FALSE,
+      intensity = "into")
+}
+
+\arguments{
+  \item{files}{input files, given as a vector of strings containing the
+    complete paths. All formats supported by XCMS can be used.}
+  \item{settings}{nested list of settings, to be used at individual
+    steps of the pipeline.}
+  \item{rtrange}{An optional vector to slice the retention time range (in seconds)}
+  \item{mzrange}{An optional vector to slice the mass spectrum}
+  \item{DB}{database containing the spectra of the pure standards. For the description see the \code{DB} element
+  in the \code{LCDBtest} dataset
+}
+  \item{polarity}{The polarity of the analysis used for CAMERA annotation. Either "positive" or "negative".
+}
+  \item{errf}{A linear model used to calculate the mass tolerance in ppm from the \code{log10(I)} and \code{m/z}. 
+  It should be called  as \code{predict(errf, data.frame(M = mz, logI = log10(maxo)))}.
+}
+  \item{runCAMERA}{
+  Logical. Should CAMERA annotation be performed?
+}
+  \item{returnXset}{ logical: should the XCMS output be returned? If yes,
+    this is a a list of \code{xcmsSet} objects, one element for each
+    input file.
+}
+  \item{intensity}{The intensity measure used in the output peaktable.
+}
+}
+\details{If the error function is not provided the mass tolerance will be fixed to the value
+defined in the \code{settings} list.
+
+}
+\value{
+A List with three elements:
+\item{PeakTable}{data.frame containing annotation information. Every
+  line is a feature. The first columns are used
+  to give information about these features, annotation, CAMERA,
+  Chemspider IDs, etcetera. The last of these meta-information columns
+  is always the one giving the retention time: "rt". After that, columns
+  correspond to input files, and give measures of intensities for every
+  single one of the features.}
+\item{Annoation}{The complete output of the \code{AnnotateTable} function.}
+\item{Settings}{The settings used in the pipeline}
+\item{xset}{optionally, the xcmsSet (CAMERA) object is returned, which can be
+  useful for more detailed inspection of the results.}
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{
+Pietro Franceschi
+}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+%% ~~objects to See Also as \code{\link{help}}, ~~~
+}
+\examples{
+if (require(metaMSdata)) {
+  
+  ## get the path 
+  cdfpath <- system.file("CDF_LC", package = "metaMSdata")
+  
+  ## files 
+  files <- list.files(cdfpath, "CDF", full.names=TRUE)
+  
+  
+  ## load the settings for the analysis
+  data(FEMsettings)
+  
+  ## load the annotation DB
+  data(LCDBtest)
+  
+  ## Run the analysis with a fixed mass tolernace 
+  pippo <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+                 DB = LCDBtest$DB)
+  
+ 
+}
+
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
+\keyword{ ~LC }
+\keyword{ ~pipeline }% __ONLY ONE__ keyword per line
