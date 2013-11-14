@@ -125,7 +125,7 @@ ThermoXLS.QQQ.GC <- list("instName" = "ThermoXLS.QQQ.GC",
                              ),
                          ## ----------------------------------
                          match2DB = list(
-                             annotationThreshold = 0.80,
+                             simthresh = 0.80,
                              rtdiff = .5,
                              minfeat = 2
                              ),
@@ -133,7 +133,7 @@ ThermoXLS.QQQ.GC <- list("instName" = "ThermoXLS.QQQ.GC",
                          matchIrrelevants = list(
                              irrelevantClasses = c("Bleeding",
                                  "Plasticizers"),
-                             annotationThreshold = 0.70,
+                             simthresh = 0.70,
                              rtdiff = 1e5       ## dont use rt...
                              ),
                          ## ----------------------------------
@@ -143,15 +143,10 @@ ThermoXLS.QQQ.GC <- list("instName" = "ThermoXLS.QQQ.GC",
                              rtdiff = .05,     
                              simthresh = .95)        ##,
                          ## ----------------------------------
-                         ## msp = list(
-                         ##     minintens = .10,  
-                         ##     minPeaks = 3,
-                         ##     mz.digits = 0,
-                         ##     convertRtOutput = FALSE)
                          )              
 
 FEMsettings <- list("Synapt.QTOF.NP" = Synapt.QTOF.NP,
                     "Synapt.QTOF.RP" = Synapt.QTOF.RP,
                     "ThermoXLS.QQQ.GC" = ThermoXLS.QQQ.GC)
 
-## save(metaMSsettings, file = "metaMSsettings.RData")
+save(FEMsettings, file = "FEMsettings.RData")
