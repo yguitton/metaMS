@@ -12,7 +12,7 @@ peakDetection(files, settings, rtrange = NULL, mzrange= NULL, convert2list = FAL
   \item{files}{input files (including path names) that will be processed
     by xcms.}
   \item{settings}{a list of settings that will be passed on to the
-    xcmsSet function}
+    xcmsSet function. See the help of \code{FEMsettings} for a detailed description}
   \item{rtrange}{If non-NULL, a vector to subset the region of the chromatography 
   retained for further analysis (in seconds)}
     \item{mzrange}{If non-NULL, a vector indicating the subset of the mass spectrum 
@@ -25,6 +25,4 @@ peakDetection(files, settings, rtrange = NULL, mzrange= NULL, convert2list = FAL
 }
 \value{Either an xcmsSet object, or a list of one-sample xcmsSet objects.}
 \author{Ron Wehrens and Pietro Franceschi}
-\examples{
-}
 \keyword{manip}

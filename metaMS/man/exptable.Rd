@@ -9,7 +9,7 @@ The table is used to construct the sample db \code{LCDBtest}.
 data(exptable)
 }
 \format{
-\code{exptable} is a table which associates standard compounds, standard injections and manually validated entries for rt and m/z
+\code{exptable} is a dataframe which associates standard compounds, standard injections and manually validated entries for rt and m/z
 
 Columns descripton
   \describe{
@@ -23,12 +23,9 @@ Columns descripton
   }
 
 }
-\details{
-}
-\seealso{}
+
 \author{Pietro Franceschi}
-\source{
-}
+
 \examples{
 if (require(metaMSdata)) {
   ##  load the manually curated table for the standards
