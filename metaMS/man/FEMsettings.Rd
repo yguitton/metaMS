@@ -42,7 +42,7 @@
       \code{minfeat} matching  within a \code{rtval} window are
       found. \code{mzwindow}: the m/z fixed mass tolerance which is used
       if no error surface is provided. \code{ppm}: the minimum mass
-      tolerance allowed when the error surface is  used.} 
+      tolerance allowed when the error surface is used.} 
     \item{DBconstruction}{the settings used to construct the DB from a
       manually validated table. \code{minfeat} the minimum number of
       features necessary to include a compound in the

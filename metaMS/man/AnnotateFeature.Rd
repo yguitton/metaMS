@@ -1,14 +1,13 @@
 \name{AnnotateFeature}
 \alias{AnnotateFeature}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Feature Wise Annotation
-%%  ~~function to do ... ~~
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
-Function to annotate a vector of the form (mz,rt,I) by using a specific
-database and a specific error function to calculate the mass tolerance.
+Function to match a vector of the form (mz,rt,I) with a specific
+database. The tolerance in retantion time is set in the \code{settings} list. 
+The mz tolerance is calculated by a specific function. If the function is not specified, (\code{NULL}) 
+a fixed mass window will be used, its value is specified into the list of settings.
 }
 \usage{
 AnnotateFeature(input, DB, settings, errf)
@@ -19,7 +18,7 @@ AnnotateFeature(input, DB, settings, errf)
    A vector with three elements in the form \code{(mz,rt,I)}.
 }
   \item{DB}{
-  A dataframe used for tha annotation
+  A dataframe, used for tha annotation. See the help of \code{LCDBtest} for a description of the DB.
 }
   \item{settings}{
   The subset of settigs contained into the "match2DB" element of the XCMSsettings list.
@@ -29,7 +28,7 @@ AnnotateFeature(input, DB, settings, errf)
 }
 }
 \details{
-If \code{errf} is provided, it is used to calculate the mass tolerance as a function of the mass range and of the logarithm of the intensity of the signal. \code{errf} is used inside a \code{predict(errf, data.frame(M = input["mz"], logI = log10(input["I"])))} call.
+If \code{errf} is provided, it is used to calculate the mass tolerance as a function of the m/z value and of the logarithm of the intensity of the signal. \code{errf} is used inside a \code{predict(errf, data.frame(M = input["mz"], logI = log10(input["I"])))} call.
 
 The DB is a \code{data.frame} which should contain the following columns: \code{"ChemSpiderID"}, \code{"compound"}, \code{"formula"}, \code{"mz"}, \code{"rt"},  \code{"maxo"} %%  ~~ I
 }
@@ -37,7 +36,7 @@ The DB is a \code{data.frame} which should contain the following columns: \code{
 A vector of indices which associates the feature to the entries  - possibly multiple -  in the database 
 }
 \references{
-%% ~put references to the literature/web site here ~
+N Shahaf, P Franceschi, P Arapitsas, I Rogachev, U Vrhovsek, R Wehrens, "Constructing a mass measurement error surface to improve automatic annotations in liquid chromatography/mass spectrometry based metabolomics". Rapid Communications in Mass Spectrometry, 27(21), 2425 (2013).
 }
 \author{
 Pietro Franceschi

@@ -28,7 +28,7 @@ The \code{DB} data.frame contains the following fields:
     \item{validated}{ a string which defines the origin of a specific feature.}
 }
 }
-\seealso{}
+\seealso{\code{\link{createSTDdbLC}}, \code{\link{exptable}}, \code{\link{FEMsettings}}}
 \author{Pietro Franceschi}
 \source{
 }

@@ -5,7 +5,7 @@
 LC alignment
 }
 \description{
-Performs the \code{xcms} grouping and retention time alignment by using settings from the XCMSsetting-file. The sequence of actions is xcms-grouping, retention time correction, xcms grouping. Fill misssing peaks is performed depending on the \code{fillPeaks} settings}
+Performs grouping and retention time correction via \code{xcms}. The settings are specified as a list with a form similar to the one discussed in the help of \code{FEMsettings}. The sequence of actions is xcms-grouping, retention time correction, a second run of xcms-grouping. Fill missing peaks is performed depending on the \code{fillPeaks} setting.}
 \usage{
 alignmentLC(xset, settings)
 }
@@ -19,7 +19,7 @@ The subset of settigs contained into the "Alignment" element of the XCMSsettings
 }
 }
 \details{
-For across sample grouping, the \code{minsamp} parameter is set taking the minimum between the \code{min.class.size} and (\code{min.class.fraction})*(\code{Number of samples}). For retention time correction, the \code{missing} and \code{extra} parameters are calculated as a fraction of the number of samples. 
+For across sample grouping, the \code{minsamp} parameter can be specified either as a minimum number of samples (\code{min.class.size}) or as the fraction of samples per class (\code{min.class.fraction}). In the function this parameter is calculated the minimum between the \code{min.class.size} and (\code{min.class.fraction})*(\code{Number of samples}). For retention time correction, the \code{missing} and \code{extra} parameters are aso expressed as a fraction of the number of samples. 
 }
 \value{
 A grouped,aligned and (filled) \code{xcmsSet} object 
