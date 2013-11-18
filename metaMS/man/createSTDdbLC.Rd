@@ -5,8 +5,9 @@
 \description{
 For creating an in-house instrument-specific annotation database,
 injections of pure standards need to be processed. For each standard the 
-analyst provides a validated reference value for retention time and m/z.
-The database is constructed by automatically extracting the features 
+analyst provides a validated reference value for retention time and m/z, 
+generally corresponding to the major ionic signal for this compound. 
+On the bases of this data, the database is constructed by automatically extracting the features 
 identified in the vicinity of the retention time of the standard .}
 \usage{
 createSTDdbLC(stdInfo, settings, polarity, Ithr = 20)
@@ -25,9 +26,8 @@ createSTDdbLC(stdInfo, settings, polarity, Ithr = 20)
   in the DB. Tipically acting on the \code{maxo} value.}
 }
 \details{
- The DB is created with the following workflow. Peak picking is performed on each standard file by using the settings. 
- CAMERA is used to group together the different features by considering their retention time and the correlation among the 
- extracted ion traces. The list of features is searched looking for the values for mz and Rt in \code{stdInfo} with the mass and retention time tolerances specified in the "DBconstruction" element of the settings list. In presence of positive match for the feature \code{f}, a spectral fingerprint is constructed by using all the features with an intensity bigger than \code{Ithr} which are in the same pcgroup of \code{f}. A match is retained only if the spectral fingerprint is composed of more than \code{minfeat} elements. This parameter is also included in the list of settings   
+ The DB is created with the following workflow. Peak picking is performed on each standard file by using the settings specified in the settings list. CAMERA is used to group together the different features by considering their retention time and the correlation among the 
+ extracted ion traces. The list of features is searched looking for the values for mz and Rt included in the \code{stdInfo} table (see the help of \code{exptable} for more details), with the mass and retention time tolerances specified in the "DBconstruction" element of the settings list. In presence of positive match for the feature \code{f}, a spectral fingerprint is constructed by using all the features with an intensity bigger than \code{Ithr} which are in the same pcgroup of \code{f}. A match is retained only if the spectral fingerprint is composed of more than \code{minfeat} elements. This parameter is also included in the list of settings   
 }
 \value{A list with three elements. 
 \item{Reftable}{the original table used for the creation of the DB.} 

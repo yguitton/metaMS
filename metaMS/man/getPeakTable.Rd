@@ -1,6 +1,5 @@
 \name{getPeakTable}
 \alias{getPeakTable}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 get peak table
 }
