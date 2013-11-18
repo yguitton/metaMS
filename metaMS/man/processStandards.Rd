@@ -16,9 +16,8 @@
     values are "positive" or "negative". Ignored for GC-MS.}
 }
 \value{
-  For LC, a list of CAMERA objects resulting from the analysis of the
-  standard injections listed in the \code{stdInfo} table. For GC, a list
-  of 
+  A list of CAMERA objects resulting from the analysis of the
+  standard injections listed in the \code{stdInfo} table.
 }
 \author{Ron Wehrens and Pietro Franceschi}
 \seealso{\code{\link{xcmsSet}}, \code{\link{runCAMERA}}}
