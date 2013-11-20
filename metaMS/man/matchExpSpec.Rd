@@ -11,7 +11,8 @@
   factor, given two appropriately scaled patterns.
 }
 \usage{
-matchExpSpec(pspec, DB, DB.treated, plotIt = FALSE, scale.p = c("sqrt", "none"), mass.weight = TRUE, ...)
+matchExpSpec(pspec, DB, DB.treated, plotIt = FALSE,
+             scale.p = c("sqrt", "none"), mass.weight = TRUE, ...)
 mzmatch(spec1, spec2)
 }
 \arguments{
