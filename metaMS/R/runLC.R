@@ -3,10 +3,10 @@ runLC <- function (files,
                    rtrange = NULL,
                    mzrange = NULL,
                    DB = NULL,
-                   returnXset = FALSE,
                    polarity = "positive",                  
                    errf = NULL,
                    runCAMERA = TRUE,
+                   returnXset = FALSE,
                    intensity = "into")
 {
   printString(paste("Experiment of", length(files), "samples"))

@@ -10,7 +10,7 @@ generally corresponding to the major ionic signal for this compound.
 On the bases of this data, the database is constructed by automatically extracting the features 
 identified in the vicinity of the retention time of the standard .}
 \usage{
-createSTDdbLC(stdInfo, settings, polarity, Ithr = 20)
+createSTDdbLC(stdInfo, settings, polarity, Ithr = 10)
 
 }
 \arguments{
