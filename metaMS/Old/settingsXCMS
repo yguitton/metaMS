@@ -1,8 +1,0 @@
-	"shortName"	"chrom"	"method"	"sthresh"	"max"	"peakwidth1"	"peakwidth2"	"prefilter1"	"prefilter2"	"ppm"	"fwhm"	"minfrac"	"minsamp"	"bw1"	"bw2"	"missing"	"span"	"smooth"	"step"	"mzdiff"	"fillPeaks"	"CAMfwhm"	"CAMth"	"CAMppm"	"CAMmult"	"CAMpol"	"STDannotation"	"STDrt"	"STDppm"
-"Synapt-QTOF-NP"	"_NP"	"LC"	"matchedFilter"	4	50						20	0	1	130	20	50	0.5	"linear"	0.05	0.1	"TRUE"	0.7	0.75	10		"automatic"	"TRUE"	1.5	10
-"Synapt-QTOF-RP"	"_RP"	"LC"	"matchedFilter"	4	50						20	0	1	30	10	50	0.5	"linear"	0.05	0.1	"TRUE"	0.7	0.75	10		"automatic"	"TRUE"	1.5	10
-"GC-Triple-Quad"	"GCtripleQ"	"GC"	"matchedFilter"	2	500						5	0	1	5	2	50	0.1	"linear"	0.5	0.5	"TRUE"	1.0	0.75	10		"automatic"	"TRUE"	1.5	10
-"GC-TOF"	"Gctof"	"GC"	"matchedFilter"	4	50						20	0	1	30	10	50	0.5	"linear"	0.05	0.5	"TRUE"	0.7	0.75	10		"automatic"	"TRUE"	1.5	10
-"Orbitrap-DI"	"Orbitrap"	"GC"	"matchedFilter"	4	50						20	0	1	30	10	50	0.5	"linear"	0.05	0.5	"TRUE"	0.7	0.75	10		"automatic"	"TRUE"	1.5	10
-"LCDB.RP"	"_RPDB"	"LC"	"matchedFilter"	5	100	"NA"	"NA"	"NA"	"NA"	"NA"	20	"NA"	1	"NA"	"NA"	"NA"	"NA"	"NA"	0.025	"NA"	"FALSE"	"NA"	0.8	25	2			0.75	20
-"LCDB.NP"	"_NPDB"	"LC"	"centWave"	5	100	20	100	1	50	25	40	"NA"	1	"NA"	"NA"	"NA"	"NA"	"NA"	0.025	"NA"	"FALSE"	1.1	"NA"	30	2			1.3333333333	20
