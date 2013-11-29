@@ -1,4 +1,3 @@
-## re-implementation without I/O
 ## Function changes a list of xset objects from injections of
 ## (combinations of) standards into spectra for individual standards.
 generateStdDBGC <- function(totalXset, settings,
@@ -6,26 +5,32 @@ generateStdDBGC <- function(totalXset, settings,
 {
   standardSettings <- settings$DBconstruction
 
-  if (!is.null(extDB)) {
-    DBobj <- match2ExtDB(totalXset, extDB, standardSettings)
+  if (!is.null(totalXset)) {
+    if (!is.null(extDB)) {
+      DBobj <- match2ExtDB(totalXset, extDB, standardSettings)
+    } else {
+      if (!is.null(totalXset)) {
+        DBobj <- xset2msp(totalXset, standardSettings)
+      }
+    }
+    ## also works when manualDB == NULL :-D
+    DBobj <- c(DBobj, manualDB)
+    
+    ## Here we set the name of the intensity value for all entries in the
+    ## DB to the appropriate value
+    for (i in 1:length(DBobj))
+        colnames(DBobj[[i]]$pspectrum)[2] <-
+            standardSettings$intensity.measure
+    
+    ## for those entries in the DB that do not have a date field: add it
+    nodate <- which(sapply(DBobj, function(x) is.null(x$date)))
+    for (i in nodate) DBobj[[i]]$date <- format(Sys.time(), "%b %d %Y")
   } else {
-    DBobj <- xset2msp(totalXset, standardSettings)
+    DBobj <- manualDB
   }
-  ## also works when manualDB == NULL :-D
-  DBobj <- c(DBobj, manualDB)
-  
-  ## Here we set the name of the intensity value for all entries in the
-  ## DB to the appropriate value
-  for (i in 1:length(DBobj))
-      colnames(DBobj[[i]]$pspectrum)[2] <-
-          standardSettings$intensity.measure
-  
-  ## for those entries in the DB that do not have a date field: add it
-  nodate <- which(sapply(DBobj, function(x) is.null(x$date)))
-  for (i in nodate) DBobj[[i]]$date <- format(Sys.time(), "%b %d %Y")
   
   ## replace all "rt" and "rt.std" fields with "std.rt" and "std.rt.sd",
-  ## but only if the are not already there...
+  ## but only if the latter are not already there...
   lapply(DBobj,
          function(x) {
            y <- x

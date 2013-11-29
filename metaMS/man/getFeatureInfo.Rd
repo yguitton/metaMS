@@ -7,7 +7,8 @@
 \description{
   Function getFeatureInfo yields a data.frame with meta-information
   on all features detected in the samples. Features are rows;
-  information is in the columns.
+  information is in the columns. Not meant to be called directly by the
+  user.
 }
 \usage{getFeatureInfo(stdDB, allMatches, sampleList)}
 \arguments{
@@ -20,7 +21,7 @@
 \value{A \code{data.frame} summarizing all meta-information of the
   pseudospectra found in the samples. Exactly what columns are included
   depends on the information contained in the in-house database. The
-  last column is always "rt". Not meant to be called directly by the user.
+  last column is always "rt". 
 }
 \author{Ron Wehrens}
 \keyword{manip}

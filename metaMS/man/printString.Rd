@@ -5,7 +5,7 @@
 \title{Functions for metaMS-formatted text output}
 \description{
   Functions to present progress output, warnings or information, in a
-  consistent way in the console window.
+  consistent way in the console window. Not meant to be called by the user.
 }
 \usage{
 printString(..., screenwidth = 72)

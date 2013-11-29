@@ -13,6 +13,11 @@ processStandards <- function(stdInfo,
 {
 
   chrom <- settings$chrom
+  if (chrom == "LC") {
+    if (!polarity %in% c("positive", "negative")) {
+      stop("For LC data, 'polarity' should either be 'positive' or 'negative'")
+    }
+  }
   
   stdNames <- sort(unique(stdInfo[,"stdFile"]))
   xset.l <- peakDetection(stdNames,

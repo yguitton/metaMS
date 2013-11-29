@@ -1,12 +1,11 @@
 Package: metaMS
 Type: Package
-Title: Mass spectrometry annotation pipeline
-Version: 0.8.3
+Title: MS-based metabolomics annotation pipeline
+Version: 0.8.4
 Date: 2013-09-12
-Author: Pietro Franceschi and Ron Wehrens, with contributions from Matthias Scholz and Nir Shahaf
-Maintainer: Ron Wehrens <ron.wehrens@fmach.it> and Pietro Franceschi <pietro.franceschi@fmach.it>
+Authors@R: c(person("Ron", "Wehrens", role = c("aut", "cre"), comment = "author of GC-MS part", email = "ron.wehrens@fmach.it"), person("Pietro", "Franceschi", role = "aut", comment = "author of LC-MS part"), person("Nir", "Shahaf", role = "ctb"), person("Matthias", "Scholz", role = "ctb"))
 Depends: tools, xcms (>= 1.35), CAMERA, robustbase, Matrix
 Suggests: metaMSdata
-Description: Mass spectrometry processing and compound annotation pipeline. 
+Description: MS-based metabolomics data processing and compound annotation pipeline. 
 License: GPL (>= 2)
 LazyLoad: yes

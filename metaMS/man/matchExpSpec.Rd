@@ -16,8 +16,8 @@ matchExpSpec(pspec, DB, DB.treated, plotIt = FALSE,
 mzmatch(spec1, spec2)
 }
 \arguments{
-  \item{pspec}{The pseudospectrum, a 
-}
+  \item{pspec}{The pseudospectrum, a two- or three-column matrix where
+    the third column (the retention time) will be ignored.}
   \item{DB}{Database of standards.}
   \item{DB.treated}{Logical, indicating whether the database has already
     been scaled (TRUE) or not.}
@@ -35,20 +35,9 @@ mzmatch(spec1, spec2)
 \value{A vector of match factors.}
 \author{Ron Wehrens}
 \examples{
-if (require(metaMSdata)) {
-  data(FEMsettings)
-  cdfdir <- system.file("CDF_GC", package = "metaMSdata")
-  cdffiles <- list.files(cdfdir, pattern = "cdf",
-                         full.names = TRUE, ignore.case = TRUE)
+data(threeStdsNIST) ## gives smallDB, containing 78 patterns
+data(threeStdsDB)   ## gives DB, containing 3 patterns :-D
 
-  result.noannot <- runGC(cdffiles, FEMsettings[[3]])
-
-  ## new
-  ps <- result.noannot$PseudoSpectra
-
-  ## now compare the first pseudospectrum with the rest (without
-  ## taking retention time into account):
-  matchExpSpec(ps[[1]]$pspectrum, ps[-1], DB.treated = FALSE, plotIt = TRUE)
-}
+matchExpSpec(DB[[1]]$pspectrum, smallDB, DB.treated = FALSE, plotIt = TRUE)
 }
 \keyword{manip}
