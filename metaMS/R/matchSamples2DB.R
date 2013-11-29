@@ -61,7 +61,7 @@ matchSamples2DB <- function(xset.msp,
                    ## sometimes, with manually added spectra, monoMW
                    ## is not present... then we use everything up
                    ## until the highest mass present.
-                   if (is.null(MWlimit))
+                   if (length(MWlimit) == 0)
                        MWlimit <- max(DB[[DB.idx]]$pspectrum[,1])
                    
                    ok.mz <- which(exp.pat[,"mz"] <= MWlimit)
