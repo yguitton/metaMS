@@ -28,15 +28,22 @@ runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
   annotation. Either "positive" or "negative".}
   \item{errf}{A linear model used to calculate the mass tolerance in ppm
   from the \code{log10(I)} and \code{m/z}. It should be called  as
-  \code{predict(errf, data.frame(M = mz, logI = log10(maxo)))}. For further details refer to the help of \code{AnnotateTable}.}
+  \code{predict(errf, data.frame(M = mz, logI = log10(maxo)))}. For
+  further details refer to the help of \code{AnnotateTable}.}
   \item{runCAMERA}{Logical. Should CAMERA annotation be performed?}
   \item{returnXset}{ logical: should the XCMS output be returned? If yes,
     this is a a list of \code{xcmsSet} objects, one element for each
     input file.}
-  \item{intensity}{The intensity measure used in the output peaktable. The available intensities are the ones provided by \code{xcms}. The default one is the total intensity (integral) of the feature on the detected chromatographic peak.}
+  \item{intensity}{The intensity measure used in the output
+  peaktable. The available intensities are the ones provided by
+  \code{xcms}. The default one is the total intensity (integral) of the
+  feature on the detected chromatographic peak.}
 }
-\details{The mz range and rtrange parameters are used to subset the mass and retantion times considered in the analysis, thus reducing possible alignment problems at the boundaries.
-If the error function is not provided the mass tolerance will be fixed to the value defined in the \code{settings} list.} 
+\details{The mz range and rtrange parameters are used to subset the mass
+  and retantion times considered in the analysis, thus reducing possible
+  alignment problems at the boundaries. 
+  If the error function is not provided the mass tolerance will be fixed
+  to the value defined in the \code{settings} list.}  
 \value{
   A list with three elements:
   \item{PeakTable}{data.frame containing annotation information. Every
@@ -53,11 +60,13 @@ If the error function is not provided the mass tolerance will be fixed to the va
 }
 
 \references{
-N Shahaf, P Franceschi, P Arapitsas, I Rogachev, U Vrhovsek, R Wehrens, "Constructing a mass measurement error surface to improve automatic annotations in liquid chromatography/mass spectrometry based metabolomics". Rapid Communications in Mass Spectrometry, 27(21), 2425 (2013).
+  N. Shahaf, P. Franceschi, P. Arapitsas, I. Rogachev, U. Vrhovsek and
+  R. Wehrens: "Constructing a mass measurement error surface to improve
+  automatic annotations in liquid chromatography/mass spectrometry based
+  metabolomics". Rapid Communications in Mass Spectrometry, 27(21), 2425
+  (2013). 
 }
-\author{
-  Pietro Franceschi
-}
+\author{Pietro Franceschi}
 
 \examples{
 if (require(metaMSdata)) {
@@ -76,8 +85,8 @@ if (require(metaMSdata)) {
   data(LCDBtest)
   
   ## Run the analysis with a fixed mass tolernace 
-  pippo <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                 DB = LCDBtest$DB)
+  result <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+                  DB = LCDBtest$DB)
 }
 }
 

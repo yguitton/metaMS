@@ -2,11 +2,12 @@
 \alias{runGC}
 \title{Wrapper for processing of GC-MS data files}
 \description{
-Main function of the pipeline for GC-MS data processing. It includes
-XCMS peak detection, definition of pseudospectra, compound
-identification by comparison to a database of standards. The function also takes care of 
-removal of artefacts like column bleeding and plasticizers, and definition of
-unknowns, consistently present across samples.}
+  Main function of the pipeline for GC-MS data processing. It includes
+  XCMS peak detection, definition of pseudospectra, and compound
+  identification by comparison to a database of standards. The function
+  also takes care of removal of artefacts like column bleeding and
+  plasticizers, and definition of unknowns, consistently present across
+  samples.}
 \usage{
 runGC(files, settings, rtrange = NULL, DB = NULL, removeArtefacts = TRUE,
       findUnknowns = length(files) > 1, returnXset = FALSE)
@@ -33,10 +34,8 @@ runGC(files, settings, rtrange = NULL, DB = NULL, removeArtefacts = TRUE,
     input file.}
 }
 
-
-
 \value{
-This function returns a list with the following elements:
+A list with the following elements:
 \item{PeakTable}{data.frame containing annotation information. Every
   line is a feature, i.e. a pseudospectrum. The first columns are used
   to give information about these features, a.o. compound name, CAS and
@@ -51,8 +50,8 @@ This function returns a list with the following elements:
   useful for more detailed inspection of the results.}
 }
 \references{
-  R. Wehrens, G. Weingart et al.: "An open-source pipeline for
-  GC-MS-based untargeted metabolomics". In preparation.
+  R. Wehrens, G. Weingart and F. Mattivi: "An open-source pipeline for
+  GC-MS-based untargeted metabolomics". Submitted.
 }
 \author{Ron Wehrens}
 \seealso{\code{msp}, \code{treat.DB}, \code{peakDetection},

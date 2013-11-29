@@ -22,7 +22,7 @@
   }
 
   Other elements have a common purpose but a different implementation,
-  or are completely different.
+  or are completely different for LC-MS and GC-MS.
   
   LC-MS-specific elements:
   \describe{

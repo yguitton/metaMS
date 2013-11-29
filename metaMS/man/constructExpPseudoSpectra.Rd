@@ -1,15 +1,15 @@
 \name{constructExpPseudoSpectra}
 \alias{constructExpPseudoSpectra}
 \title{
-Create a list of all pseudospectra found in a GC-MS experiment of
-several samples.}
+  Create a list of all pseudospectra found in a GC-MS experiment of
+  several samples.}
 \description{
-Function constructExpPseudoSpectra creates an msp object containing all
-the patterns referenced to in the annotation. The first argument is
-the output of function matchSamples2Samples and contains the full
-annotation matrix and the pseudospectra of the known unknowns; the
-second is the msp object containing the standards that are actually found.
-Not meant to be called directly by the user.}
+  Function constructExpPseudoSpectra creates an msp object containing all
+  the patterns referenced to in the annotation. The first argument is
+  the output of function matchSamples2Samples and contains the full
+  annotation matrix and the pseudospectra of the known unknowns; the
+  second is the msp object containing the standards that are actually found.
+  Not meant to be called directly by the user.}
 \usage{constructExpPseudoSpectra(allMatches, standardsDB)}
 \arguments{
   \item{allMatches}{Result of a call to \code{matchSamples2DB} or

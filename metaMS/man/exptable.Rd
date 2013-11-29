@@ -1,31 +1,31 @@
 \name{exptable}
 \alias{exptable}
 \docType{data}
-\title{Sample table for DB generation (LC)}
-\description{
-The table is used to construct the sample db \code{LCDBtest}.
-}
-\usage{
-data(exptable)
-}
+\title{Sample table for the generation of a database of standards (LCMS)}
+\description{An example of a table used to construct a database of
+  standards. This particular table is used to obtain object \code{LCDBtest}.}
+\usage{data(exptable)}
 \format{
-\code{exptable} is a dataframe which associates standard compounds, standard injections and manually validated entries for rt and m/z
-
-Columns descripton
+  \code{exptable} is a \code{data.frame} summarizing information on the
+  chemical standards used for creating a database.
+  
+  Column descripton:
   \describe{
-    \item{ChemSpiderID}{The Chemspider ID of a specific compound}
-    \item{compound}{A string containing the (human) readable name of the compound.}
-    \item{formula}{The formula of the compound}
-    \item{M.ref}{The theoretical value for the observed m/z reference ion}
-    \item{mz.observed}{The manually validated m/z value identifying a specific compound. It can be, for example, the protonated(unprotonated) ion, one known adduct or a characteristic fragment.}
+    \item{ChemSpiderID}{The Chemspider ID of a specific compound.}
+    \item{compound}{A string containing the (human) readable name of the
+      compound.} 
+    \item{formula}{The formula of the compound.}
+    \item{M.ref}{The theoretical value for the observed m/z reference
+      ion. This can be, for example, the protonated (unprotonated) molecular
+      ion, a known adduct or a characteristic fragment.}
+    \item{mz.observed}{The manually validated m/z value of the reference
+      ion.} 
     \item{RTman}{The manually validated retantion time value for the standard.}
-    \item{stdFile}{The name (with the path) of the injection of the standard}
+    \item{stdFile}{The name (including the path) of the raw data file of the
+      standard.} 
   }
-
 }
-
 \author{Pietro Franceschi}
-
 \examples{
 if (require(metaMSdata)) {
   ##  load the manually curated table for the standards
@@ -53,11 +53,9 @@ if (require(metaMSdata)) {
                             settings = FEMsettings$Synapt.QTOF.RP,
                             polarity = "positive",
                             Ithr = 20)
-                            
+                           
   ## saved in "LCDBtest.RData" in the data directory of the metaMS
   ## package
 }
-
-
 }
 \keyword{datasets}
