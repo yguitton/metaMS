@@ -41,7 +41,7 @@ runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
 \details{The mz range and rtrange parameters are used to subset the mass
   and retantion times considered in the analysis, thus reducing possible
   alignment problems at the boundaries. \cr
-  The error function calculates the optimal m/z tolerance used during feature annotation on the bases of the \code{mz,rt,I} of each feature. To have a    more complete description of the process refer to the help of \code{AnnotateTable} and the reference beow. An example on how an error surface can be created is included in the examples. Note that the use of "lm" is one of the possible choice, but all kind of functional approximations working with the \code{predict() function could be used.} 
+  The error function calculates the optimal m/z tolerance used during feature annotation on the bases of the \code{mz,rt,I} of each feature. To have a    more complete description of the process refer to the help of \code{AnnotateTable} and the reference beow. An example on how an error surface can be created is included in the examples. Note that the use of "lm" is one of the possible choice, but all kind of functional approximations working with the \code{predict()} function could be used.} 
   If the error function is not provided the mass tolerance will be fixed
   to the value defined in the \code{settings} list.}  
 \value{
@@ -98,21 +98,13 @@ if (require(metaMSdata)) {
   ## create the linear model
   dummy.model <- lm(err~M+logI, data = pippo)
 
-  
-<<<<<<< HEAD
-=======
-  
-  
->>>>>>> fbae488ff732e96e5238e37cad9abcc31fe9a7a0
+
   ## Run the analysis with an adaptive mass tolernace 
   result.adaptive <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                            DB = LCDBtest$DB, errf = dummy.model)
                   
-<<<<<<< HEAD
+
   ## Run the analysis with a fixed mass tolernace 
-=======
-  ## Run the analysis with an adaptive mass tolernace 
->>>>>>> fbae488ff732e96e5238e37cad9abcc31fe9a7a0
   resultfixed <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                        DB = LCDBtest$DB)
                   
