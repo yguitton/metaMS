@@ -99,11 +99,20 @@ if (require(metaMSdata)) {
   dummy.model <- lm(err~M+logI, data = pippo)
 
   
+<<<<<<< HEAD
+=======
+  
+  
+>>>>>>> fbae488ff732e96e5238e37cad9abcc31fe9a7a0
   ## Run the analysis with an adaptive mass tolernace 
   result.adaptive <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                            DB = LCDBtest$DB, errf = dummy.model)
                   
+<<<<<<< HEAD
   ## Run the analysis with a fixed mass tolernace 
+=======
+  ## Run the analysis with an adaptive mass tolernace 
+>>>>>>> fbae488ff732e96e5238e37cad9abcc31fe9a7a0
   resultfixed <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                        DB = LCDBtest$DB)
                   
