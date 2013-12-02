@@ -9,7 +9,9 @@ analyst provides a validated reference value for retention time and m/z,
 generally corresponding to the major ionic signal for this compound. On
 the bases of this data, the database is constructed by automatically
 extracting the features identified in the vicinity of the retention time
-of the standard .}
+of the standard. \cr
+The function \code{generateSTDdbLC} is not meant to be
+  called directly - use \code{createSTDdbLC} instead.}
 \usage{
 createSTDdbLC(stdInfo, settings, polarity, Ithr = 10)
 generateStdDBLC(stdxsets, settings, Ithr) 
@@ -26,7 +28,8 @@ generateStdDBLC(stdxsets, settings, Ithr)
   \item{Ithr}{The intensity threshold used to decide weather or not a
     feature should be included in the DB. Typically acting on the
     \code{maxo} value.}
-  \item{stdxsets}{Please add...}
+  \item{stdxsets}{A list of CAMERA objects resulting from the analysis (erformed by \code{processStandards}) of the
+  standard injections listed in the \code{stdInfo} table.}
 }
 \details{
  The DB is created with the following workflow. Peak picking is
