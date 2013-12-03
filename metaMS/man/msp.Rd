@@ -43,7 +43,7 @@ to.msp(object, file = NULL, settings = NULL, ndigit = 0,
     defaults to the following fields: \code{"Name"}, \code{"CAS"},
     \code{"stdFile",} \code{"date"}, \code{"validated"},
     \code{"ChemspiderID"}, \code{"SMILES"}, \code{"InChI"},
-    \code{"Class"}, \code{"comment"}, \code{"csLinks"})}.}
+    \code{"Class"}, \code{"comment"}, \code{"csLinks"}.}
   \item{msp}{msp object.}
   \item{rtrange, mzrange, minfeat, minintens, minPeaks}{restrictions to
     what constitutes genuine pseudospectra in terms of minimal numbers
