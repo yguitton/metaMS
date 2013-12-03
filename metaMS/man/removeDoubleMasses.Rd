@@ -1,8 +1,6 @@
 \name{removeDoubleMasses}
 \alias{removeDoubleMasses}
-\title{
-Subfunction GC-MS processing (matchfuns.R)
-}
+\title{Remove double m7z entries in a pseudospectrum}
 \description{
   Since in nominal-mass GC data m/z values are rounded to whole numbers, in
   some cases an m/z value may occur multiple times - in that case the

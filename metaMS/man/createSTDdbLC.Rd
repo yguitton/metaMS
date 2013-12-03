@@ -28,8 +28,9 @@ generateStdDBLC(stdxsets, settings, Ithr)
   \item{Ithr}{The intensity threshold used to decide weather or not a
     feature should be included in the DB. Typically acting on the
     \code{maxo} value.}
-  \item{stdxsets}{A list of CAMERA objects resulting from the analysis (erformed by \code{processStandards}) of the
-  standard injections listed in the \code{stdInfo} table.}
+  \item{stdxsets}{A list of CAMERA objects resulting from the analysis
+    (performed by \code{processStandards}) of the standard injections
+    listed in the \code{stdInfo} table.}
 }
 \details{
  The DB is created with the following workflow. Peak picking is
@@ -66,9 +67,10 @@ if (require(metaMSdata)) {
   files <- list.files(cdfpath, "CDF", full.names=TRUE)
   
   ## get the complete names for the files
-  exptable$stdFile <- sapply(exptable$stdFile, function(x){
-    out <- files[grep(x,files)]
-  })
+  exptable$stdFile <-
+    sapply(exptable$stdFile,
+           function(x)
+           files[grep(x,files)])
   
   ## load the settings for the analysis
   data(FEMsettings)

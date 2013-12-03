@@ -19,15 +19,14 @@ depending on the \code{fillPeaks} setting.}
   }
 }
 \details{
-  For across-sample grouping, the \code{minsamp} parameter can be
-  specified either as a minimum number of samples (\code{min.class.size})
-  or as the fraction of samples per class (\code{min.class.fraction}). In
-  the function this parameter is calculated the minimum between the
-  \code{min.class.size} and (\code{min.class.fraction})*(\code{Number of
-    samples}). For retention time correction, the \code{missing} and
-  \code{extra} parameters are aso expressed as a fraction of the number of
-  samples.  
+  For across-sample grouping in XCMS, the \code{minsamp} parameter can be
+  specified either in the settings as a minimum number of samples
+  (\code{min.class.size}) or as the fraction of samples per class
+  (\code{min.class.fraction}) - if both are given the smallest number is
+  used. For retention time correction, the settings allow to express the
+  XCMS parameters \code{missing} and \code{extra} as fractions.  
 }
+\seealso{\code{\link{FEMsettings}}
 \value{A grouped and rt-aligned \code{xcmsSet} object.}
 \author{Ron Wehrens and Pietro Franceschi}
 \keyword{manip}
