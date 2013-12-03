@@ -1,7 +1,8 @@
 \name{getAnnotationLC}
 \alias{getAnnotationLC}
 \title{Get LC annotation}
-\description{Main function of LC-MS compound annotation.}
+\description{Main function for the annotation of an xcmsSet or CAMERA object. This function is not meant to be
+  called directly. Use \code{runLC} instead.}
 \usage{
 getAnnotationLC(xs, settings, DB, errf)
 }
@@ -19,11 +20,7 @@ getAnnotationLC(xs, settings, DB, errf)
     tolerance. See the help of \code{AnnotateTable} for details.}
 }
 \details{
-  The function relies on \code{getPeakTable} to extract the \code{maxo}
-  value (maximum value of the ionic signal over the chromatographic peak)
-  from \code{xs}. In the case of multiple samples the maximum intensity of
-  a specific feature across all the samples is used for
-  annotation. \code{maxo} is used to calculate the mass tolerance. 
+  The function extracts from the \code{xs} object a Peaktable with the intensities of the features across all the samples. Since this Peaktable is meant to be used only for annotation (and not for subsequent statistical analysis), the intensities are expressed as\code{maxo} - the absolute maximum of the signal over the detected chromatographic peak (see the documentation of xcms for more details). Within the function the peaktable is converted into a matrix in the form \code{(mz,rt,I)} used by \code{AnnotateTable}. If \code{xs} contains more than one  sample, the intensity is the maximum intensity of each feature across all the samples. 
 }
 \value{
   A list with two elements. \code{raw} is the complete output of
