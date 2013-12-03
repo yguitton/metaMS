@@ -26,7 +26,7 @@ depending on the \code{fillPeaks} setting.}
   used. For retention time correction, the settings allow to express the
   XCMS parameters \code{missing} and \code{extra} as fractions.  
 }
-\seealso{\code{\link{FEMsettings}}
+\seealso{\code{\link{FEMsettings}}}
 \value{A grouped and rt-aligned \code{xcmsSet} object.}
 \author{Ron Wehrens and Pietro Franceschi}
 \keyword{manip}
