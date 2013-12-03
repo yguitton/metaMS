@@ -74,10 +74,9 @@ The most important functions for running the pipeline are \code{runGC}
 and \code{runLC} - in-house databases are created by functions
 \code{createSTDdbGC} and \code{createSTDdbLC}.
 }
-\author{
-Pietro Franceschi and Ron Wehrens, with contributions from Matthias Scholz and Nir Shahaf
+\author{Ron Wehrens [aut, cre] (author of GC-MS part), Pietro Franceschi [aut] (author of LC-MS part), Nir Shahaf [ctb], Matthias Scholz [ctb], Georg Weingart [ctb] (development of GC-MS approach), Elisabete Carvalho [ctb] (testing and feedback of GC-MS pipeline)
 
-Maintainer: Ron Wehrens <ron.wehrens@fmach.it> and Pietro Franceschi <pietro.franceschi@fmach.it>
+Maintainer: Ron Wehrens <ron.wehrens@fmach.it>
 }
 \keyword{ package }
 \seealso{\code{\link[metaMSdata:metaMSdata-package]{metaMSdata}}}

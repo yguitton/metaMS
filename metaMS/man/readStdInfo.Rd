@@ -1,9 +1,9 @@
 \name{readStdInfo}
 \alias{readStdInfo}
-\title{Read information of injections of standards from a csv file}
+\title{Read information of GC injections of standards from a csv file}
 \description{
   The csv contains all information necessary to process a series of
-  injections of standards. Required fields: \code{Name}, \code{RTman},
+  injections of standards (GC-MS). Required fields: \code{Name}, \code{RTman},
   \code{monoMW}, \code{stdFile}, and an identifier such as \code{CAS} or
   \code{ChemspiderID}. At the moment, the system is completely based on
   \code{CAS}, although this may change in the future.}

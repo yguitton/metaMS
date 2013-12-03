@@ -8,7 +8,7 @@
 \usage{data(LCDBtest)}
 \format{
   \describe{
-    \code{LCDBtest} is a list with three elements: 
+    \code{LCDBtest} is a list with three elements: \cr
     \item{Reftable}{The initial table used to generate the DB.}
     \item{Info}{Some info on the DB: date of creation, and settings used.}
     \item{DB}{A \code{data.frame} containing the actual information. See the
