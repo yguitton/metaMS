@@ -26,10 +26,9 @@ runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
   the description refer to the \code{LCDBtest} help.}
   \item{polarity}{The polarity of the analysis used for CAMERA
   annotation. Either "positive" or "negative".}
-  \item{errf}{A linear model used to calculate the mass tolerance in ppm
-  from the \code{log10(I)} and \code{m/z}. It should be called  as
-  \code{predict(errf, data.frame(M = mz, logI = log10(maxo)))}. For
-  further details refer to the help of \code{AnnotateTable}.}
+  \item{errf}{A model used to calculate the mass tolerance in ppm
+  for each features on the bases of its mass, retention time and intensity.
+  For further details refer to the help of \code{AnnotateTable}.}
   \item{runCAMERA}{Logical. Should CAMERA annotation be performed?}
   \item{returnXset}{ logical: should the XCMS output be returned? If yes,
     this is a a list of \code{xcmsSet} objects, one element for each
@@ -41,7 +40,8 @@ runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
 }
 \details{The mz range and rtrange parameters are used to subset the mass
   and retantion times considered in the analysis, thus reducing possible
-  alignment problems at the boundaries. 
+  alignment problems at the boundaries. \cr
+  The error function calculates the optimal m/z tolerance used during feature annotation on the bases of the \code{mz,rt,I} of each feature. To have a    more complete description of the process refer to the help of \code{AnnotateTable} and the reference beow. An example on how an error surface can be created is included in the examples. Note that the use of "lm" is one of the possible choice, but all kind of functional approximations working with the \code{predict()} function could be used.} 
   If the error function is not provided the mass tolerance will be fixed
   to the value defined in the \code{settings} list.}  
 \value{
@@ -84,9 +84,31 @@ if (require(metaMSdata)) {
   ## load the annotation DB
   data(LCDBtest)
   
+  ## <--------------    create a dummy error function     -------------- >
+  ## dataset to evaluate it: 
+  ## "M"" is the mz, 
+  ## "logI" is the log of the intensity
+  ## "err" is the mass error in ppm. The error is the difference between the "real" 
+  ## m/z of a known ion and the one actually measured with the spectrometer
+  
+  pippo <- data.frame("M" = seq(1,500,2), 
+                      "logI" = rnorm(250, mean = 5, sd = 1), 
+                      "err" = rnorm(250, mean = 40, sd = 5))
+  
+  ## create the linear model
+  dummy.model <- lm(err~M+logI, data = pippo)
+
+
+  ## Run the analysis with an adaptive mass tolernace 
+  result.adaptive <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+                           DB = LCDBtest$DB, errf = dummy.model)
+                  
+
   ## Run the analysis with a fixed mass tolernace 
-  result <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                  DB = LCDBtest$DB)
+  resultfixed <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+                       DB = LCDBtest$DB)
+                  
+                 
 }
 }
 
