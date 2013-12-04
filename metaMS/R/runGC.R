@@ -51,7 +51,7 @@ runGC <- function(files,
   }
   ## now scale the rest...
   allSamples.msp.scaled <- lapply(allSamples.msp, treat.DB,
-                                     isMSP = FALSE)
+                                  isMSP = FALSE)
 
   ## remove Artefacts
   if (!is.null(DB)) {
