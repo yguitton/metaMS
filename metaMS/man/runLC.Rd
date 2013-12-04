@@ -107,11 +107,19 @@ if (require(metaMSdata)) {
 
 
   ## Run the analysis with an adaptive mass tolernace 
+  result.adaptive.dummy <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+                                 DB = LCDBtest$DB, errf = dummy.model)
+  
+  
+  
+  ## <--------------    Use the Synapt Q-TOF error function     -------------- >
+  data(errf)
+  
   result.adaptive <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                           DB = LCDBtest$DB, errf = dummy.model)
-                  
-
-  ## Run the analysis with a fixed mass tolernace 
+                          DB = LCDBtest$DB, errf = errf)
+  
+  
+  ## <--------------    Run the analysis with a fixed mass tolernace      -------------- >
   resultfixed <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                        DB = LCDBtest$DB)
                   
