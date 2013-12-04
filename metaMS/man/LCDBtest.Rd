@@ -31,38 +31,4 @@
 \seealso{\code{\link{createSTDdbLC}}, \code{\link{exptable}},
   \code{\link{FEMsettings}}}
 \author{Pietro Franceschi}
-\examples{
-if (require(metaMSdata)) {
-  ##  load the manually curated table for the standards
-  data(exptable)
-  ## add location of cdf file from which the standards DB is going to be
-  ## built - this depends on your platform and requires the metaMSdata package
-  cdfpath <- system.file("CDF_LC", package = "metaMSdata")
-  
-  ## files 
-  files <- list.files(cdfpath, "CDF", full.names=TRUE)
-  
-  ## get the complete names for the files
-  exptable$stdFile <- sapply(exptable$stdFile, function(x){
-    out <- files[grep(x,files)]
-  })
-  
-  ## load the settings for the analysis
-  data(FEMsettings)
-  
-  ## set the minimum number of features to 2
-  FEMsettings$Synapt.QTOF.RP$DBconstruction$minfeat  <- 2
-  
-  ## create the DB
-  LCDBtest <- createSTDdbLC(stdInfo=exptable, 
-                            settings = FEMsettings$Synapt.QTOF.RP,
-                            polarity = "positive",
-                            Ithr = 20)
-                            
-  ## saved in "LCDBtest.RData" in the data directory of the metaMS
-  ## package
-}
-
-
-}
 \keyword{datasets}
