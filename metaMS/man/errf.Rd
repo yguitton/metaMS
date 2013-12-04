@@ -2,19 +2,23 @@
 \alias{errf}
 \docType{data}
 \title{Mass error surface for Waters Synapt Q-TOF spectrometers}
-\description{This function can be used to calculate the optimal mz tolerance for annotation. The surface has been developed for a Waters Synapt QTOF spectrometer }
+\description{This function can be used to calculate the optimal mz
+  tolerance (in ppm) for annotation. The surface has been developed for
+  a Waters Synapt QTOF spectrometer.} 
 \usage{data(errf)}
 \format{
-  \code{errf} is a linear model of the form \code{lm(formula = err ~ M + logI + M * logI, data = linear.approx). \cr
+  \code{errf} is a linear model of the form \code{M + logI + M * logI}:
   \describe{
-    \item{err}{The mass tolerance}
     \item{M}{The mz of the ion} 
-    \item{logI}{Logarithm of the intensity of the \code{M} ion.} 
+    \item{logI}{Logarithm of the intensity of the ion.} 
   }
 }
-}
 \details{
- The function is a linear approaximation of the complete error function (see Reference). The latter has been calculated by comparing the measured and nominal mass of several hundreds of standard. The experiments were performed by using a Waters Synapt Q-TOF spectrometer so this specific surface is valid for this model of spectrometers.
+  The function is a linear approaximation of the complete error function
+  (see Reference). The latter has been calculated by comparing the
+  measured and nominal mass of several hundreds of standards. The
+  experiments were performed by using a Waters Synapt Q-TOF spectrometer
+  so this specific surface is valid only for this model of spectrometers. 
 }
 
 
@@ -27,6 +31,11 @@ metabolomics". Rapid Communications in Mass Spectrometry, 27(21), 2425
 
 \author{Pietro Franceschi}
 \examples{
+data(errf)
+
+newdata <- data.frame(M = c(105, 131, 157), logI = c(1, .5, 1.4))
+predict(errf, newdata) ## mass error in ppm
+
 if (require(metaMSdata)) {
   
   ## get the path 
@@ -43,13 +52,11 @@ if (require(metaMSdata)) {
   data(LCDBtest)
   
   
-  ## <--------------    Use the Synapt Q-TOF error function     -------------- >
+  ## <-----------    Use the Synapt Q-TOF error function     ----------- >
   data(errf)
   
   result.adaptive  <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                                 DB = LCDBtest$DB, errf = errf)
-  
-                  
+                            DB = LCDBtest$DB, errf = errf)
 }
 }
 \keyword{datasets}
