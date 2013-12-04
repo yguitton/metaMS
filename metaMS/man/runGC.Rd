@@ -64,12 +64,19 @@ if (require(metaMSdata)) {
   cdffiles <- list.files(cdfdir, pattern = "cdf",
                          full.names = TRUE, ignore.case = TRUE)
 
+\dontrun{
+  ## no annotation database
   result.noannot <- runGC(cdffiles, FEMsettings[[3]])
+  ## only three patterns consistently found, one of which is a standard
+  settings <- FEMsettings[[3]]
+  settings$betweenSamples$simthresh <- .8 ## more lenient settings
+  result.noannot2 <- runGC(cdffiles, settings)
+  ## now 15 patterns are found consistently across the samples,
+  ## including the three standards
+}
 
   ## use with a database of standards
-  ## note that in this example the peakpicking is done twice: more
-  ## efficient would be to run the individual steps of runGC separately
-  data(threeStdsDB) # provides DB
+  data(threeStdsDB) 
   result.annot <- runGC(cdffiles, FEMsettings[[3]], DB = DB)
 }
 }
