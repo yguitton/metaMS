@@ -79,11 +79,12 @@ if (require(metaMSdata)) {
   FEMsettings$Synapt.QTOF.RP$DBconstruction$minfeat  <- 2
   
   ## create the DB
+  \dontrun{
   LCDBtest <- createSTDdbLC(stdInfo=exptable, 
                             settings = FEMsettings$Synapt.QTOF.RP,
                             polarity = "positive",
                             Ithr = 20)
-                            
+  }                 
   ## saved in "LCDBtest.RData" in the data directory of the metaMS
   ## package
 }

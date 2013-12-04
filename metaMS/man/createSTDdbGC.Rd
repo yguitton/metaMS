@@ -78,8 +78,10 @@ if (require(metaMSdata)) {
 
   data(FEMsettings)
   data(threeStdsNIST)  ## provides object smallDB, excerpt from NIST DB
-  
+
+  \dontrun{
   DB <- createSTDdbGC(stdInfo, FEMsettings[[3]], extDB = smallDB)
+  }
   ## saved in "threeStdsDB.RData" in the data directory of the metaMS
   ## package
 
