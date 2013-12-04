@@ -98,12 +98,12 @@ if (require(metaMSdata)) {
   ## "real" m/z of a known ion, and the one actually measured with the
   ## spectrometer
   
-  pippo <- data.frame("M" = seq(1,500,2), 
-                      "logI" = rnorm(250, mean = 5, sd = 1), 
-                      "err" = rnorm(250, mean = 40, sd = 5))
+  MErr.data <- data.frame("M" = seq(1,500,2), 
+                          "logI" = rnorm(250, mean = 5, sd = 1), 
+                          "err" = rnorm(250, mean = 40, sd = 5))
   
   ## create the linear model
-  dummy.model <- lm(err~M+logI, data = pippo)
+  dummy.model <- lm(err~M+logI, data = MErr.data)
 
 
   ## Run the analysis with an adaptive mass tolernace 
@@ -112,14 +112,14 @@ if (require(metaMSdata)) {
   
   
   
-  ## <--------------    Use the Synapt Q-TOF error function     -------------- >
+  ## <-------------    Use the Synapt Q-TOF error function     -------------- >
   data(errf)
   
   result.adaptive <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                          DB = LCDBtest$DB, errf = errf)
+                           DB = LCDBtest$DB, errf = errf)
   
   
-  ## <--------------    Run the analysis with a fixed mass tolernace      -------------- >
+  ## <--------    Run the analysis with a fixed mass tolerance      --------- >
   resultfixed <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                        DB = LCDBtest$DB)
                   
