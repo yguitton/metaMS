@@ -5,6 +5,12 @@ generateStdDBGC <- function(totalXset, settings,
 {
   standardSettings <- settings$DBconstruction
 
+  if (!is.null(manualDB)) {
+    for (i in 1:length(manualDB))
+        if (is.null(manualDB[[i]]$Class))
+            manualDB[[i]]$Class <- "Manual"
+  }
+
   if (!is.null(totalXset)) {
     if (!is.null(extDB)) {
       DBobj <- match2ExtDB(totalXset, extDB, standardSettings)
@@ -13,6 +19,9 @@ generateStdDBGC <- function(totalXset, settings,
         DBobj <- xset2msp(totalXset, standardSettings)
       }
     }
+    for (i in 1:length(DBobj))
+        DBobj[[i]]$Class <- "Standard"
+    
     ## also works when manualDB == NULL :-D
     DBobj <- c(DBobj, manualDB)
     
@@ -29,18 +38,14 @@ generateStdDBGC <- function(totalXset, settings,
     DBobj <- manualDB
   }
   
-  ## replace all "rt" and "rt.std" fields with "std.rt" and "std.rt.sd",
-  ## but only if the latter are not already there...
+  ## rename all "rt" and "rt.std" fields to "std.rt" and "std.rt.sd"
   lapply(DBobj,
          function(x) {
-           y <- x
-           y$rt <-  y$rt.sd <- NULL
-           if (is.null(y$std.rt) & is.null(y$std.rt.sd)) {
-             y$std.rt <- x$rt
-             y$std.rt.sd <- x$rt.sd
-           }
+           x$std.rt <- x$rt
+           x$std.rt.sd <- x$rt.sd
+           x$rt <-  x$rt.sd <- NULL
            
-           y
+           x
          })
 }
 
