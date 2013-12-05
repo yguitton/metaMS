@@ -1,7 +1,0 @@
-0.8.2: first version released for beta testing, Sept 24, 2013
-
-0.8.3: - fixed bug in matchSamples2DB: also if monoMW is absent a
-       	 correct annotation can now be obtained
-       - completed and corrected manual pages
-       - allow cdf as well as mzxml files (in readStdInfo cdf files
-       	 used to be hard-wired)
