@@ -9,8 +9,9 @@
   plasticizers, and definition of unknowns, consistently present across
   samples.}
 \usage{
-runGC(files, settings, rtrange = NULL, DB = NULL, removeArtefacts = TRUE,
-      findUnknowns = length(files) > 1, returnXset = FALSE)
+runGC(files, settings, rtrange = NULL, DB = NULL,
+      removeArtefacts = TRUE, findUnknowns = length(files) > 1,
+      returnXset = FALSE, RIstandards = NULL)
       
 }
 \arguments{
@@ -32,6 +33,10 @@ runGC(files, settings, rtrange = NULL, DB = NULL, removeArtefacts = TRUE,
   \item{returnXset}{logical: should the XCMS output be returned? If yes,
     this is a a list of \code{xcmsSet} objects, one element for each
     input file.}
+  \item{RIstandards}{A two-column matrix containing for the standards
+    defining the RI scale both retention times and retention indices. If
+    not given, no RI values will be calculated and retention times will
+    be used instead.}
 }
 
 \value{
@@ -54,9 +59,10 @@ A list with the following elements:
   GC-MS-based untargeted metabolomics". Submitted.
 }
 \author{Ron Wehrens}
-\seealso{\code{msp}, \code{treat.DB}, \code{peakDetection},
-  \code{matchSamples2DB}, \code{matchSamples2Samples},
-  \code{getAnnotationMat}}
+\seealso{\code{\link{msp}}, \code{\link{treat.DB}},
+  \code{\link{peakDetection}}, \code{\link{matchSamples2DB}},
+  \code{\link{matchSamples2Samples}},
+  \code{\link{getAnnotationMat}}, \code{\link{addRI}}}
 \examples{
 if (require(metaMSdata)) {
   data(FEMsettings)

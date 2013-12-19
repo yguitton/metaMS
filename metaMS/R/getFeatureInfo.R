@@ -3,7 +3,8 @@
 ## information is in the columns. The last column of the meta-info is
 ## always "rt".
 
-getFeatureInfo <- function(stdDB, allMatches, sampleList) {
+getFeatureInfo <- function(stdDB, allMatches, sampleList,
+                           RIstandards = NULL) {
   allAnnotations <- sort(unique(unlist(sapply(allMatches$annotations,
                                               function(x) x[,"annotation"]))))
   allAnnotations <- c(allAnnotations[allAnnotations > 0],
@@ -29,6 +30,8 @@ getFeatureInfo <- function(stdDB, allMatches, sampleList) {
                          list(rt = mean(rts, na.rm = TRUE),
                               rt.sd = sd(rts, na.rm = TRUE)))
                      })
+  if (!is.null(pSpectra))
+      pSpectra <- addRI(pSpectra, RIstandards)
 
   if (length(pSpectra) > 0) {
     ## in the meta information we include all fields present in the
@@ -37,7 +40,11 @@ getFeatureInfo <- function(stdDB, allMatches, sampleList) {
     ## entry, "rt" always the last, and the other rt-related fields
     ## directly in front of "rt".
     fields <- unique(unlist(lapply(pSpectra, names)))
-    rtfields <- c("std.rt", "rt.sd", "rt")
+    if (is.null(RIstandards)) {
+      rtfields <- c("std.rt", "rt.sd", "rt")
+    } else {
+      rtfileds <- c("std.RI", "RI", "std.rt", "rt.sd", "rt")
+    }
     fields <- c("Name",
                 fields[!(fields %in% c("Name", "pspectrum", "bestDBmatch",
                                        rtfields))],

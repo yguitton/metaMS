@@ -1,7 +1,8 @@
 createSTDdbGC <- function(stdInfo,
                           settings,
                           extDB = NULL,
-                          manualDB = NULL)
+                          manualDB = NULL,
+                          RIstandards = NULL)
 {
   if (is.null(stdInfo)) {
     if (is.null(manualDB)) {
@@ -25,6 +26,7 @@ createSTDdbGC <- function(stdInfo,
   }
   
   generateStdDBGC(totalXset, settings,
-                  extDB = extDB, manualDB = manualDB)
+                  extDB = extDB, manualDB = manualDB,
+                  RIstandards = RIstandards)
 }
   

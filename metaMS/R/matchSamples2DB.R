@@ -15,14 +15,14 @@ matchSamples2DB <- function(xset.msp,
                             settings,
                             quick) {
   if ((settings$timeComparison == "RI" & is.null(settings$RIdiff)) |
-      (settings$timeComparison == "RI" & is.null(settings$RIdiff))) {
+      (settings$timeComparison == "rt" & is.null(settings$rtdiff))) {
     ## don't use any rt or RI information in the matching phase
     rt.matches <- lapply(1:length(xset.msp),
                          function(ii)
-                         cbind(rep(1:length(standard.rts),
+                         cbind(rep(1:length(DB),
                                    length(xset.msp[[ii]])),
                                rep(1:length(xset.msp[[ii]]),
-                                   each = length(standard.rts))))
+                                   each = length(DB))))
   } else {
     if (settings$timeComparison == "RI") {
       standard.rts <- sapply(DB, function(x) x$std.RI)
