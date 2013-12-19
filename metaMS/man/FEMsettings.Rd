@@ -202,19 +202,22 @@ ThermoXLS.QQQ.GC <- list("instName" = "ThermoXLS.QQQ.GC",
                              ),
                          match2DB = list(
                              simthresh = 0.80,
+                             timeComparison = "rt",
                              rtdiff = .5,
+                             RIdiff = 5,
                              minfeat = 2
                              ),
                          matchIrrelevants = list(
                              irrelevantClasses = c("Bleeding",
                                  "Plasticizers"),
-                             simthresh = 0.70,
-                             rtdiff = 1e5       ## dont use rt...
+                             simthresh = 0.70
                              ),
                          betweenSamples = list(
                              min.class.fraction = .5,
                              min.class.size = 5,
-                             rtdiff = .05,     
+                             timeComparison = "rt",
+                             rtdiff = .05,
+                             RIdiff = 2,    
                              simthresh = .95)        ##,
                          )              
 
