@@ -1,7 +1,8 @@
 ## Function changes a list of xset objects from injections of
 ## (combinations of) standards into spectra for individual standards.
 generateStdDBGC <- function(totalXset, settings,
-                            extDB = NULL, manualDB = NULL)
+                            extDB = NULL, manualDB = NULL,
+                            RIstandards = NULL)
 {
   standardSettings <- settings$DBconstruction
 
@@ -36,6 +37,18 @@ generateStdDBGC <- function(totalXset, settings,
     for (i in nodate) DBobj[[i]]$date <- format(Sys.time(), "%b %d %Y")
   } else {
     DBobj <- manualDB
+  }
+
+  if (!is.null(RIstandards)) {
+    DBobj <- addRI(DBobj, RIstandards)
+    ## rename all "RI" fields to "std.RI"
+    DBobj <- lapply(DBobj,
+                    function(x) {
+                      x$std.RI <- x$RI
+                      x$RI <- NULL
+                      
+                      x
+                    })
   }
   
   ## rename all "rt" and "rt.std" fields to "std.rt" and "std.rt.sd"

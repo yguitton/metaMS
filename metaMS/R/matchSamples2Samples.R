@@ -22,6 +22,7 @@
 
 ## Aug 13: new structure of annotations, now a three-column data.frame
 
+## Dec 19: addition of RI check, as an alternative to rt check
 matchSamples2Samples <- function(xset.msp.scaled,
                                  xset.msp,
                                  annotations,
@@ -51,8 +52,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
     for (j in (i+1):length(xset.work)) {
       matchmat <- match.unannot.patterns(xset.work[[i]],
                                          xset.work[[j]],
-                                         rtdiff = settings$rtdiff,
-                                         simthresh = settings$simthresh)
+                                         settings = settings)
       if (length(matchmat) > 0) {
         for (k in 1:nrow(matchmat)) {
 	id1 <- cumpatterns[i] + matchmat[k, "ID1"]  
@@ -163,9 +163,13 @@ matchSamples2Samples <- function(xset.msp.scaled,
 ## Function match.unannot.patterns takes two lists of unannotated
 ## patterns and returns a matrix with IDs and RTs of matching
 ## patterns, as well as the match factor
-match.unannot.patterns <- function(msp1, msp2, rtdiff, simthresh) {
-  rt1 <- sapply(msp1, function(x) mean(x[,"rt"]))
-  rt2 <- sapply(msp2, function(x) mean(x[,"rt"]))
+match.unannot.patterns <- function(msp1, msp2, settings) {
+  maxdiff <- ifelse(settings$timeComparison == "rt",
+                    settings$rtdiff,
+                    settings$RIdiff)
+      
+  rt1 <- sapply(msp1, function(x) mean(x[,settings$timeComparison]))
+  rt2 <- sapply(msp2, function(x) mean(x[,settings$timeComparison]))
 
   msp.rtdiffs <- abs(outer(rt1, rt2, "-"))
   close.idx <- which(msp.rtdiffs < rtdiff, arr.ind = TRUE)
