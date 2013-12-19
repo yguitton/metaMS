@@ -14,7 +14,7 @@
   user.}
 \usage{
 matchSamples2Samples(xset.msp.scaled, xset.msp, annotations, settings)
-match.unannot.patterns(msp1, msp2, rtdiff, simthresh)
+match.unannot.patterns(msp1, msp2, settings)
 }
 \arguments{
   \item{xset.msp.scaled}{Scaled version of all pseudospectra in the
@@ -24,10 +24,10 @@ match.unannot.patterns(msp1, msp2, rtdiff, simthresh)
     are provided for efficiency reasons.}
   \item{annotations}{Annotations of all pseudospectra: only patterns
     without annotations will be considered.}
-  \item{settings}{Settings determining what a valid "unknown" is.}
+  \item{settings}{Settings determining what a valid "unknown" is. For an
+    example, see the man page of \code{FEMsettings},
+    field \code{matchIrrelevants}.}
   \item{msp1, msp2}{lists of pseudospectra}
-  \item{rtdiff}{maximal retention time difference (in minutes).}
-  \item{simthresh}{similarity threshold.}
 }
 \value{Function \code{matchSamples2Samples} returns an updated
   annotation object such as the one 
@@ -36,8 +36,8 @@ match.unannot.patterns(msp1, msp2, rtdiff, simthresh)
   recognized as "unknowns".
 
   Function \code{match.unannot.patterns} returns a list of combinations
-  of pseudospectra IDs, retention times and match factors (only for
-  those combinations that satisfy the criteria on retention time and
-  match factor).}
+  of pseudospectra IDs, retention times (or retention indices) and match
+  factors (only for those combinations that satisfy the criteria on
+  retention time (index) and match factor).}
 \author{Ron Wehrens}
 \keyword{manip}

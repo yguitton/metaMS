@@ -4,7 +4,8 @@ runGC <- function(files,
                   DB = NULL,
                   removeArtefacts = TRUE,
                   findUnknowns = length(files) > 1,
-                  returnXset = FALSE)
+                  returnXset = FALSE,
+                  RIstandards = NULL)
 {
   printString(paste("Experiment of", length(files), "samples"))
   printString(paste("Instrument:", settings$instName))
@@ -30,9 +31,9 @@ runGC <- function(files,
   xset.l <- peakDetection(files, settings = settings$PeakPicking,
                           rtrange = rtrange, convert2list = TRUE)
   allSamples <- lapply(xset.l, runCAMERA,
-                         chrom = settings$chrom,
-                         settings = settings$CAMERA)
-
+                       chrom = settings$chrom,
+                       settings = settings$CAMERA)
+  
   
   ## convert into msp format (a nested list)
   allSamples.msp <- lapply(allSamples,
@@ -41,6 +42,9 @@ runGC <- function(files,
                            settings = settings$DBconstruction)
   names(allSamples.msp) <- sapply(allSamples,
                                   function(x) sampnames(x@xcmsSet))
+  ## if RI information is given, add the RI for all elements
+  if (!is.null(RIstandards))
+      allSamples.msp <- addRI(allSamples.msp, RIstandards)
 
   ## check: files without any features - should not happen very often...
   nofeats <- which(sapply(allSamples.msp, length) == 0)
