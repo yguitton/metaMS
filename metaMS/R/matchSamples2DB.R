@@ -14,21 +14,46 @@ matchSamples2DB <- function(xset.msp,
                             DB,
                             settings,
                             quick) {
-  standard.rts <- sapply(DB, function(x) x$std.rt)
-  ## rt.matches is a list of two-column matrices, one for each
-  ## xset.msp element. The first column gives the DB entry that
-  ## matches with the sample entry in the second column. This is very
-  ## fast to calculate.
-  rt.matches <-
-      lapply(1:length(xset.msp),
-             function(ii) {
-               group.rts <- sapply(xset.msp[[ii]],
-                                   function(x)
-                                   mean(x[,"rt"]))
-               which(abs(outer(standard.rts, group.rts, FUN = "-")) <
-                     settings$rtdiff,
-                     arr.ind = TRUE)
-             })
+  if ((settings$timeComparison == "RI" & is.null(settings$RIdiff)) |
+      (settings$timeComparison == "RI" & is.null(settings$RIdiff))) {
+    ## don't use any rt or RI information in the matching phase
+    rt.matches <- lapply(1:length(xset.msp),
+                         function(ii)
+                         cbind(rep(1:length(standard.rts),
+                                   length(xset.msp[[ii]])),
+                               rep(1:length(xset.msp[[ii]]),
+                                   each = length(standard.rts))))
+  } else {
+    if (settings$timeComparison == "RI") {
+      standard.rts <- sapply(DB, function(x) x$std.RI)
+      ## rt.matches is a list of two-column matrices, one for each
+      ## xset.msp element. The first column gives the DB entry that
+      ## matches with the sample entry in the second column. This is very
+      ## fast to calculate.
+      rt.matches <-
+          lapply(1:length(xset.msp),
+                 function(ii) {
+                   group.rts <- sapply(xset.msp[[ii]],
+                                       function(x)
+                                       mean(x[,"RI"]))
+                   which(abs(outer(standard.rts, group.rts, FUN = "-")) <
+                         settings$RIdiff,
+                         arr.ind = TRUE)
+                 })
+    } else {
+      standard.rts <- sapply(DB, function(x) x$std.rt)
+      rt.matches <-
+          lapply(1:length(xset.msp),
+                 function(ii) {
+                   group.rts <- sapply(xset.msp[[ii]],
+                                       function(x)
+                                       mean(x[,"rt"]))
+                   which(abs(outer(standard.rts, group.rts, FUN = "-")) <
+                         settings$rtdiff,
+                         arr.ind = TRUE)
+                 })
+    }
+  }
 
   if (quick) { ## xset.msp has already been scaled
     match.results <-

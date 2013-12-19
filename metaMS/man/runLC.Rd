@@ -64,7 +64,6 @@ runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
   \item{xset}{optionally, the xcmsSet (CAMERA) object is returned, which can be
     useful for more detailed inspection of the results.}
 }
-
 \references{
   N. Shahaf, P. Franceschi, P. Arapitsas, I. Rogachev, U. Vrhovsek and
   R. Wehrens: "Constructing a mass measurement error surface to improve
@@ -73,7 +72,6 @@ runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
   (2013). 
 }
 \author{Pietro Franceschi}
-
 \examples{
 if (require(metaMSdata)) {
   
@@ -89,39 +87,16 @@ if (require(metaMSdata)) {
   
   ## load the annotation DB
   data(LCDBtest)
-  
-  ## <--------------    create a dummy error function     -------------- >
-  ## dataset to evaluate it: 
-  ## "M" is the mz, 
-  ## "logI" is the log of the intensity
-  ## "err" is the mass error in ppm. The error is the difference between the 
-  ## "real" m/z of a known ion, and the one actually measured with the
-  ## spectrometer
-  
-  MErr.data <- data.frame("M" = seq(1,500,2), 
-                          "logI" = rnorm(250, mean = 5, sd = 1), 
-                          "err" = rnorm(250, mean = 40, sd = 5))
-  
-  ## create the linear model
-  dummy.model <- lm(err~M+logI, data = MErr.data)
-
-
-  ## Run the analysis with an adaptive mass tolernace 
-  result.adaptive.dummy <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                                 DB = LCDBtest$DB, errf = dummy.model)
-  
-  
-  
+    
   ## <-------------    Use the Synapt Q-TOF error function     -------------- >
   data(errf)
-  
   result.adaptive <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                            DB = LCDBtest$DB, errf = errf)
   
   
   ## <--------    Run the analysis with a fixed mass tolerance      --------- >
-  resultfixed <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                       DB = LCDBtest$DB)
+  result.fixed <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+                        DB = LCDBtest$DB)
                   
                  
 }

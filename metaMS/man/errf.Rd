@@ -36,6 +36,20 @@ data(errf)
 newdata <- data.frame(M = c(105, 131, 157), logI = c(1, .5, 1.4))
 predict(errf, newdata) ## mass error in ppm
 
+## <--------------    create a dummy error function     -------------- >
+## dataset to evaluate it: 
+## "M" is the mz, 
+## "logI" is the log of the intensity
+## "err" is the mass error in ppm. The error is the difference between the 
+## actual m/z of a known ion, and the one measured with the spectrometer
+  
+MErr.data <- data.frame("M" = seq(1,500,2), 
+                        "logI" = rnorm(250, mean = 5, sd = 1), 
+                        "err" = rnorm(250, mean = 40, sd = 5))
+  
+## create the linear model
+dummy.model <- lm(err~M+logI, data = MErr.data)
+
 if (require(metaMSdata)) {
   
   ## get the path 
@@ -51,10 +65,14 @@ if (require(metaMSdata)) {
   ## load the annotation DB
   data(LCDBtest)
   
+  ## Run the analysis with an adaptive mass tolerance 
+  \dontrun{
+  result.adaptive.dummy <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+                                 DB = LCDBtest$DB, errf = dummy.model)
+  }
   
   ## <-----------    Use the Synapt Q-TOF error function     ----------- >
   data(errf)
-  
   result.adaptive  <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                             DB = LCDBtest$DB, errf = errf)
 }
