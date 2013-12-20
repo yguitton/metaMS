@@ -15,16 +15,26 @@ constructExpPseudoSpectra <- function(allMatches, standardsDB) {
   
   if (min(allAnnotations) < 0) { ## write known unknowns
     unknDB <- allMatches$unknowns
-    
-    unknDB <- lapply(unknDB,
-                     function(x) cbind(x[,1:2], rt = round(x[,3], 2)))
-    extra.info <- data.frame(Name = paste("Unknown", 1:length(unknDB)),
-                             DB.idx = sort(allAnnotations[allAnnotations < 0],
-                                 decreasing = TRUE),
-                             rt = sapply(unknDB,
-                                 function(x) round(mean(x[,3]), 2)),
-                             Class = "Unknown",
-                             stringsAsFactors = FALSE)
+
+    if ("RI" %in% colnames(unknDB[[1]])) {
+      extra.info <- data.frame(Name = paste("Unknown", 1:length(unknDB)),
+                               DB.idx = sort(allAnnotations[allAnnotations < 0],
+                                   decreasing = TRUE),
+                               rt = sapply(unknDB,
+                                   function(x) round(mean(x[,"rt"]), 2)),
+                               RI = sapply(unknDB,
+                                   function(x) round(mean(x[,"RI"]), 0)),
+                               Class = "Unknown",
+                               stringsAsFactors = FALSE)
+    } else {
+      extra.info <- data.frame(Name = paste("Unknown", 1:length(unknDB)),
+                               DB.idx = sort(allAnnotations[allAnnotations < 0],
+                                   decreasing = TRUE),
+                               rt = sapply(unknDB,
+                                   function(x) round(mean(x[,"rt"]), 2)),
+                               Class = "Unknown",
+                               stringsAsFactors = FALSE)
+    }
     unkn.msp <- construct.msp(spectra = unknDB, extra.info)
     
     c(stdDB, unkn.msp)

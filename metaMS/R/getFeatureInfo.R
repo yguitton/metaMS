@@ -3,36 +3,60 @@
 ## information is in the columns. The last column of the meta-info is
 ## always "rt".
 
-getFeatureInfo <- function(stdDB, allMatches, sampleList,
-                           RIstandards = NULL) {
+getFeatureInfo <- function(stdDB, allMatches, sampleList) {
+  signif.rt <- 3
+  signif.rt.sd <- 4
+  signif.RI <- 0
+  
   allAnnotations <- sort(unique(unlist(sapply(allMatches$annotations,
                                               function(x) x[,"annotation"]))))
   allAnnotations <- c(allAnnotations[allAnnotations > 0],
                       rev(allAnnotations[allAnnotations < 0]))
   
-  ## add rt and rt.sd information
+  ## add rt and rt.sd information, and possibly RI info
   patRTs <- lapply(sampleList,
                    function(x)
-                   sapply(x, function(xx) mean(xx[,3])))
-
-  pSpectra <- lapply(allAnnotations[allAnnotations > 0],
-                     function(x) {
-                       hits <- lapply(allMatches$annotations,
-                                      function(xx)
-                                      xx[xx[,"annotation"] == x, "pattern"])
-                       rts <- mapply(function(x, y)
-                                     ifelse (length(y) > 0,
-                                             x[y],
-                                             NA),
-                                     patRTs,
-                                     hits)
-                       c(stdDB[[x]],
-                         list(rt = mean(rts, na.rm = TRUE),
-                              rt.sd = sd(rts, na.rm = TRUE)))
-                     })
-  if (!is.null(pSpectra))
-      pSpectra <- addRI(pSpectra, RIstandards)
-
+                   sapply(x, function(xx) mean(xx[,"rt"])))
+  if ("RI" %in% colnames(sampleList[[1]][[1]])) {
+    RIpresent <- TRUE
+    patRIs <- lapply(sampleList,
+                   function(x)
+                   sapply(x, function(xx) mean(xx[,"RI"])))
+  } else {
+    RIpresent <- FALSE
+  }
+    
+  pSpectra <-
+      lapply(allAnnotations[allAnnotations > 0],
+             function(x) {
+               hits <- lapply(allMatches$annotations,
+                              function(xx)
+                              xx[xx[,"annotation"] == x, "pattern"])
+               rts <- mapply(function(x, y)
+                             ifelse (length(y) > 0,
+                                     x[y],
+                                     NA),
+                             patRTs,
+                             hits)
+               
+               if (RIpresent) {
+                 RIs <- mapply(function(x, y)
+                               ifelse (length(y) > 0,
+                                       x[y],
+                                       NA),
+                               patRIs,
+                               hits)
+                 c(stdDB[[x]],
+                   list(rt = round(mean(rts, na.rm = TRUE), signif.rt),
+                        rt.sd = round(sd(rts, na.rm = TRUE), signif.rt.sd),
+                        RI = round(mean(RIs, na.rm = TRUE), signif.RI)))
+               } else {
+                 c(stdDB[[x]],
+                   list(rt = round(mean(rts, na.rm = TRUE), signif.rt),
+                        rt.sd = round(sd(rts, na.rm = TRUE), signif.rt.sd)))
+               }
+             })
+  
   if (length(pSpectra) > 0) {
     ## in the meta information we include all fields present in the
     ## stdDB, except for the pspectrum, std.rt.sd, and bestDBmatch.
@@ -40,13 +64,14 @@ getFeatureInfo <- function(stdDB, allMatches, sampleList,
     ## entry, "rt" always the last, and the other rt-related fields
     ## directly in front of "rt".
     fields <- unique(unlist(lapply(pSpectra, names)))
-    if (is.null(RIstandards)) {
-      rtfields <- c("std.rt", "rt.sd", "rt")
+    if (RIpresent) {
+      rtfields <- c("std.RI", "std.rt", "RI", "rt.sd", "rt")
     } else {
-      rtfileds <- c("std.RI", "RI", "std.rt", "rt.sd", "rt")
+      rtfields <- c("std.rt", "rt.sd", "rt")
     }
     fields <- c("Name",
-                fields[!(fields %in% c("Name", "pspectrum", "bestDBmatch",
+                fields[!(fields %in% c("Name", "pspectrum",
+                                       "bestDBmatch", "std.rt.sd",
                                        rtfields))],
                 rtfields)
    
@@ -85,9 +110,16 @@ getFeatureInfo <- function(stdDB, allMatches, sampleList,
     meta.info.df[(nstd + 1):(nstd + nunkn), "Name"] <- paste("Unknown", 1:nunkn)
     meta.info.df[(nstd + 1):(nstd + nunkn), "Class"] <- "Unknown"
     meta.info.df[(nstd + 1):(nstd + nunkn), "rt"] <-
-      round(sapply(allMatches$unknowns, function(x) mean(x[,3])),3)
+      round(sapply(allMatches$unknowns, function(x) mean(x[,"rt"])),
+            signif.rt)
     meta.info.df[(nstd + 1):(nstd + nunkn), "rt.sd"] <-
-      round(sapply(allMatches$unknowns, function(x) sd(x[,3])),4)
+      round(sapply(allMatches$unknowns, function(x) sd(x[,"rt"])),
+            signif.rt.sd)
+
+    if (RIpresent)
+        meta.info.df[(nstd + 1):(nstd + nunkn), "RI"] <-
+            round(sapply(allMatches$unknowns, function(x) mean(x[,"RI"])),
+                  signif.RI)
   }
 
   meta.info.df
