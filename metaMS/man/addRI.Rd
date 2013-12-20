@@ -8,12 +8,15 @@ msp object. This will only be done if there is not already an RI field:
 existing information will not be overwritten.
 }
 \usage{
-addRI(mspobj, RIstandards)
+addRI(mspobj, RIstandards, isMSP = TRUE)
 }
 \arguments{
   \item{mspobj}{An msp object.}
   \item{RIstandards}{A two-column matrix containing for the standards
     defining the RI scale both retention times and retention indices.}
+  \item{isMSP}{Logical: if TRUE, then the spectra are stored in slot
+    \code{pspectrum}; otherwise the spectra are simply the list
+    elements of \code{DB} - matrices with three columns.}
 }
 \value{An msp object, now also containing an RI slot.}
 \author{Ron Wehrens}

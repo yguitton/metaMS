@@ -7,14 +7,32 @@ runGC <- function(files,
                   returnXset = FALSE,
                   RIstandards = NULL)
 {
+  ## Some preliminary sanity checks
+  if (is.null(DB) & !findUnknowns)
+      stop("Nothing to do. Provide a DB or set findUnknowns to TRUE...")
+
+  if (findUnknowns & !is.null(DB) &
+      settings$betweenSamples$timeComparison !=
+      settings$match2DB$timeComparison)
+      stop("Settings error: choose one value for timeComparison only...")
+
+  if (is.null(RIstandards) &
+      ((settings$betweenSamples$timeComparison == "RI" & findUnknowns) |
+       (settings$match2DB$timeComparison == "RI" & !is.null(DB))))
+      stop("Argument RIstandards is mandatory when using RI for matching")
+
+  if (!is.null(RIstandards) & 
+      settings$betweenSamples$timeComparison == "rt" &
+      settings$match2DB$timeComparison == "rt")
+      printWarning("Warning: argument RIstandards provided, but using retention times for matching")
+
+  ## Go!
   printString(paste("Experiment of", length(files), "samples"))
   printString(paste("Instrument:", settings$instName))
   if (length(rtrange) == 2)
       printString(paste("Retention time range:", rtrange[1], "to",
                         rtrange[2], "minutes"))
   
-  if (is.null(DB) & !findUnknowns)
-      stop("Nothing to do. Provide a DB or set findUnknowns to TRUE...")
 
   if (!is.null(DB)) {
     DB.orig <- DB
@@ -34,7 +52,6 @@ runGC <- function(files,
                        chrom = settings$chrom,
                        settings = settings$CAMERA)
   
-  
   ## convert into msp format (a nested list)
   allSamples.msp <- lapply(allSamples,
                            to.msp,
@@ -42,9 +59,9 @@ runGC <- function(files,
                            settings = settings$DBconstruction)
   names(allSamples.msp) <- sapply(allSamples,
                                   function(x) sampnames(x@xcmsSet))
-  ## if RI information is given, add the RI for all elements
   if (!is.null(RIstandards))
-      allSamples.msp <- addRI(allSamples.msp, RIstandards)
+      allSamples.msp <- lapply(allSamples.msp, addRI,
+                               RIstandards, isMSP = FALSE)
 
   ## check: files without any features - should not happen very often...
   nofeats <- which(sapply(allSamples.msp, length) == 0)

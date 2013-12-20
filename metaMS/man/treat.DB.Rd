@@ -15,7 +15,7 @@ treat.DB(DB, scale.p = c("sqrt", "none"), mass.weight = TRUE, isMSP = TRUE)
   \item{mass.weight}{Logical: if TRUE, higher masses are given more
     weight.}
   \item{isMSP}{Logical: if TRUE, then the spectra are stored in slot
-    \code{psepectrum}; otherwise the spectra are simply the list
+    \code{pspectrum}; otherwise the spectra are simply the list
     elements of \code{DB}.}
 }
 \value{

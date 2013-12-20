@@ -172,13 +172,13 @@ match.unannot.patterns <- function(msp1, msp2, settings) {
   rt2 <- sapply(msp2, function(x) mean(x[,settings$timeComparison]))
 
   msp.rtdiffs <- abs(outer(rt1, rt2, "-"))
-  close.idx <- which(msp.rtdiffs < rtdiff, arr.ind = TRUE)
+  close.idx <- which(msp.rtdiffs < maxdiff, arr.ind = TRUE)
   if (length(close.idx) > 0) {
     X1 <- msp1[close.idx[,1]]
     X2 <- msp2[close.idx[,2]]
 
     matchfactors <- mapply(mzmatch, X1, X2)
-    if (any(good.idx <- matchfactors > simthresh)) {
+    if (any(good.idx <- matchfactors > settings$simthresh)) {
       cbind(ID1 = close.idx[good.idx,1],
             RT1 = rt1[close.idx[good.idx,1]],
             ID2 = close.idx[good.idx,2],
