@@ -1,4 +1,5 @@
 \name{msp}
+\alias{msp}
 \alias{construct.msp}
 \alias{write.msp}
 \alias{read.msp}
