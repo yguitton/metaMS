@@ -24,7 +24,7 @@ Built: \tab R 3.0.2; ; 2013-10-09 14:45:48 UTC; unix\cr
 \author{
 Pietro Franceschi and Ron Wehrens
 
-Maintainer: Ron Wehrens <ron.wehrens@fmach.it> and Pietro Franceschi <pietro.franceschi@fmach.it>
+Maintainer: Ron Wehrens <ron.wehrens@fmach.it>
 }
 \keyword{ package }
 \seealso{\code{\link[metaMS:metaMS-package]{metaMS}}}
