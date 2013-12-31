@@ -14,8 +14,9 @@ matchSamples2DB <- function(xset.msp,
                             DB,
                             settings,
                             quick) {
-  if ((settings$timeComparison == "RI" & is.null(settings$RIdiff)) |
-      (settings$timeComparison == "rt" & is.null(settings$rtdiff))) {
+  if (is.null(settings$timeComparison) ||
+      ((settings$timeComparison == "RI" & is.null(settings$RIdiff)) |
+       (settings$timeComparison == "rt" & is.null(settings$rtdiff)))) {
     ## don't use any rt or RI information in the matching phase
     rt.matches <- lapply(1:length(xset.msp),
                          function(ii)
@@ -24,7 +25,8 @@ matchSamples2DB <- function(xset.msp,
                                rep(1:length(xset.msp[[ii]]),
                                    each = length(DB))))
   } else {
-    if (settings$timeComparison == "RI") {
+    if (!is.null(settings$timeComparison) &
+        settings$timeComparison == "RI") {
       standard.rts <- sapply(DB, function(x) x$std.RI)
       ## rt.matches is a list of two-column matrices, one for each
       ## xset.msp element. The first column gives the DB entry that
