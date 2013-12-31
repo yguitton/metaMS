@@ -3,6 +3,7 @@ Type: Package
 Title: Example CDF data for the metaMS package
 Version: 0.1.0
 Date: 2013-08-26
+ZipData: no
 Authors@R: c(person("Ron", "Wehrens", role = c("aut", "cre"), email = "ron.wehrens@fmach.it"), person("Pietro", "Franceschi", role = "aut"), person("Georg", "Weingart", role = "ctb"))
 Description: Example CDF data for the metaMS package
 License: GPL (>= 2)
