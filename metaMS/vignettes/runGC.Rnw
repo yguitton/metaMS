@@ -146,6 +146,10 @@ cdffiles <- list.files(cdfdir, pattern = "cdf",
 > result <- runGC(cdffiles, GCsettings, DB = DB)
 \end{Sinput}
 \end{Schunk}
+This result is a list containing a set of patterns corresponding with the
+compounds that have been found, either annotated or unknown, the
+relative intensities of these patterns in the individual annotations,
+and possibly the \code{xcmsSet} object for further inspection.
 In practice, the \code{runGC} function is all that users need to
 use. However, to give more details, each of the steps in the workflow
 will be discussed briefly below.
@@ -163,7 +167,8 @@ xset.l <- peakDetection(cdffiles, settings = GCsettings$PeakPicking,
                         convert2list = TRUE)
 @ 
 Since this part can take quite some time, it is operated in parallel
-wherever possible, and shows some feedback to the user. The last
+wherever possible (using \pkg{Rmpi} or \pkg{snow}, and shows some
+feedback to the user. The last 
 argument of the function determines whether the results are to be
 presented for all samples together (the format of \pkg{xcms}), or
 should be split into a list with one entry for each individual
@@ -259,7 +264,7 @@ entries in the database. If the \code{plotIt} argument is \code{TRUE},
 the best match is shown -- see Figure~\ref{fig:match}.
 \begin{figure}[tb]
   \centering
-<<fig=TRUE,height=4.5,width=10>>=
+<<fig=TRUE,height=5.5,width=9.5>>=
 matchExpSpec(allSamples.msp[[1]][[4]], DB.treated, 
              DB.treated = TRUE, plotIt = TRUE)
 @ 
@@ -295,7 +300,9 @@ differences are rather small. In addition, one would expect
 reproducible spectra for a single compound. A true unknown, or at
 least an interesting one, is also present in a significant fraction of
 the samples. All these parameters are gathered in the
-\code{betweenSamples} element of the settings list. Since the
+\code{betweenSamples} element of the settings list. 
+
+Since the
 matching is done using scaled patterns, we need to created a scaled
 version of the experimental pseudospectra first:
 <<>>=
@@ -310,12 +317,84 @@ names(allSam.matches)
 @
 For large numbers of samples, this process can take quite some time
 (it scales quadratically), especially if the allowed difference in
-retention time is larger.
+retention time is large.
+The result now is a list of two elements: the first is the annotation
+table that we also saw after the comparison with the database, and the
+second is a list of pseudospectra corresponding to unknowns. In the
+annotation table, negative indices correspond to the pseudospectra in
+this list.
+<<>>=
+allSam.matches$annotations[[1]]
+@ 
+In the example above we see that pattern 10 in the first sample
+corresponds to the first unknown.
 
 \subsubsection{Output}
+At this stage, all elements are complete: we have the list of
+pseudospectra with an annotation, either as a chemical standard from
+the database, or an unknown occurring in a sizeable fraction of the
+injections. The only things left to do is to calculate relative
+intensities for the pseudospectra, and to put the results in an
+easy-to-use table. This table consists of two parts. The first part is
+the information on the ``features'', which here are the pseudospectra:
+<<>>=
+features.df <- getFeatureInfo(stdDB = DB, allMatches = allSam.matches, 
+                              sampleList = allSamples.msp)
+features.df[, c(1:3, 12:15)]
+@ 
+The first three lines are the standards, and the next two are the two
+unknowns that are identified by the pipeline. The second part of the
+table contains the intensities of these features in the individual
+injections.
+
+In manual interpretation of this kind of data, the intensities
+of one or two ``highly specific'' features are often used to achieve
+relative quantitation. In an automatic pipeline, this is a risky
+strategy: not only can the intensity of a peak vary quite dramatically
+(relative standard deviations of up to 30\% are assumed acceptable in
+GC-MS, e.g. when SPME is applied), but these errors are all the more
+pronounced in high-intensity peaks (hence the common use of a relative
+standard deviation). In addition, one is ignoring the information in
+the other peaks of the pseudospectrum. In \pkg{metaMS}, pseudospectrum
+intensity is expressed as a multiple of the corresponding reference
+pattern (either a database pattern or an unknown), where the intensity
+ratio is determined using robust regression to avoid one deviating
+feature to influence the results too much~\cite{Wehrens2014}.
+First, we define an object containing all relevant pseudospectra, and
+next the intensities are generated:
+<<>>=
+PseudoSpectra <- constructExpPseudoSpectra(allMatches = allSam.matches, 
+                                           standardsDB = DB)
+ann.df <- getAnnotationMat(exp.msp = allSamples.msp, pspectra = PseudoSpectra, 
+                           allMatches = allSam.matches)
+ann.df
+@ 
+Since relative intensities are hard to interpret for mass
+spectrometrists, these are converted into numbers corresponding to
+peak heights or peak areas. This is done by multiplication by the
+highest intensity in the reference spectrum:
+<<>>=
+ann.df2 <- sweep(ann.df, 1, sapply(PseudoSpectra, 
+                                   function(x) max(x$pspectrum[, 2])), 
+                 FUN = "*")
+ann.df2
+@ 
+The three standards (the first three lines) have been identified in
+all four samples; the two unknowns in three and two cases, respectively.
+The final result is obtained by simply concatenating the two tables
+column-wise.
 
 \subsection{Building a database of standards}
-Standards may be injected as mixtures, provided that their retention
+From the previous discussion it should be clear how important an
+in-house database of standards, measured on the same system as the
+samples, really is. The point is that the retention behaviour of
+chemical compounds can differ substantially across systems -- an
+in-house database is the best way to avoid many false negative and
+false positive hits.
+
+Fortunately, the pipeline as discussed so far can be used easily to
+also process injections of standards. These may be injected as
+mixtures, provided that their retention 
 times are not completely overlapping. Additional information is
 obtained from a user-provided \code{csv} file containing information like
 CAS number, retention time, and molecular weight. Such a file is
@@ -366,12 +445,40 @@ the validated spectrum.
 
 \section{Alternative annotation strategies}
 Instead of the strategy outlined above, one could also use the
-building blocks provided by \pkg{metaMS} in different ways. One of
-them is discussed briefly as an example here, but several variations
-are possible, depending on the characteristics of the experiment and
-the requirements of the researchers.
+building blocks provided by \pkg{metaMS} in different ways.
+Instead of first comparing all pseudospectra in the injections with
+the database patterns, one could also first identify all
+unknowns. Then the pseudospectra corresponding to the unknowns could
+be compared with the database to see if any of them matches known
+standards. This strategy would get rid of ``single hits'',
+i.e. chemical compounds that are identified in only one or very few
+injections, and would make full use of the fact that all injections
+have been done in a single run, so would lead to very similar
+retention time behaviour and very similar spectra. One could
+hypothesize that over the course of several months or even years, a
+database of spectra of standards could show bigger and bigger
+deviations with actual measurements, and this alternative strategy
+could possibly lead to more easily interpretable, or at least
+easier-to-correct results.
 
-Instead of 
+There are also downsides to this strategy, as can be imagined: first
+of all, it is slower, especially with large numbers of samples. Since
+the comparison with a database scales linearly with the number of
+injections, and the defintion of unknowns quadratically, this can be
+quite a big issue. In addition, the definition of what is an unknown
+not only depends on spectral and chromatographic similarities, but
+also on the fraction of injections in which this pattern is found: an
+additional parameter that can make quite a big difference in the
+outcome. Finally, it is easy to remove annotations from the
+``standard'' strategy that occur in only very few samples: one can
+even assess whether alternative annotations are present that are more
+in line with what is found in the other samples.
+
+Whichever strategy is most useful depends on the data and the
+scientific questions at hand. Given the building blocks provided by
+\pkg{xcms} and \pkg{CAMERA}, and on a more abstract level by
+\pkg{metaMS}, it is now quite easy to implement different strategies
+for different purposes.
 
 \clearpage
 
