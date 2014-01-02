@@ -16,7 +16,7 @@
 \tabular{ll}{
 Package: \tab metaMS\cr
 Type: \tab Package\cr
-Version: \tab 0.8.3\cr
+Version: \tab 0.8.5\cr
 Date: \tab 2013-09-12\cr
 Depends: \tab tools, xcms (>= 1.35), CAMERA, robustbase, Matrix\cr
 Suggests: \tab metaMSdata\cr
@@ -79,4 +79,3 @@ and \code{runLC} - in-house databases are created by functions
 Maintainer: Ron Wehrens <ron.wehrens@fmach.it>
 }
 \keyword{ package }
-\seealso{\code{\link[metaMSdata:metaMSdata-package]{metaMSdata}}}
