@@ -185,7 +185,7 @@ AnnotateTable <- function(peaktable,
       lapply(femid.to.pseudospectrum.cl,
              function(x) {
                clSize <- table(x[,"clid"])
-               bigCl <- as.numeric(names(clSize[clSize > settings$minfeat]))
+               bigCl <- as.numeric(names(clSize[clSize >= settings$minfeat]))
                x[x[,"clid"] %in% bigCl,]
              })
   
