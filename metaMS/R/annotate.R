@@ -170,7 +170,7 @@ AnnotateTable <- function(peaktable,
                  "ann.features" = NULL))    
   }
   
-  ## 2) I need at least two features with an rt difference < rtval
+  ## 2) I need more features with an rt difference < rtval
   femid.to.pseudospectrum.cl <-
       lapply(femid.to.pseudospectrum,
              function(x){
