@@ -1,0 +1,561 @@
+\documentclass[a4paper]{article}
+%\VignetteIndexEntry{alsace}
+
+\usepackage{geometry}
+\usepackage{layout}
+
+\geometry{
+  includeheadfoot,
+  margin=2.54cm
+}
+
+\newcommand{\pkg}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\newcommand{\proglang}[1]{{\sffamily #1}}
+\newcommand{\code}[1]{{\ttfamily #1}}
+\newcommand{\R}{\proglang{R}}
+
+\newcommand{\bC}{\mbox{\boldmath{$C$}}}
+\newcommand{\bE}{\mbox{\boldmath{$E$}}}
+\newcommand{\bS}{\mbox{\boldmath{$S$}}}
+\newcommand{\bX}{\mbox{\boldmath{$X$}}}
+
+\newcommand{\compresslist}{%
+  \setlength{\itemsep}{1pt}%
+  \setlength{\parskip}{0pt}%
+  \setlength{\parsep}{0pt}%
+}
+
+\renewcommand{\textfraction}{0}
+
+\title{Annotation of LC-MS metabolomics datasets by ``metaMS'' package}
+\author{Pietro Franceschi}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\maketitle
+
+\section{Introduction}
+\pkg{metaMS} is designed to perform the analysis of LC-MS and GC-MSbased metabolomics assays.
+For LC-MS data, its major function \code{runLC()} is a wrapper around the functions and classes of {\bf xcms} and {\bf CAMERA} and it is designed to process a series of data files producing a peak table with the intensity of each feature - an mz,rt couple -  in each one of the samples.
+The functions and classes of \pkg{xcms} and \pkg{CAMERA} are used to perform the peak picking, grouping and retention correction, peak filling, and CAMERA annotation. The parameters required at each step are collected into a list of settings which is passed as an argument to \code{runLC}. To illustrate the structure of this list an example is included and described in the package:
+\begin{Schunk}
+\begin{Sinput}
+library(metaMS)
+data(FEMsettings)
+?FEMsettings
+\end{Sinput}
+\end{Schunk}
+\pkg{metaMS} implements a strategy to generate an annotation database by processing the injections of a list chemical standards, which have been analyzed under the same chromatographic conditions as the samples. The injections of the standards are processed by \pkg{xcms} and \pkg{CAMERA} and the peak lists are matched against a manually validated reference table to identify the set of features associated to each compound. These features are then organized in the database used for the annotation which is included in the output of \code{runLC()}. In the following, database generation and feature annotation are described in details, while for the discussion of \pkg{xcms} and \pkg{CAMERA} the reader should refer to their specific documentation.
+
+\section{Example Data}
+A part of the data used to illustrate database creation and feature annotation is included in \code{metaMS}, while the more heavy experimental data have been included in the \pkg{metaMSdata} package. For LC-MS  \pkg{metaMSdata} contains four CDF files referring to the analysis of a mixture of chemical standards. These files have been converted to the open source CDF format by using proprietary vendor software (Waters, Databridge). 
+The system specific position of the example files can be determined as follows:
+<<>>=
+library(metaMSdata)
+cdfpath <- system.file("CDF_LC", package = "metaMSdata")
+files <- list.files(cdfpath, "CDF", full.names=TRUE)
+files
+@
+
+The construction of the database is performed on the basis of a manually validated reference table which contains the key analytical information for each standard. The example table is part of \pkg{metaMS}: 
+
+<<>>=
+library(metaMS)
+data(exptable)
+@
+The content of the table can be visualized as follows:
+<<>>=
+head(exptable)
+@
+
+\begin{itemize}
+\item \code{ChemSpiderID}: an unique numeric identifier for a chemical standard from the freeware ChemSpider database (http://www.chemspider.com).
+\item \code{compound}: a string with the human readable name of the standard. This name is used to produce the output of the annotation.
+\item \code{formula}: the chemical formula of the compound. This field is included in view of future developments.
+\item \code{M.ref}: the theoretical mass for the observed ion. This field is included in view of future developments.
+\item \code{mz.observed}: the manually validated {/it m/z} value which identifies the ``main" ion for this specific compound. In the majority of cases, one would choose the most most intense ion of each compound. To avoid wrong assignments the best practice should be to ask to the analyst to ``identify" the nature of the ion (protonated/deprotonated, adduct, dimer, common fragment, ...).  
+\item \code{RTman}: the manually validated retention time for the standard (in minutes).
+\item \code{stdFile}: the complete path which points to the raw file of the injection of the standard.
+\end{itemize}
+
+
+
+\section{Database Construction}
+In order to create the database, the \code{stdFile} column in \code{exptable} has to be updated with the complete path pointing to the correct CDF file:
+<<>>=
+exptable$stdFile <- sapply(exptable$stdFile, function(x){
+    out <- files[grep(x,files)]
+  })
+
+exptable$stdFile
+@
+The annotation database is constructed on the basis of \code{exptable} with the following workflow:
+\begin{enumerate}
+\item {\sc Peak picking}. The injections of the standards are processed to produce a feature list by using the parameters specified in the \code{PeakPicking} element of the \code{settings} list. For each feature, the maximum value of the signal on the chromatographic peak (\code{maxo}) is extracted. For a detailed description of the single settings refer to the package documentation.
+<<>>=
+data(FEMsettings)
+FEMsettings$Synapt.QTOF.RP$PeakPicking
+@
+\item {\sc Feature grouping}. \code{CAMERA} with its default settings is used to group the features in pseudospectra and annotate them looking for isotopes and common adducts. These pseudospectra can be therefore considered as mass spectrometric fingerprints of compounds eluting at a specific retention time. It is important to remember that co-eluting compounds are likely to be grouped together, in particular where chromatographic separation is not optimal (e.g. at the extreme ends of a chromatographic run). 
+\item {\sc Ref. Table Matching}. The full list of feature is matched with \code{exptable} looking for features compatible with \code{M.ref} and \code{RTman}. The {/it m/z} and retention time tolerances are fixed and specified in the \code{DBconstruction} element of the \code{settings} list. 
+<<>>=
+FEMsettings$Synapt.QTOF.RP$DBconstruction
+@
+The retention time tolerance is specified in minutes, the {/it m/z} one in dalton. The \code{minfeat} parameter is used to prevent the inclusion in the database of standards with a very low number of associated features. This unfortunate situation can happen, for example, when the signal is too low either because a chemical is not efficiently ionized or because it has been injected with low concentration. The absence of a good matching for a specific compound is notified on the output on the screen.
+\item {\sc Database Creation} The features assigned to each standard are collected into a dataframe which can be used for annotation. At this stage an additional filter on the feature intensities is applied: only the ones with an intensity bigger than \code{Ithr} are kept. This is done to avoid inserting in the DB low intensity features coming from the noise.
+\end{enumerate}
+
+Consider as an example the construction of the database included in the \code{metaMS} package. It contains four chemical standards:
+<<>>=
+exptable$compound
+@
+The reference table has been already described. The data can be loaded as follows
+<<>>=
+library(metaMSdata)
+cdfpath <- system.file("CDF_LC", package = "metaMSdata")
+files <- list.files(cdfpath, "CDF", full.names=TRUE)
+exptable$stdFile <- sapply(exptable$stdFile,
+            function(x)
+            files[grep(x,files)])
+@
+
+For this example the \code{minfeat} parameter is set to 2:
+<<>>=
+FEMsettings$Synapt.QTOF.RP$DBconstruction$minfeat  <- 2
+@
+
+The database is constructed by using the\code{createSTDdbLC()} function:
+<<>>=
+LCDBtest <- createSTDdbLC(stdInfo=exptable, 
+                          settings = FEMsettings$Synapt.QTOF.RP,
+                          polarity = "positive",
+                          Ithr = 20)
+@
+The messages on the screen can be used to monitor the progress of the analysis.
+The example database (\code{LCDBtest}) is a list of three elements:
+<<>>=
+names(LCDBtest)
+@
+The first contains the reference table:
+<<>>=
+head(LCDBtest$Reftable)
+@
+The second contains the settings and the date of creation of the DB:
+<<>>=
+names(LCDBtest$Info)
+@
+The third is the true database:
+<<>>=
+head(LCDBtest$DB)
+@
+Each line of this \code{data.frame} is a feature detected at \code{mz} and \code{rt} with an intensity \code{maxo}. The output of \pkg{CAMERA} annotation are presented in the \code{adduct} and \code{isotopes} fields. \code{ChemSpiderID} and \code{compound} identify the compound which a feature is associated to. The \code{validate} column is set to \code{automatic} to indicate that the feature has been assigned to the neutral by using an automatic algorithm, without performing any manual validation of the results.
+
+It is interesting to see how many features are included in the DB and their association to the four chemical standards included in the reference table.
+<<>>=
+table(LCDBtest$DB$compound)
+@
+
+
+\section{Annotation}
+In the previous section, we have illustrated how to create a database from a series of injections of standards. This DB can then be used to annotate the results of the analysis of a complete metabolomic experiment by passing it to the main \code{runLC} function. It is important to remember that this type of annotation relies very much on the retention time, so it gives its best results when the standards and the samples have been analyzed under the same chromatographic and mass-spectrometric conditions. 
+
+Considering that in LC-MS experiments co-elution of different compounds is the rule rather than the exception, the annotation is performed feature-wise (each feature is independently matched with the DB) and a subsequent validation step is performed. The idea is to retain annotations only if more than one feature associated to a specific compound is found in the peak list. How many ``validation" features are requested is an adjustable parameter included in the settings (\code{minfeat} element of the settings list). For matching and validation it is necessary to specify mass and {/it m/z} tolerances, accounting for mass and retention time shifts. For retention time the tolerance is fixed and it is specified in the settings. For {/it m/z}, the package implements either a {\it fixed tolerance} or an {\it adaptive tolerance}. The use of an {\it adaptive tolerance} to optimize the results of the annotation for Q-TOF spectrometers has been proposed by the authors in \cite{Shahaf2013}. With this approach, the optimal {/it m/z} tolerance is calculated taking into account the {/it m/z} value for a specific ion and its intensity: these two parameters are indeed affecting the accuracy of this specific class of analyzers. A more detailed description of the approach can be found in the manual pages of the package and in the specific reference.    
+
+The implemented annotation strategy can be broken down in the following steps:
+\begin{enumerate}
+\item {\sc Feature wise Annotation} Each feature detected by \code{runLC} is matched against the database. If the mass error function is provided, the appropriate {/it m/z} tolerance is calculated, otherwise a fixed tolerance is used (\code{mzwindow}). The retention time tolerance is fixed and should be selected on the bases of the characteristics of each chromatographic method (\code{rttol}). Multiple annotations - i.e. features which are associated to more than one compound - are possible. This outcome does not indicate a problem {\it per se}, but is an inherent drawback of co-elution.
+\item {\sc Annotation Validation} The annotated features are organized in ``pseudospectra" collecting all the experimental features which are assigned to a specific compound. A specific annotation is confirmed only if more than \code{minfeat} features which differ in retention time less than \code{rtval} are present in a pseudospectrum. As a  general rule \code{rtval} should be narrower than \code{rttol}. The latter, indeed, accounts for shifts in retention time between the injection of the standards and the metabolomics experiment under investigation. This time can be rather long, considering that the standards are not commonly re-analyzed each time. On the other hand,\code{rtval} represents the shift between the ions of the same compound within the same batch of injections and therefore it has only to account for the smaller shifts occurring during peak picking and alignment.
+\end{enumerate}
+
+To illustrate the procedure consider the results of the annotation of the example data included in \code{metaMSdata} with the \code{LCDBtest} db.
+Here we set a fixed mass tolerance and we use the settings for a Reverse Phase chromatography.
+<<>>=
+results  <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+                  DB = LCDBtest$DB)
+@
+As before, the progress of the analysis can be followed from the messages on the screen. A summary of the results of the annotation can be found in the \code{Annotation} element of \code{results}:
+
+<<>>=
+head(results$Annotation$annotation.table)
+@
+This dataframe contains the complete results of the annotation. 
+\begin{itemize}
+\item \code{feature}: the index of the annotated feature in the peak table.
+\item \code{ChemSpiderID}: the Chem Spider ID of the neutral the feature is associated to.
+\item \code{dbposition}: the position inside the DB of the matching entry.
+\item \code{mz,rt,I}: mass, retention time and intensity of the feature.
+\item \code{compound}: the (human) readable name of the standard.
+\item \code{db\_mz,db\_rt,db\_I,db\_ann}: information relative to the corresponding DB entry.
+\item \code{mz.err}: the {/it m/z} error used in the matching.
+\item \code{clid}: the results of a hierarchical clustering of the retention times of the annotated features. This can be used to identify the presence of sub groupings of the features which are assigned to the same standard, thus suggesting the presence of co-eluting isomers/compounds. The HC tree is cut at a hight of \code{rtval}.
+\end{itemize}
+
+<<>>=
+results$Annotation$compounds
+results$Annotation$ChemSpiderIDs
+@
+These are the list of standards found in the peaklist.
+
+<<>>=
+results$Annotation$multiple.annotations
+@
+This is the list of features which show multiple annotations
+
+<<>>=
+results$Annotation$ann.features
+@
+The list of the features with annotation.
+
+Inside the results,the outputs of the annotation are also included in a more compact form as part of the peak table in the \code{ChemSpiderID} and \code{compound} columns:
+<<>>=
+head(results$PeakTable)
+@
+
+
+
+\clearpage
+
+\bibliographystyle{unsrt}
+\bibliography{LC} 
+
+
+
+
+
+% \section{Example data}
+% Package \pkg{alsace} comes with example data, a very compressed part
+% of the data that 
+% have been described in the analysis of carotenoids in grape
+% sample~\cite{Wehrens2013}. By their very nature, these data are quite
+% big and therefore it is impossible to include data from all samples in
+% the package itself. In the near future, however, these will be
+% uploaded to an open data repository so that users can observe the
+% application of \pkg{alsace} to the full data set.
+% 
+% The samples that \emph{are} included in the package are 
+% five real grape samples, measured after 0, 0, 1, 3 and 4 days of
+% storage, respectively. The name of the data set is \code{tea}, which
+% does not refer to the hot beverage but to tri-ethylamine (TEA), used as a
+% conserving agent in these samples. The original publication
+% investigated whether addition of TEA was useful (it was). Each
+% sample leads to a data matrix of 97 time points and 209 wavelengths.
+% Contour plots of the six files are shown in Figure~\ref{fig:data}.
+% %% object tea is made from TEA by the following R code:
+% %% load("../../Obsolete/TEA.RData")
+% %% tpoints <- seq(10.2, 15, by = .05)
+% %% tea.raw <- lapply(TEA, preprocess, remove.time.baseline = FALSE,
+% %% spec.smooth = FALSE, dim1 = tpoints)
+% \begin{figure}[bt]
+%   \begin{center}
+% \setkeys{Gin}{width=\linewidth}
+% <<>>=
+% a  <- 10
+% @
+% \end{center}
+% \caption{Contour plots of the \code{tea} data coming with the
+%   \pkg{alsace} package.}
+% \label{fig:data}
+% \end{figure}
+% 
+% It should be stressed that the examples in this vignette in no way
+% should be taken as the ideal or even a reasonably thorough analysis of
+% these data: one disadvantage of ALS is that there is rotational
+% ambiguity, meaning that there are several and in some cases many
+% equivalent solutions. Imposing constraints, such as non-negativity,
+% helps, but may not be sufficient. In general, one can expect better
+% results with larger data sets: including as many samples as possible
+% will only improve results. If some of these samples contain mixtures
+% of known compounds, or are measurements of pure standards, this will
+% signficantly help the analysis in two ways: firstly, rotational
+% ambiguity will be decreased when a few unambiguous samples are
+% present. And secondly, one can use prior information for the
+% initialization: if spectra of compounds that are known to be present
+% are available, this provides a good starting point for the ALS
+% iterations (see below).
+% 
+% \section{Basic workflow}
+% The basic workflow of an ALS analysis usually runs as follows:
+% \begin{enumerate} \compresslist
+% \item load the data;
+% \item do preprocessing;
+% \item determine the number of components;
+% \item set up initial guesses for either spectra or concentration profiles;
+% \item run the ALS algorithm;
+% \item interpret the results;
+% \item refine settings, add or remove components, and rerun.
+% \end{enumerate}
+% A graphical flowchart is shown in Figure~\ref{fig:flowchart}.
+% Each of the steps in this scheme will be discussed briefly below.
+% % \begin{figure}[tbp]
+% % \par
+% % \centerline{
+% % \includegraphics[width=.75\textwidth]{flowchart.png}}
+% % \caption{Flowchart of the alsace functionality. We start with a list
+% %   of data matrices, and we end with a table giving peak intensities
+% %   for all components across all samples. Basic \pkg{alsace} functions
+% %   are given in the yellow panels; functions combining building blocks
+% %   in orange.}
+% % \label{fig:flowchart}
+% % %% Flowchart created in dia; exported to svg file and with gimp
+% % %% converted to png or pdf. Directly saving from dia did not work :-(
+% % \end{figure}
+% 
+% \subsection{Data loading}
+% Most probably, the data coming from the spectrometer need to be
+% converted into an \R-accessible format such as a \code{csv} file. Once
+% all \code{csv} files are gathered in one directory (say, \code{foo}),
+% an easy way to load them is to use \code{lapply}:
+% \begin{Schunk}
+% \begin{Sinput}
+% > allf <- list.files("foo", pattern = "csv", full.names = TRUE)
+% > mydata <- lapply(allf, read.csv)
+% \end{Sinput}
+% \end{Schunk}
+% This will lead to a list of matrices, each one corresponding to one
+% data file --  look at the \code{tea} object to see exactly what is meant.
+% 
+% For later ease of interpretation and making plots, it is advisable to
+% put the time points and wavelengths as row names and column names,
+% respectively. If all is well, the result should look something like this:
+% <<>>=
+% b  <- 10
+% @ 
+% 
+% \subsection{Preprocessing}
+% Experimental data can suffer from a number of non-informative defects,
+% such as noise (random or non-random), a baseline, missing values, and
+% many others. In addition, the measurement instrument may provide more
+% data than we are actually interested in: the wavelength range or time
+% range may be larger than we need. HPLC-DAD data are quite smooth in
+% nature, which makes it relatively easy to tackle these issues:
+% smoothing can remove much of the noise in the spectra direction,
+% baseline subtraction can remove a baseline in the elution direction,
+% and through selection and interpolation we can choose the time and
+% wavelength ranges and resolutions. 
+% 
+% All this is available through function \code{preprocess}. By default
+% smoothing and baseline subtraction are enabled, and providing
+% alternative sets of time points and/or wavelengths will lead to a
+% subsampling and subsequent interpolation both one or both axes. This
+% can signficantly reduce the data size and computational load in later
+% steps. Consider, e.g., doing some preprocessing on the \code{tea.raw}
+% data:
+% <<>>=
+% c <- 11
+% @ 
+% The preprocessing by default does baseline subtraction in the temporal
+% direction, and smoothing in the spectral direction. This example also
+% decreases the spectral resolution. It is also possible to set the maximum
+% intensity to a prespecified value: this can be useful when data of
+% chemical standards are analysed together with real samples. In such a
+% case one might give the chemical standards a high weight (by scaling
+% them to a high intensity) -- this will help ALS in obtaining
+% meaningful components.
+% 
+% \subsection{Estimating the number of components}
+% Estimating the number of components is a difficult business. There are
+% some criteria, but you will never be sure until after you finish your
+% analysis. Currently, \pkg{alsace} does not support any automatic
+% choice for picking the right number of components, but it \emph{does}
+% offer the possibility to assess component redundancy
+% (see Section~\ref{sec:relevantComps}). In that sense, it is probably
+% best to start with a generous estimate, see which components make
+% sense and which don't, and to refit the model only with the useful
+% components.
+% 
+% \subsection{Obtain an initial guess}
+% For HPLC-DAD data, the usual approach is to find time points at which
+% the measured spectrum is as ``pure'' as possible, \emph{i.e.}, is most
+% likely to come from only one chemical compound. Many different methods
+% have been proposed in literature; \pkg{alsace} currently provides the
+% Orthogonal Projection Approach (OPA)~\cite{Sanchez1994} through
+% function \code{opa}~\cite{WehrensBook2011}. The function
+% returns a set of spectra that is as different as possible. The
+% criterion is based on the determinant of the matrix of spectra
+% selected so far: the one spectrum that, when added to the matrix,
+% leads to the biggest increase in the determinankt is considered to be
+% the one that is least similar to the ones previously selected, and
+% will be added. This step is repeated until the desired number of
+% components is reached; the very first spectrum is the one that is most
+% different from the mean spectrum.
+% 
+% The \R\ syntax is very simple indeed:
+% <<>>=
+% f <- 11
+% @
+% This leads to the spectra shown in Figure~\ref{fig:opa}. The first
+% one, shown in black, does not immediately seem very interesting, but
+% the other three are: the red and blue lines show the typical three-peak
+% structure of carotenoids, while the green line corresponds to the
+% spectrum of tocopherol~\cite{Wehrens2013}.
+% % \begin{figure}[bt]
+% % \setkeys{Gin}{width=.5\linewidth}
+% %   \begin{center}
+% % % <<fig=TRUE,echo=TRUE>>=
+% % % pippo
+% % % @
+% % % \end{center}
+% % % \caption{Result of applying OPA to the preprocessed \code{tea} data:
+% % %   four components are shown. The code to generate the figure is shown
+% % %   on top.}
+% % % \label{fig:opa}
+% % % \end{figure}
+% 
+% If we have prior information, e.g., in the form of spectra of
+% compounds known to be present, this can be presented to opa using the
+% \code{initXref} argument. The function will then add components (as
+% dissimilar to the presented spectra as possible) until the required
+% number of components has been reached.
+% 
+% \subsection{Run ALS}
+% Once we have initial guesses of the spectra of pure components, it is
+% time to start the ALS iterations. Function \code{doALS} basically is a
+% wrapper for the \code{als} function from the \pkg{ALS} package with
+% some predefined choices:
+% \begin{itemize} \compresslist
+% \item we start from estimated pure spectra, such as given by the
+%   \code{opa} function;
+% \item spectra are normalized to a length of one -- this means
+%   concentration profiles are not normalized;
+% \item we do not allow negative values in either spectra or
+%   concentration profiles;
+% \item we do not fit a separate baseline, since we assume the data have
+%   been preprocessed in an appropriate way;
+% \item since in the analysis of natural products it can easily happen
+%   that different compounds have the same chromophore (and therefore
+%   the same UV spectrum), we do \emph{not} enforce unimodality of the
+%   concentration profiles: more than one peak can occur in the elution
+%   profile of one particular component.
+% \end{itemize}
+% The result is an object of class ``\code{ALS}'', for which
+% \code{summary}, \code{print} and \code{plot} methods are available.
+% 
+% 
+% 
+% 
+% 
+% For our small set of example data, this leads to the following:
+% 
+% Note that the standard output of the underlying \code{ALS} function,
+% showing for the individual iterations the residual sum of squares, and
+% at the end printing the ratio of the initial versus the final values,
+% is suppressed in \code{doALS}.  Instead, the \code{summary} can be
+% used after the fitting to obtain more information on the model,
+% presenting three common measures of fit.
+% 
+% The \code{plot} method for an \code{ALS} object can show two things:
+% the spectra, and the concentration profiles. Figure~\ref{fig:plotALS}
+% shows both, where for space-saving reasons only the concentration
+% profiles of the first file are shown.
+% % \begin{figure}[tb]
+% % \begin{center}
+% % \setkeys{Gin}{width=.75\linewidth}
+% % <<fig=true,height=5, width=9>>=
+% % par(mfrow = c(1,2))
+% % plot(tea.als)
+% % plot(tea.als, what = "profiles", mat.idx = 1)
+% % legend("topleft", legend = paste("Comp.", 1:4), bty = "n",
+% %        lty = 1, col = 1:4)
+% % @ 
+% % \end{center}
+% %   \caption{Examples of the generic \code{plot} method for an
+% %     \code{ALS} object: the left plot shows the spectra, and the right
+% %     plot shows the concentration profiles in the first of the five
+% %     \code{tea} samples. The code to generate the plots is shown at the top.}
+% % \label{fig:plotALS}
+% % \end{figure}
+% Comparing the spectra after application of ALS with the OPA results,
+% we see that especially Component 1 has changed. The right plot,
+% containing the concentration profiles in the first file, looks not
+% very smooth due to the low number of time points. Nevertheless, we can
+% see several clear peaks for the carotenoids (blue and red lines), and
+% one clear peak for tocopherol at approximately 11.1 minutes. Notice
+% that around this retention time also two carotenoids elute -- ALS is
+% able to resolve such overlap situations because of the difference in
+% spectral characteristics of the individual components.
+% 
+% \subsection{Generate a peak table}
+% After the ALS step, we still are some distance away from having a peak
+% table summarizing, for each component, what peaks are found, including
+% information such as retention time and peak area. Such a
+% table is the goal of most metabolomics analyses, and can serve as
+% input for further multivariate analysis. A complicating factor is that
+% retention times can vary, sometimes significantly. This necessitates
+% an alignment step, that puts the same chemical compounds at the same
+% retention time. Application of ALS can greatly help in this respect,
+% since we now have peaks with distinct spectral characteristics that
+% should be aligned. If in all files only one tocopherol peak is found,
+% such as in the right plot in Figure~\ref{fig:plotALS}, this already
+% gives us a strong handle to apply the correct retention time
+% correction. 
+% 
+% \subsubsection{Peak fitting}
+% The first step in generating a peak table is to identify peaks. This
+% is done by the \pkg{alsace} function \code{getAllPeaks}. It works on
+% the list of concentration profiles (one list element for each data
+% file), and takes one other argument indicating the span, i.e. the
+% width of the interval in which local maxima are to be found. A wider
+% span leads to fewer peaks. Note that the \code{span} parameter is
+% given in terms of number of points, and not in the retention time scale.
+% 
+% For the \code{tea} data, the function leads to the following result:
+% <<>>=
+% cat("ciao")
+% @ 
+% Component 1, for example, shows three peaks in the first file, four in
+% the third, and two in the others. There is clearly some variation:
+% hopefully this is mainly in the small peaks. Again it should be
+% stressed that these are low-resolution data, only used for
+% illustration purposes.
+% 
+% \subsubsection{Peak alignment}
+% Many retention time correction (or time warping) algorithms have been
+% described in literature. Here we use Parametric Time Warping
+% (PTW)~\cite{Eilers2004}, as implemented in package
+% \pkg{ptw}~\cite{Bloemberg2010}. The advantages of this approach
+% include speed, simplicity, and an explicit control over the complexity
+% of the warping function. The last property is essential in preventing
+% false matches to be made. The gist of the \code{ptw} method is that
+% the time axis is warped with a polynomial function: the higher the
+% degree of the polynomial, the more wriggly the transformed time axis
+% can become. Simply adding a shift or a stretch of the time axis can
+% already be obtained by using a linear function. Note that alignment or
+% time warping is not necessary for the application of ALS itself -- on
+% the contrary, time warping of a signal that is already deconvoluted by
+% ALS is much, much simpler than doing it on the original data.
+% 
+% Finding the optimal warping coefficients for a polynomial of a certain
+% degree can be done with function \code{correctRT}. It takes the list
+% of concentration profiles, and the index of the data set that is
+% considered to be the ``reference''. Choosing the optimal reference is
+% not a trivial task: in order to make the data distortions by warping
+% as small as possible one could consider choosing a sample somewhere in
+% the middle of the measurement sequence, but also other considerations
+% apply~\cite{Bloemberg2013}. In the current example, the choice does
+% 
+% \subsubsection{Grouping peaks across samples}
+% Once the peaks are aligned, one can think of grouping features across
+% samples -- the result can then be presented in the form of a simple
+% matrix, giving peak areas or peak heights for each feature over the
+% whole set of data matrices. Function \code{getPeakTable} tackles this
+% by performing a complete linkage clustering over the (corrected)
+% retention times for each component. If two peaks from the same sample
+% end up in the same cluster, a warning message is given: in such a case
+% only the most intense response will be included in the data
+% matrix. 
+% 
+% The first three columns of the output describe the feature:
+% intensities, either given as peak area (as in the example above) or as
+% peak height, are in the further columns. We can see that in this case
+% component 1 leads to four peaks, with retention times of 10.6, 10.8,
+% 11.6 and 11.9 minutes, respectively. The first and the last of these
+% are found in all five samples; the others are sometimes absent. The
+% total peak table contains sixteen different features.
+% 
+
+
+%\bibliographystyle{unsrt}
+%\bibliography{als} 
+
+\end{document}
