@@ -27,11 +27,11 @@
 
 \renewcommand{\textfraction}{0}
 
-\title{Annotation of LC-MS metabolomics datasets by ``metaMS'' package}
+\title{Annotation of LC-MS metabolomics datasets by the ``metaMS'' package}
 \author{Pietro Franceschi}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+%%%\SweaveOpts{concordance=TRUE}
 
 \maketitle
 
