@@ -24,12 +24,17 @@ addRI(mspobj, RIstandards, isMSP = TRUE)
   standards, NA will be used as RI value.
 }
 \examples{
-manual.fname <- list.files(system.file("CDF_GC", package = "metaMSdata"),
-                           pattern = "msp", full.names = TRUE)
-manual <- read.msp(manual.fname)
-RIstandards <- cbind("rt" = seq(1.8, 25.0, by = 1.3),
-                     "RI" = (1:18)*100 + 200)
+if (require(metaMSdata)) {
+  manual.fname <- list.files(system.file("CDF_GC", package = "metaMSdata"),
+                             pattern = "msp", full.names = TRUE)
+  manual <- read.msp(manual.fname)
+  RIstandards <- cbind("rt" = c(1.54, 1.68, 1.99, 2.7, 4.36, 6.81, 9.43,
+                                11.88, 14.17, 16.34, 18.39, 20.33, 22.18,
+                                23.93, 25.5, 27.18, 28.72, 30.26, 31.75,
+                                33.19, 34.58, 35.95),
+                       "RI" = (6:27)*100)
 
-manualRI <- addRI(manual, RIstandards)
+  manualRI <- addRI(manual, RIstandards)
+}
 }
 \keyword{manip}
