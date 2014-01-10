@@ -58,7 +58,7 @@ important of which are:
     pipeline. This improves consistency and maintainability;
   \item rather than a feature-based analysis, as is the case with
     \pkg{xcms}, \pkg{metaMS} performs a pseudospectrum-based analysis,
-    where the basic entity is a collection of (mz, I) pairs are
+    where the basic entity is a collection of (mz, I) pairs at
     specific retention times. This avoids the alignment step, which
     can be extremely difficult for GC-MS data;
   \item support has been added for the creation of in-house databases of
@@ -177,14 +177,17 @@ also when setting up a database of standards.
 
 \subsubsection{Definition of pseudospectra}
 Rather than individual peaks, the basic data structure in the GC-MS
-part of \pkg{metaMS} is a pseudospectrum, i.e. a set of peaks eluting
-at the same time. This choice is motivated by several
+part of \pkg{metaMS} is a pseudospectrum, i.e. a set of \emph{m/z}
+values showing a chromatographic peak at the same retention time. This
+choice is motivated by several 
 considerations. First of all, in GC the amount of overlap is much less
 than in LC: peaks are much narrower. This means that even a one- or
-two-second difference in retention time can be enough to see
-separation. Secondly, fragmentation patterns for many compounds are
+two-second difference in retention time can be enough to separate the
+corresponding mass spectra. Secondly, fragmentation patterns for many
+compounds are 
 available in extensive libraries like the NIST
-library~\cite{McLafferty2008}. In addition, the spectra are somewhat
+library (see {\tt http://www.nist.gov/srd/nist1a.cfm}). In addition,
+the spectra are somewhat 
 easier to interpret since adducts, such as found in LC, are not
 present. The main advantage of pseudospectra, however, is that their
 use allows the results to be interpreted directly as relative
@@ -237,7 +240,7 @@ Once we have identified our pseudospectra, we can start the annotation
 process. This is done by comparing every pseudospectrum to a database
 of spectra. As a similarity measure, we use the weighted dot
 product as it is fast, simple, and gives good
-results~\cite{Stein1994}. The first step in the comparison is based on
+results~\cite{Stein1994a}. The first step in the comparison is based on
 retention, since a comparison of either retention time or retention
 index is much faster than a spectral comparison. The corresponding
 function is \code{matchSamples2DB}. Since the weighted dot product
