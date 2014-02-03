@@ -134,22 +134,30 @@ list as mandatory arguments. In addition, some extra arguments can be
 provided. In particular, a database of standards, as discussed in the
 previous section, can be provided for annotation purposes. The call
 therefore can be as simple as:
-<<>>=
-library(metaMSdata)
-data(threeStdsDB)        ## provides DB
-cdfdir <- system.file("CDF_GC", package = "metaMSdata")
-cdffiles <- list.files(cdfdir, pattern = "cdf",
-                       full.names = TRUE, ignore.case = TRUE)
-@ 
 \begin{Schunk}
 \begin{Sinput}
+> library(metaMSdata)
+> data(threeStdsDB)        ## provides DB
+> cdfdir <- system.file("CDF_GC", package = "metaMSdata")
+> cdffiles <- list.files(cdfdir, pattern = "cdf",
+>                        full.names = TRUE, ignore.case = TRUE)
 > result <- runGC(cdffiles, GCsettings, DB = DB)
 \end{Sinput}
 \end{Schunk}
-This result is a list containing a set of patterns corresponding with the
-compounds that have been found, either annotated or unknown, the
-relative intensities of these patterns in the individual annotations,
-and possibly the \code{xcmsSet} object for further inspection.
+Alternatively, if the peak picking by \pkg{xcms} is already done, one
+can provide the \code{xcmsSet} object:
+<<echo=FALSE>>=
+data(threeStdsDB)        ## provides DB
+@ 
+<<>>=
+data(GCset)
+result <- runGC(xset = GCset, GCsettings, DB = DB)
+@ 
+In both cases, the result is a list containing a set of patterns
+corresponding with the compounds that have been found, either
+annotated or unknown, the relative intensities of these patterns in
+the individual annotations, and possibly the \code{xcmsSet} object for
+further inspection.
 In practice, the \code{runGC} function is all that users need to
 use. However, to give more details, each of the steps in the workflow
 will be discussed briefly below.
