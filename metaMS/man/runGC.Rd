@@ -68,13 +68,13 @@ A list with the following elements:
   \code{\link{matchSamples2Samples}},
   \code{\link{getAnnotationMat}}, \code{\link{addRI}}}
 \examples{
+\dontrun{
 if (require(metaMSdata)) {
   data(FEMsettings)
   cdfdir <- system.file("CDF_GC", package = "metaMSdata")
   cdffiles <- list.files(cdfdir, pattern = "cdf",
                          full.names = TRUE, ignore.case = TRUE)
 
-\dontrun{
   ## no annotation database
   result.noannot <- runGC(cdffiles, FEMsettings[[3]])
   ## only three patterns consistently found, one of which is a standard
@@ -84,10 +84,12 @@ if (require(metaMSdata)) {
   ## now 15 patterns are found consistently across the samples,
   ## including the three standards
 }
-
-  ## use with a database of standards
-  data(threeStdsDB) 
-  result.annot <- runGC(cdffiles, FEMsettings[[3]], DB = DB)
 }
+
+## Same data, but now in the form where the peak picking has already
+## been done
+data(GCset)
+data(threeStdsDB) 
+result.annot <- runGC(xset = GCset, FEMsettings[[3]], DB = DB)
 }
 \keyword{manip}
