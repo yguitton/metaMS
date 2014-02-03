@@ -9,7 +9,7 @@
   mass.
 }
 \usage{
-runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
+runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
       polarity = "positive", errf = NULL, runCAMERA = TRUE,
       returnXset = FALSE, intensity = "into")
 }
@@ -17,6 +17,10 @@ runLC(files, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
 \arguments{
   \item{files}{input files, given as a vector of strings containing the
     complete paths. All formats supported by XCMS can be used.}
+  \item{xset}{alternatively, one can present an xcmsSet object, instead
+    of the input files. In that case no peak picking will be
+    performed. If both \code{files} and \code{xset} are given, the
+    former takes precedence.}
   \item{settings}{nested list of settings, to be used at individual
     steps of the pipeline. See the help of \code{FEMsettings} for details.}
   \item{rtrange}{An optional vector to slice the retention time range

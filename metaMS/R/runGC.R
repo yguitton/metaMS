@@ -1,4 +1,5 @@
 runGC <- function(files,
+                  xset,
                   settings,
                   rtrange = NULL,
                   DB = NULL,
@@ -8,6 +9,15 @@ runGC <- function(files,
                   RIstandards = NULL)
 {
   ## Some preliminary sanity checks
+  if (!missing(files)) {
+    nexp <- length(files)
+  } else {
+    if (missing(xset))
+        stop("Either 'files' or 'xset' should be given")
+
+    nexp <- length(sampnames(xset))
+  }
+    
   if (is.null(DB) & !findUnknowns)
       stop("Nothing to do. Provide a DB or set findUnknowns to TRUE...")
 
@@ -27,7 +37,7 @@ runGC <- function(files,
       printWarning("Warning: argument RIstandards provided, but using retention times for matching")
 
   ## Go!
-  printString(paste("Experiment of", length(files), "samples"))
+  printString(paste("Experiment of", nexp, "samples"))
   printString(paste("Instrument:", settings$instName))
   if (length(rtrange) == 2)
       printString(paste("Retention time range:", rtrange[1], "to",
@@ -45,9 +55,15 @@ runGC <- function(files,
   }
 
   ## Peak picking and CAMERA
-  printString("Performing peak picking")
-  xset.l <- peakDetection(files, settings = settings$PeakPicking,
-                          rtrange = rtrange, convert2list = TRUE)
+  if (!missing(files)) {
+    printString("Performing peak picking")
+    xset.l  <-  peakDetection(files, settings$PeakPicking,
+                            rtrange = rtrange, convert2list = TRUE)
+  } else {
+    printString("Using xcmsSet object, no peak picking performed.")
+    xset.l <- split(xset, factor(sampnames(xset), levels = sampnames(xset)))
+  }
+
   allSamples <- lapply(xset.l, runCAMERA,
                        chrom = settings$chrom,
                        settings = settings$CAMERA)

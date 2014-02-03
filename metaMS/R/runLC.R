@@ -1,15 +1,25 @@
-runLC <- function (files, 
-                   settings,
-                   rtrange = NULL,
-                   mzrange = NULL,
-                   DB = NULL,
-                   polarity = "positive",                  
-                   errf = NULL,
-                   runCAMERA = TRUE,
-                   returnXset = FALSE,
-                   intensity = "into")
+runLC <- function(files,
+                  xset,
+                  settings,
+                  rtrange = NULL,
+                  mzrange = NULL,
+                  DB = NULL,
+                  polarity = "positive",                  
+                  errf = NULL,
+                  runCAMERA = TRUE,
+                  returnXset = FALSE,
+                  intensity = "into")
 {
-  printString(paste("Experiment of", length(files), "samples"))
+  if (!missing(files)) {
+    nexp <- length(files)
+  } else {
+    if (missing(xset))
+        stop("Either 'files' or 'xset' should be given")
+
+    nexp <- length(sampnames(xsetObj))
+  }
+    
+  printString(paste("Experiment of", nexp, "samples"))
   printString(paste("Instrument:", settings$instName,
                     " - polarity:", polarity))
   if (length(rtrange) == 2)
@@ -19,9 +29,14 @@ runLC <- function (files,
   if (!is.null(DB)){
     printString("Database of", length(unique(DB$ChemSpiderID)), "compounds")
   }
-  
-  printString("Performing peak picking")
-  xset  <-  peakDetection(files, settings$PeakPicking, rtrange = rtrange, mzrange = mzrange)   
+
+  if (!missing(files)) {
+    printString("Performing peak picking")
+    xset  <-  peakDetection(files, settings$PeakPicking,
+                            rtrange = rtrange, mzrange = mzrange)
+  } else {
+    printString("Using xcmsSet object, no peak picking performed.")
+  }
   
   printString("Grouping and retention time alignment")
   xset <- alignmentLC(xset, settings$Alignment) 
