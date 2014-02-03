@@ -1,13 +1,12 @@
 Package: metaMS
 Type: Package
 Title: MS-based metabolomics annotation pipeline
-Version: 0.99.0
-Date: 2014-01-10
+Version: 0.99.1
+Date: 2014-03-02
 Authors@R: c(person("Ron", "Wehrens", role = c("aut", "cre"), comment = "author of GC-MS part", email = "ron.wehrens@fmach.it"), person("Pietro", "Franceschi", role = "aut", comment = "author of LC-MS part"), person("Nir", "Shahaf", role = "ctb"), person("Matthias", "Scholz", role = "ctb"), person("Georg", "Weingart", role = "ctb", comment = "development of GC-MS approach"), person("Elisabete", "Carvalho", role = "ctb", comment = "testing and feedback of GC-MS pipeline"))
-Depends: tools, xcms (>= 1.35), CAMERA, robustbase, Matrix
+Imports: tools, xcms (>= 1.35), CAMERA, robustbase, Matrix
 Suggests: metaMSdata
 Enhances: Rmpi, parallel, snow
 Description: MS-based metabolomics data processing and compound annotation pipeline. 
 License: GPL (>= 2)
-LazyLoad: yes
 biocViews: MassSpectrometry, Metabolomics
