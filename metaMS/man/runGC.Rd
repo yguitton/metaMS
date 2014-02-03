@@ -9,7 +9,7 @@
   plasticizers, and definition of unknowns, consistently present across
   samples.}
 \usage{
-runGC(files, settings, rtrange = NULL, DB = NULL,
+runGC(files, xset, settings, rtrange = NULL, DB = NULL,
       removeArtefacts = TRUE, findUnknowns = length(files) > 1,
       returnXset = FALSE, RIstandards = NULL)
       
@@ -17,6 +17,10 @@ runGC(files, settings, rtrange = NULL, DB = NULL,
 \arguments{
   \item{files}{input files, given as a vector of strings containing the
     complete paths. All formats supported by XCMS can be used.}
+  \item{xset}{alternatively, one can present an xcmsSet object, instead
+    of the input files. In that case no peak picking will be performed.
+    If both \code{files} and \code{xset} are given, the
+    former takes precedence.}
   \item{settings}{a nested list of settings, to be used at individual
     steps of the pipeline.}
   \item{rtrange}{part of the chromatograms that is to be analysed. If

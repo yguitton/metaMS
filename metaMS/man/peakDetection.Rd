@@ -16,7 +16,7 @@ peakDetection(files, settings, rtrange = NULL, mzrange= NULL,
     xcmsSet function. See the help of \code{FEMsettings} for a detailed
     description of the fields in this list.} 
   \item{rtrange}{If non-NULL, a vector to subset the region of the
-    chromatography retained for further analysis (in seconds).}
+    chromatography retained for further analysis (given in minutes).}
   \item{mzrange}{If non-NULL, a vector indicating the subset of the
     mass spectrum retained for the analysis.}
   \item{convert2list}{logical. If \code{TRUE}, the xcmsSet object will
