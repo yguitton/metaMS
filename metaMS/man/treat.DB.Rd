@@ -2,7 +2,7 @@
 \alias{treat.DB}
 \title{Scaling of pseudospectra in an msp object}
 \description{
-  This function transforms the "raw" data in an msp DB object into
+  This function transforms the \dQuote{raw} data in an msp DB object into
   preprocessed data. Even if no scale and no mass.weight is applied,
   the intensities are still changed: scaled to unit length.}
 \usage{

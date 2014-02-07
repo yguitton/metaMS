@@ -16,8 +16,8 @@ construct.msp <- function(spectra, extra.info) {
     stop("Unequal lengths in arguments")
 
   if (all(sapply(spectra, ncol) == 3)) {
-    extra.info$rt <- round(sapply(spectra, function(x) mean(x[,3])),3)
-    extra.info$rt.sd <- round(sapply(spectra, function(x) sd(x[,3])),4)
+    extra.info$rt <- round(sapply(spectra, function(x) mean(x[,3])), 3)
+    extra.info$rt.sd <- round(sapply(spectra, function(x) sd(x[,3])), 4)
   }
 
   lapply(1:length(spectra),
@@ -153,7 +153,7 @@ read.msp <- function(file, only.org = FALSE,
                         "csLinks")
     
     fields.idx <- grep(":", strs)
-    fields <- sapply(strsplit(strs[fields.idx], ":"), function(x) x[1])
+    fields <- sapply(strsplit(strs[fields.idx], ":"), "[[", 1)
     
     pk.idx <- which(fields == "Num Peaks")
     if (length(pk.idx) == 0) ## should not happen
@@ -186,8 +186,8 @@ read.msp <- function(file, only.org = FALSE,
         stop("Not the right number of peaks in compound", cmpnd$Name)
     pklst <- strsplit(pks, " ")
     pklst <- lapply(pklst, function(x) x[x != ""])
-    cmz <- as.numeric(sapply(pklst, function(x) x[1]))
-    cintens <- as.numeric(sapply(pklst, function(x) x[2]))
+    cmz <- as.numeric(sapply(pklst, "[[", 1))
+    cintens <- as.numeric(sapply(pklst, "[[", 2))
     ##  intens.OK <- cintens >= minintens
     
     finaltab <- matrix(c(cmz, cintens), ncol = 2)

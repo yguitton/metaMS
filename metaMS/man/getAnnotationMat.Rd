@@ -9,8 +9,8 @@ when the number of common features is five or larger; for 2-4 peaks
 a weighted linear regression is used, and if only one peak is in
 common the intensity ratio for this peak is used. Reference patterns are
 the patterns in the database of standards or the patterns in the
-"unknowns" slot of the \code{allMatches} object. Not meant to be called
-directly by the user.
+\dQuote{unknowns} element of the \code{allMatches} object. Not meant to
+be called directly by the user.
 }
 \usage{
 getAnnotationMat(exp.msp, pspectra, allMatches)
@@ -19,8 +19,7 @@ relInt(pat, refpat)
 \arguments{
   \item{exp.msp}{List of experimental pseudospectra.}
   \item{pspectra}{Spectra from the in-house database.}
-  \item{allMatches}{
-  }
+  \item{allMatches}{Match information in the form of a list.}
   \item{pat, refpat}{Both pseudospectra.}
 }
 \value{Function \code{getAnnotationMat} returns a matrix containing all

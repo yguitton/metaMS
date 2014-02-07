@@ -6,7 +6,7 @@
   Function \code{matchSamples2Samples} matches pseudospectra across all
   samples - if a pseudospectrum is present at more or less the same
   retention time in several samples, it can get the status of
-  "unknown". Exactly how much difference there may be between the
+  \dQuote{unknown}. Exactly how much difference there may be between the
   pseudospectra and retention times, and how often it should be present,
   is determined by the settings. The auxiliary function
   \code{match.unannot.patterns} compares two msp objects, representing
@@ -24,7 +24,7 @@ match.unannot.patterns(msp1, msp2, settings)
     are provided for efficiency reasons.}
   \item{annotations}{Annotations of all pseudospectra: only patterns
     without annotations will be considered.}
-  \item{settings}{Settings determining what a valid "unknown" is. For an
+  \item{settings}{Settings determining what a valid \dQuote{unknown} is. For an
     example, see the man page of \code{FEMsettings},
     field \code{matchIrrelevants}.}
   \item{msp1, msp2}{lists of pseudospectra}
@@ -33,7 +33,7 @@ match.unannot.patterns(msp1, msp2, settings)
   annotation object such as the one 
   returned by \code{matchSamples2DB}, but now with an additional
   \code{unknowns} element, containing the pseudospectra that are
-  recognized as "unknowns".
+  recognized as \dQuote{unknowns}.
 
   Function \code{match.unannot.patterns} returns a list of combinations
   of pseudospectra IDs, retention times (or retention indices) and match

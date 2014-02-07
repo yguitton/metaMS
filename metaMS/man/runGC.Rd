@@ -11,7 +11,7 @@
 \usage{
 runGC(files, xset, settings, rtrange = NULL, DB = NULL,
       removeArtefacts = TRUE, findUnknowns = nexp > 1,
-      returnXset = FALSE, RIstandards = NULL)
+      returnXset = FALSE, RIstandards = NULL, nSlaves = 0)
       
 }
 \arguments{
@@ -41,6 +41,7 @@ runGC(files, xset, settings, rtrange = NULL, DB = NULL,
     defining the RI scale both retention times and retention indices. If
     not given, no RI values will be calculated and retention times will
     be used instead.}
+  \item{nSlaves}{Number of cores to be used in peak picking.}
 }
 
 \value{
@@ -49,10 +50,11 @@ A list with the following elements:
   line is a feature, i.e. a pseudospectrum. The first columns are used
   to give information about these features, a.o. compound name, CAS and
   Chemspider IDs, etcetera. The last of these meta-information columns
-  is always the one giving the retention time: "rt". After that, columns
+  is always the one giving the retention time: \dQuote{rt}. After that,
+  columns 
   correspond to input files, and give measures of intensities for every
   single one of the features. If a feature is not detected in a sample,
-  this is indicated with "0" (zero).} 
+  this is indicated with \dQuote{0} (zero).} 
 \item{PseudoSpecra}{A list of pseudospectra in msp format, in the
   same order as the rows in the PeakTable.}
 \item{xset}{optionally, the xcmsSet object is returned, which can be

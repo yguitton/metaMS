@@ -4,9 +4,9 @@ printString <- function(..., screenwidth = 72) {
                       prstring,
                       paste(rep("-", screenwidth - nchar(prstring) - 12),
                             collapse = ""),
-                      ">\n")
+                      ">")
   
-  cat(prntString)
+  message(prntString)
 }
 
 
@@ -16,16 +16,18 @@ printString <- function(..., screenwidth = 72) {
 ## function calling printInfo or printWarning.
 printInfo <- function(...) {
   prstring <- paste(..., collapse = " ")
-  prntString <- paste("\t", prstring, "\n")
-  cat(prntString)
+  prntString <- paste("\t", prstring)
+
+  message(prntString)
 }
 
 ## for the warnings 
 
 printWarning <- function(...) {
   prstring <- paste(..., collapse = " ")
-  prntString <- paste("!!\n", prstring, "\n!!\n")
-  cat(prntString)
+  prntString <- paste("!!\n", prstring, "\n!!")
+
+  message(prntString)
 }
 
 

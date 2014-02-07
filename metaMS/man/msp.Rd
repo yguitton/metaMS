@@ -11,7 +11,8 @@
   Functions to construct, read, write and filter so-called msp
   objects, collections of spectra with additional information. This
   other information is of free format, but typically
-  contains fields like "Name", "CAS", "ChemspiderID", and "rt".
+  contains fields like \dQuote{Name}, \dQuote{CAS},
+  \dQuote{ChemspiderID}, and \dQuote{rt}. 
 }
 \usage{
 construct.msp(spectra, extra.info)
@@ -37,14 +38,14 @@ to.msp(object, file = NULL, settings = NULL, ndigit = 0,
     returned as an msp object. If non-null, the information will be
     written to the file with this name.} 
   \item{only.org}{logical: if TRUE this will skip all entries that have
-    non-organical elements in the "Formula" field.}
+    non-organical elements in the \dQuote{Formula} field.}
   \item{org.set}{List of elements to be considered as organic.}
   \item{noNumbers}{Optional argument, indicating which fields are not to
     be converted into numeric entries. If not given, this currently
-    defaults to the following fields: \code{"Name"}, \code{"CAS"},
-    \code{"stdFile",} \code{"date"}, \code{"validated"},
-    \code{"ChemspiderID"}, \code{"SMILES"}, \code{"InChI"},
-    \code{"Class"}, \code{"comment"}, \code{"csLinks"}.}
+    defaults to the following fields: \code{Name}, \code{CAS},
+    \code{stdFile}, \code{date}, \code{validated},
+    \code{ChemspiderID}, \code{SMILES}, \code{InChI},
+    \code{Class}, \code{comment}, \code{csLinks}.}
   \item{msp}{msp object.}
   \item{rtrange, mzrange, minfeat, minintens, minPeaks}{restrictions to
     what constitutes genuine pseudospectra in terms of minimal numbers
@@ -77,8 +78,9 @@ to.msp(object, file = NULL, settings = NULL, ndigit = 0,
   Other issues may arise with the keywords. While read.msp will be able
   to read msp files with non-standard keywords, the metaMS package
   expects at least the following list to be present (case-sensitive):
-  "Name", "validated", "CAS", "rt", "monoMW", and "Class". The final
-  keyword is always "Num Peaks", and should be followed by the list of
+  \dQuote{Name}, \dQuote{validated}, \dQuote{CAS}, \dQuote{rt},
+  \dQuote{monoMW}, and \dQuote{Class}. The final 
+  keyword is always \dQuote{Num Peaks}, and should be followed by the list of
   mz-I combinations.
   }
 \author{Ron Wehrens}

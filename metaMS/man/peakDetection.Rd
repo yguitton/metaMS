@@ -7,7 +7,7 @@
   mass-spectrometric characteristics of the instruments at hand.}
 \usage{
 peakDetection(files, settings, rtrange = NULL, mzrange= NULL,
-              convert2list = FALSE) 
+              convert2list = FALSE, nSlaves = 0) 
 }
 \arguments{
   \item{files}{input files (including path names) that will be processed
@@ -24,6 +24,8 @@ peakDetection(files, settings, rtrange = NULL, mzrange= NULL,
     separately. This is useful not only in GC-MS data, where peak
     alignment is avoided, but also in setting up databases of standards,
     where no common peaks between injections are expected to occur.}
+  \item{nSlaves}{Argument for XCMS: how many cores should be used in the
+    peak picking?}
 }
 \value{Either an xcmsSet object, or a list of one-sample xcmsSet objects.}
 \author{Ron Wehrens and Pietro Franceschi}

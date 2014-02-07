@@ -6,7 +6,8 @@ runGC <- function(files,
                   removeArtefacts = TRUE,
                   findUnknowns = nexp > 1,
                   returnXset = FALSE,
-                  RIstandards = NULL)
+                  RIstandards = NULL,
+                  nSlaves = 0)
 {
   ## Some preliminary sanity checks
   if (!missing(files)) {
@@ -63,7 +64,8 @@ runGC <- function(files,
   if (!missing(files)) {
     printString("Performing peak picking")
     xset.l  <-  peakDetection(files, settings$PeakPicking,
-                            rtrange = rtrange, convert2list = TRUE)
+                              rtrange = rtrange, convert2list = TRUE,
+                              nSlaves = nSlaves)
   } else {
     printString("Using xcmsSet object, no peak picking performed.")
     xset.l <- split(xset, factor(sampnames(xset), levels = sampnames(xset)))

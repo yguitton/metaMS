@@ -1,5 +1,5 @@
 ## load specific functions from tools and robustbase
-import(Rcpp, xcms, CAMERA)
+import(xcms, CAMERA)
 importFrom(tools, file_ext, list_files_with_exts, file_path_sans_ext)
 importFrom(robustbase, lmrob)
 importFrom(Matrix, Matrix)
