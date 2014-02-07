@@ -1,5 +1,6 @@
 peakDetection <- function (files, settings, rtrange = NULL,
-                           mzrange = NULL, convert2list = FALSE)
+                           mzrange = NULL, convert2list = FALSE,
+                           nSlaves = 0)
 {
   ## Rmpi tends to give many warnings that are not relevant to end
   ## users: this is an attempt to suppress this output
@@ -23,12 +24,15 @@ peakDetection <- function (files, settings, rtrange = NULL,
                        which(xr@scantime > rtrange[2])[1] - 1,
                        na.rm = TRUE))
 
-    xset <- do.call(xcmsSet, c(list(files = files,
-                                    scanrange = scanRange),
-                               settings))
+    allSettings <- c(list(files = files,
+                          scanrange = scanRange,
+                          nSlaves = nSlaves),
+                     settings)
   } else {
-    xset <- do.call(xcmsSet, c(list(files = files), settings))
+    allSettings <- c(list(files = files, nSlaves = nSlaves), settings)
   }
+  
+  xset <- do.call(xcmsSet, allSettings)
 
   if (!is.null(mzrange)) {
     idx <-  (xset@peaks[,"mz"] > mzrange[1]) & (xset@peaks[,"mz"] < mzrange[2])

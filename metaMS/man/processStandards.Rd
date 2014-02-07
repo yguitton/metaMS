@@ -13,7 +13,7 @@
   \item{settings}{Settings list, containing sublists for peak picking
     and CAMERA grouping (GC-MS) or annotation (LC-MS).}
   \item{polarity}{Polarity of the analysis (used for CAMERA). Possible
-    values are "positive" or "negative". Ignored for GC-MS.}
+    values are \dQuote{positive} or \dQuote{negative}. Ignored for GC-MS.}
 }
 \value{
   A list of CAMERA objects resulting from the analysis of the

@@ -11,7 +11,7 @@
 \usage{
 runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
       polarity = "positive", errf = NULL, runCAMERA = TRUE,
-      returnXset = FALSE, intensity = "into")
+      returnXset = FALSE, intensity = "into", nSlaves = 0)
 }
 
 \arguments{
@@ -24,23 +24,24 @@ runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
   \item{settings}{nested list of settings, to be used at individual
     steps of the pipeline. See the help of \code{FEMsettings} for details.}
   \item{rtrange}{An optional vector to slice the retention time range
-  (in minutes).}
+    (in minutes).}
   \item{mzrange}{An optional vector to slice the mass spectrum}
   \item{DB}{database containing the spectra of the pure standards. For
-  the description refer to the \code{LCDBtest} help.}
+    the description refer to the \code{LCDBtest} help.}
   \item{polarity}{The polarity of the analysis used for CAMERA
-  annotation. Either "positive" or "negative".}
+    annotation. Either "positive" or "negative".}
   \item{errf}{A model used to calculate the mass tolerance in ppm
-  for each features on the bases of its mass, retention time and intensity.
-  For further details refer to the help of \code{AnnotateTable}.}
+    for each features on the bases of its mass, retention time and intensity.
+    For further details refer to the help of \code{AnnotateTable}.}
   \item{runCAMERA}{Logical. Should CAMERA annotation be performed?}
   \item{returnXset}{ logical: should the XCMS output be returned? If yes,
     this is a a list of \code{xcmsSet} objects, one element for each
     input file.}
   \item{intensity}{The intensity measure used in the output
-  peaktable. The available intensities are the ones provided by
-  \code{xcms}. The default one is the total intensity (integral) of the
-  feature on the detected chromatographic peak.}
+    peaktable. The available intensities are the ones provided by
+    \code{xcms}. The default one is the total intensity (integral) of the
+    feature on the detected chromatographic peak.}
+  \item{nSlaves}{Number of cores to be used in peak picking.}
 }
 \details{The \code{mzrange} and \code{rtrange} parameters are used to
   subset the mass and retention times considered in the analysis,

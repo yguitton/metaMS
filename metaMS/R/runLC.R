@@ -8,7 +8,8 @@ runLC <- function(files,
                   errf = NULL,
                   runCAMERA = TRUE,
                   returnXset = FALSE,
-                  intensity = "into")
+                  intensity = "into",
+                  nSlaves = 0)
 {
   if (!missing(files)) {
     nexp <- length(files)
@@ -33,7 +34,8 @@ runLC <- function(files,
   if (!missing(files)) {
     printString("Performing peak picking")
     xset  <-  peakDetection(files, settings$PeakPicking,
-                            rtrange = rtrange, mzrange = mzrange)
+                            rtrange = rtrange, mzrange = mzrange,
+                            nSlaves = nSlaves)
   } else {
     printString("Using xcmsSet object, no peak picking performed.")
   }
