@@ -1,7 +1,8 @@
 ## load specific functions from tools and robustbase
-import(CAMERA, Matrix)
+import(Rcpp, xcms, CAMERA)
 importFrom(tools, file_ext, list_files_with_exts, file_path_sans_ext)
 importFrom(robustbase, lmrob)
+importFrom(Matrix, Matrix)
 
 ## Export all functions that could be useful for users. Not only the
 ## two toplevel functions runGC and runLC, but also those functions one
