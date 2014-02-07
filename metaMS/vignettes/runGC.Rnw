@@ -1,4 +1,4 @@
-documentclass[a4paper]{article}
+\documentclass[a4paper]{article}
 %\VignetteIndexEntry{runGC}
 
 \usepackage{geometry}
@@ -136,7 +136,6 @@ previous section, can be provided for annotation purposes. The call
 therefore can be as simple as:
 <<eval = FALSE, echo = TRUE>>=
 library(metaMSdata)
-data(threeStdsDB)        ## provides DB
 cdfdir <- system.file("CDF_GC", package = "metaMSdata")
 cdffiles <- list.files(cdfdir, pattern = "cdf",
                        full.names = TRUE, ignore.case = TRUE)
@@ -145,7 +144,6 @@ result <- runGC(files = cdffiles, settings = GCsettings, DB = DB)
 Alternatively, if the peak picking by \pkg{xcms} is already done, one
 can provide the \code{xcmsSet} object:
 <<eval = FALSE, echo = TRUE>>=
-data(threeStdsDB)        ## provides DB
 result <- runGC(xset = GCset, settings = GCsettings, DB = DB)
 @ 
 In both cases, the result is a list containing a set of patterns
@@ -162,7 +160,7 @@ in data object \code{GCresults} -- this is used here to demonstrate
 the structure of the data objects without having to create them on the
 fly, which simply takes too much time:
 <<>>=
-load("GCresults")
+data("GCresults")
 @ 
 
 \subsubsection{Peak picking}
@@ -260,6 +258,7 @@ function is \code{matchSamples2DB}. Since the weighted dot product
 uses scaled mass spectra, the scaling of the database is done once,
 and then used in all comparisons:
 <<>>=
+data(threeStdsDB)        ## provides DB
 DB.treated <- treat.DB(DB)
 allSam.matches <- matchSamples2DB(allSamples.msp, DB = DB.treated, 
                                   settings = GCsettings$match2DB, 
