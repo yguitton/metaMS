@@ -17,9 +17,4 @@ printInfo(...)
   \item{screenwidth}{Width of the text field.}
 }
 \author{Ron Wehrens and Pietro Franceschi}
-\examples{
-printString(c("Hello", "world"))
-printWarning(c("Hello", "world"))
-printInfo(c("Hello", "world"))
-}
 \keyword{print}
