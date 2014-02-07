@@ -17,10 +17,10 @@ runGC(files, xset, settings, rtrange = NULL, DB = NULL,
 \arguments{
   \item{files}{input files, given as a vector of strings containing the
     complete paths. All formats supported by XCMS can be used.}
-  \item{xset}{alternatively, one can present an xcmsSet object, instead
-    of the input files. In that case no peak picking will be performed.
-    If both \code{files} and \code{xset} are given, the
-    former takes precedence.}
+  \item{xset}{alternatively, one can present an xcmsSet object, or a
+    list of xcmsSet objects, instead of the input files. In that case no
+    peak picking will be performed. If both \code{files} and \code{xset}
+    are given, the former takes precedence.}
   \item{settings}{a nested list of settings, to be used at individual
     steps of the pipeline.}
   \item{rtrange}{part of the chromatograms that is to be analysed. If
@@ -68,28 +68,29 @@ A list with the following elements:
   \code{\link{matchSamples2Samples}},
   \code{\link{getAnnotationMat}}, \code{\link{addRI}}}
 \examples{
+## analysis of an xset object
+data(GCset)
+data(threeStdsDB) 
+data(FEMsettings)
+settings <- FEMsettings[[3]]
+result.annot <- runGC(xset = GCset, settings = settings, DB = DB)
 \dontrun{
+## to start directly from the CDF files and include peak picking in the
+## pipeline, simply provide the "files" argument rather than the "xset" argument
 if (require(metaMSdata)) {
-  data(FEMsettings)
   cdfdir <- system.file("CDF_GC", package = "metaMSdata")
   cdffiles <- list.files(cdfdir, pattern = "cdf",
                          full.names = TRUE, ignore.case = TRUE)
 
   ## no annotation database
-  result.noannot <- runGC(cdffiles, FEMsettings[[3]])
+  result.noannot <- runGC(files = cdffiles, settings = settings)
   ## only three patterns consistently found, one of which is a standard
-  settings <- FEMsettings[[3]]
   settings$betweenSamples$simthresh <- .8 ## more lenient settings
-  result.noannot2 <- runGC(cdffiles, settings)
+  result.noannot2 <- runGC(files = cdffiles, settings = settings)
   ## now 15 patterns are found consistently across the samples,
   ## including the three standards
 }
 }
 
-## Same data, but now in the form where the peak picking has already
-## been done
-data(GCset)
-data(threeStdsDB) 
-result.annot <- runGC(xset = GCset, FEMsettings[[3]], DB = DB)
 }
 \keyword{manip}
