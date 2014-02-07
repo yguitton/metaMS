@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+documentclass[a4paper]{article}
 %\VignetteIndexEntry{runGC}
 
 \usepackage{geometry}
@@ -134,24 +134,19 @@ list as mandatory arguments. In addition, some extra arguments can be
 provided. In particular, a database of standards, as discussed in the
 previous section, can be provided for annotation purposes. The call
 therefore can be as simple as:
-\begin{Schunk}
-\begin{Sinput}
-> library(metaMSdata)
-> data(threeStdsDB)        ## provides DB
-> cdfdir <- system.file("CDF_GC", package = "metaMSdata")
-> cdffiles <- list.files(cdfdir, pattern = "cdf",
->                        full.names = TRUE, ignore.case = TRUE)
-> result <- runGC(cdffiles, GCsettings, DB = DB)
-\end{Sinput}
-\end{Schunk}
+<<eval = FALSE, echo = TRUE>>=
+library(metaMSdata)
+data(threeStdsDB)        ## provides DB
+cdfdir <- system.file("CDF_GC", package = "metaMSdata")
+cdffiles <- list.files(cdfdir, pattern = "cdf",
+                       full.names = TRUE, ignore.case = TRUE)
+result <- runGC(files = cdffiles, settings = GCsettings, DB = DB)
+@ 
 Alternatively, if the peak picking by \pkg{xcms} is already done, one
 can provide the \code{xcmsSet} object:
-<<echo=FALSE>>=
+<<eval = FALSE, echo = TRUE>>=
 data(threeStdsDB)        ## provides DB
-@ 
-<<>>=
-data(GCset)
-result <- runGC(xset = GCset, GCsettings, DB = DB)
+result <- runGC(xset = GCset, settings = GCsettings, DB = DB)
 @ 
 In both cases, the result is a list containing a set of patterns
 corresponding with the compounds that have been found, either
@@ -160,7 +155,15 @@ the individual annotations, and possibly the \code{xcmsSet} object for
 further inspection.
 In practice, the \code{runGC} function is all that users need to
 use. However, to give more details, each of the steps in the workflow
-will be discussed briefly below.
+will be discussed briefly below. 
+
+All results and intermediate results from this vignette are available
+in data object \code{GCresults} -- this is used here to demonstrate
+the structure of the data objects without having to create them on the
+fly, which simply takes too much time:
+<<>>=
+load("GCresults")
+@ 
 
 \subsubsection{Peak picking}
 The peak picking is performed by the usual \pkg{xcms} functions. A
@@ -170,8 +173,8 @@ individual parameters to be passed to the function as a settings
 list. The result is that the whole of the \pkg{xcms} functionality is
 available, simply by changing the values of some settings, or by
 adding fields. In the \code{runGC} function, this step is performed by
-<<>>=
-xset.l <- peakDetection(cdffiles, settings = GCsettings$PeakPicking, 
+<<eval = FALSE, echo = TRUE>>=
+GCset <- peakDetection(cdffiles, settings = GCsettings$PeakPicking, 
                         convert2list = TRUE)
 @ 
 Since this part can take quite some time, it is operated in parallel
@@ -206,8 +209,8 @@ of hard-to-interpret features.
 The pseudospectra are obtained by simply clustering on retention time,
 using the \code{runCAMERA} wrapper function, which for GC data calls
 \code{groupFWHM}:
-<<>>=
-allSamples <- lapply(xset.l, runCAMERA, chrom = GCsettings$chrom, 
+<<eval = FALSE, echo = TRUE>>=
+allSamples <- lapply(GCset, runCAMERA, chrom = GCsettings$chrom, 
                      settings = GCsettings$CAMERA)
 @ 
 Again, all the usual parameters for the \code{groupFWHM} function can
@@ -219,9 +222,11 @@ The final step is to convert the CAMERA objects into easily handled
 lists, which are basically the \R\ equivalent of the often-used
 \code{msp} format from the AMDIS software~\cite{Stein1999}. In
 \code{runGC}, this step is implemented as:
-<<>>=
+<<eval = FALSE, echo = TRUE>>=
 allSamples.msp <- lapply(allSamples, to.msp, file = NULL, 
                          settings = GCsettings$DBconstruction)
+@ 
+<<>>=
 sapply(allSamples.msp, length)
 allSamples.msp[[1]][[26]]
 @ 
