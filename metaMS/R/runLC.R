@@ -16,7 +16,7 @@ runLC <- function(files,
     if (missing(xset))
         stop("Either 'files' or 'xset' should be given")
 
-    nexp <- length(sampnames(xsetObj))
+    nexp <- length(sampnames(xset))
   }
     
   printString(paste("Experiment of", nexp, "samples"))

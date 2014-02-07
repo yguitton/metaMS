@@ -10,7 +10,7 @@
   samples.}
 \usage{
 runGC(files, xset, settings, rtrange = NULL, DB = NULL,
-      removeArtefacts = TRUE, findUnknowns = length(files) > 1,
+      removeArtefacts = TRUE, findUnknowns = nexp > 1,
       returnXset = FALSE, RIstandards = NULL)
       
 }
