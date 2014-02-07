@@ -1,5 +1,17 @@
-# Default NAMESPACE created by R
-# Remove the previous line if you edit this file
+## load specific functions from tools and robustbase
+import(CAMERA, Matrix)
+importFrom(tools, file_ext)
+importFrom(robustbase, lmrob)
 
-# Export all names
-exportPattern(".")
+## Export all functions that could be useful for users. Not only the
+## two toplevel functions runGC and runLC, but also those functions one
+## layer lower in abstraction level.
+exportPattern(runGC, runLC, peakDetection, matchExpSpec,
+              write.msp, construct.msp, filter.msp, read.msp, to.msp,
+              addRI, treat.DB, matchSamples2DB, matchSamples2Samples,
+              constructExpPseudoSpectra, getFeatureInfo, getAnnotationMat,
+              plotPseudoSpectrum, processStandards,
+              alignmentLC, runCAMERA, getAnnotationLC, getPeakTable,
+              createSTDdbGC, createSTDdbLC, readStdInfo,
+              generateStdDBGC, generateStdDBLC)
+

@@ -4,7 +4,7 @@ runGC <- function(files,
                   rtrange = NULL,
                   DB = NULL,
                   removeArtefacts = TRUE,
-                  findUnknowns = length(files) > 1,
+                  findUnknowns = nexp > 1,
                   returnXset = FALSE,
                   RIstandards = NULL)
 {
@@ -15,7 +15,12 @@ runGC <- function(files,
     if (missing(xset))
         stop("Either 'files' or 'xset' should be given")
 
-    nexp <- length(sampnames(xset))
+    if (class(xset) == "xcmsSet") {
+      nexp <- length(sampnames(xset))
+      xset <- split(xset, factor(sampnames(xset), levels = sampnames(xset)))
+    } else { ## a list of xcmsSet objects
+      nexp <- length(xset)
+    }
   }
     
   if (is.null(DB) & !findUnknowns)
