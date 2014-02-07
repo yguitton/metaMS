@@ -5,8 +5,8 @@
 \description{
   Function \code{annotations2tab} converts the output of
   \code{matchSamples2DB} into a table, in the case of multiple DB hits
-  for one pseudospectrum distinguishing the "best" hit from the
-  "alternative" hits. Function \code{makeAnnotation} prepares a
+  for one pseudospectrum distinguishing the \dQuote{best} hit from the
+  \dQuote{alternative} hits. Function \code{makeAnnotation} prepares a
   \code{data.frame} object with the correct number of rows. Both functions are
   not meant to be called directly by the user.
 }

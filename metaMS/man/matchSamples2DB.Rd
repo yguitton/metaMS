@@ -26,8 +26,8 @@
   pseudospectrum from that sample: if the element is empty, there is no
   match with the DB - a number points to the DB entry that gives a
   hit. Elements can contain more than one number; these will be split
-  into one "best" annotation and "alternative" annotations in function
-  \code{annotations2tab}.
+  into one \dQuote{best} annotation and \dQuote{alternative} annotations
+  in function \code{annotations2tab}.
 }
 \author{Ron Wehrens}
 \keyword{manip}
