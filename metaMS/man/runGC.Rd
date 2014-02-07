@@ -69,12 +69,11 @@ A list with the following elements:
   \code{\link{getAnnotationMat}}, \code{\link{addRI}}}
 \examples{
 ## analysis of an xset object
-data(GCset)
 data(threeStdsDB) 
 data(FEMsettings)
 settings <- FEMsettings[[3]]
-result.annot <- runGC(xset = GCset, settings = settings, DB = DB)
 \dontrun{
+result.annot <- runGC(xset = GCset, settings = settings, DB = DB)
 ## to start directly from the CDF files and include peak picking in the
 ## pipeline, simply provide the "files" argument rather than the "xset" argument
 if (require(metaMSdata)) {
@@ -90,6 +89,8 @@ if (require(metaMSdata)) {
   ## now 15 patterns are found consistently across the samples,
   ## including the three standards
 }
+data(GCresults) ## pre-compiled results
+names(result.annot)
 }
 
 }
