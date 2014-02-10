@@ -1,0 +1,30 @@
+Version 0.99.1: changes w.r.t. 0.99.0
+- nSlaves now is an argument for functions runGC, runLC and
+peakDetection, rather than a setting. Done, the field is also taken out
+from the FEMsettings data object.
+- printString and friends no longer use "cat" but rather "message". Done.
+- explicit export of functions that can / should be called by metaMS
+users in the NAMESPACE file. Done.
+- reduced the number of packages in the "Depends" field in
+DESCRIPTION: "Rcpp" is only included because otherwise warnings were
+seen during the building and installation of the package - not quite
+clear why. Issue also has appeared for other packages (e.g. Risa).
+- removed the "Enhances" field in DESCRIPTION since it did not seem
+appropriate. Done.
+- CITATION added to the inst directory. Done.
+- NEWS added to the inst directory. This file: done.
+
+Still do to:
+- during building the package R complains that the methods package is
+used but not declared. "Error" from xcms? CAMERA? another package?
+- to improve speed of installation, checking and vignette building all
+intermediate results needed to illustrate certain functionality are
+precomputed and saved in an RData file. Vignettes and examples are
+changed accordingly. GC vignette finishes within 15 seconds, examples
+even faster. LC still to do.
+- add S4 class for settings, put the FEMsettings in this format, and
+remove the old FEMsettigns object. File metaMSsettings.R has been
+created; now we need to give it a manual page that shows how the three
+(four, if we include the orbitrap settings) sets of settings are
+created.
+- add tests - see Laurent comments on Unit Testing
