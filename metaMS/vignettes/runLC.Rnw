@@ -126,14 +126,21 @@ FEMsettings$Synapt.QTOF.RP$DBconstruction$minfeat  <- 2
 @
 
 The database is constructed by using the\code{createSTDdbLC()} function:
-<<>>=
+<<eval = FALSE, echo = TRUE>>=
 LCDBtest <- createSTDdbLC(stdInfo=exptable, 
                           settings = FEMsettings$Synapt.QTOF.RP,
                           polarity = "positive",
                           Ithr = 20)
 @
 The messages on the screen can be used to monitor the progress of the analysis.
-The example database (\code{LCDBtest}) is a list of three elements:
+In practice, the \code{createSTDdbLC} function is all that users need to
+use. 
+
+The example DB is also available as data object \code{LCDBtest} and can be loaded with
+<<>>=
+data(LCDBtest)
+@
+The example database is a list of three elements:
 <<>>=
 names(LCDBtest)
 @
@@ -170,14 +177,21 @@ The implemented annotation strategy can be broken down in the following steps:
 
 To illustrate the procedure consider the results of the annotation of the example data included in \code{metaMSdata} with the \code{LCDBtest} db.
 Here we set a fixed mass tolerance and we use the settings for a Reverse Phase chromatography.
-<<>>=
-results  <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+<<eval = FALSE, echo = TRUE>>=
+LC <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                   DB = LCDBtest$DB)
 @
-As before, the progress of the analysis can be followed from the messages on the screen. A summary of the results of the annotation can be found in the \code{Annotation} element of \code{results}:
+The progress of the analysis can be followed from the messages on the screen. As before, the results from this vignette are available
+in data object \code{LCresults} -- this is used here to demonstrate the structure of the output without having to create it on the
+fly, which simply takes too much time.
+<<>>=
+data(LCresults)
+@
+
+A summary of the results of the annotation can be found in the \code{Annotation} element of \code{LCresults}:
 
 <<>>=
-head(results$Annotation$annotation.table)
+head(LCresults$Annotation$annotation.table)
 @
 This dataframe contains the complete results of the annotation. 
 \begin{itemize}
@@ -192,24 +206,24 @@ This dataframe contains the complete results of the annotation.
 \end{itemize}
 
 <<>>=
-results$Annotation$compounds
-results$Annotation$ChemSpiderIDs
+LCresults$Annotation$compounds
+LCresults$Annotation$ChemSpiderIDs
 @
 These are the list of standards found in the peaklist.
 
 <<>>=
-results$Annotation$multiple.annotations
+LCresults$Annotation$multiple.annotations
 @
 This is the list of features which show multiple annotations
 
 <<>>=
-results$Annotation$ann.features
+LCresults$Annotation$ann.features
 @
 The list of the features with annotation.
 
 Inside the results,the outputs of the annotation are also included in a more compact form as part of the peak table in the \code{ChemSpiderID} and \code{compound} columns:
 <<>>=
-head(results$PeakTable)
+head(LCresults$PeakTable)
 @
 
 
