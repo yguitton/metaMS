@@ -31,10 +31,16 @@ metabolomics". Rapid Communications in Mass Spectrometry, 27(21), 2425
 
 \author{Pietro Franceschi}
 \examples{
+
+
+## <--------------    direct use of the error function     -------------- >
+## load the Synapt-QTOF error function
 data(errf)
 
+## predict the mass error in ppm
 newdata <- data.frame(M = c(105, 131, 157), logI = c(1, .5, 1.4))
 predict(errf, newdata) ## mass error in ppm
+
 
 ## <--------------    create a dummy error function     -------------- >
 ## dataset to evaluate it: 
@@ -50,31 +56,25 @@ MErr.data <- data.frame("M" = seq(1,500,2),
 ## create the linear model
 dummy.model <- lm(err~M+logI, data = MErr.data)
 
-if (require(metaMSdata)) {
-  
-  ## get the path 
-  cdfpath <- system.file("CDF_LC", package = "metaMSdata")
-  
-  ## files 
-  files <- list.files(cdfpath, "CDF", full.names=TRUE)
-  
-  
-  ## load the settings for the analysis
-  data(FEMsettings)
-  
-  ## load the annotation DB
-  data(LCDBtest)
-  
-  ## Run the analysis with an adaptive mass tolerance 
-  \dontrun{
-  result.adaptive.dummy <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
+## <--------------    Use this for the annotation     -------------- >
+
+## load the example xcmsSet
+data(LCxset)
+
+## Run the analysis with an adaptive mass tolerance 
+\dontrun{
+result.adaptive.dummy <- runLC(xset = LCxset, settings = FEMsettings$Synapt.QTOF.RP, 
                                  DB = LCDBtest$DB, errf = dummy.model)
-  }
-  
-  ## <-----------    Use the Synapt Q-TOF error function     ----------- >
-  data(errf)
-  result.adaptive  <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                            DB = LCDBtest$DB, errf = errf)
 }
+
+## <-----------    Use the Synapt Q-TOF error function     ----------- >
+## load the Synapt-QTOF error function
+data(errf)
+
+\dontrun{
+result.adaptive  <- runLC(xset = LCxset, settings = FEMsettings$Synapt.QTOF.RP, 
+                            DB = LCDBtest$DB, errf = errf)
+                            }
+
 }
 \keyword{datasets}

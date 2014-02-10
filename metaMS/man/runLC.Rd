@@ -78,6 +78,28 @@ runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
 }
 \author{Pietro Franceschi}
 \examples{
+
+## load the settings for the analysis
+  data(FEMsettings)
+  
+## load the annotation DB
+  data(LCDBtest)
+
+## load the Synapt Q-TOF error function
+ data(errf)
+
+## load the example xcmsSet
+data(LCxset)
+
+\dontrun{
+results.xset  <- runLC(xset = LCxset, settings = FEMsettings$Synapt.QTOF.RP, 
+                        DB = LCDBtest$DB)
+}
+
+
+## to start directly from the CDF files and include peak picking in the
+## pipeline, simply provide the "files" argument rather than the "xset" argument
+
 if (require(metaMSdata)) {
   
   ## get the path 
@@ -85,16 +107,10 @@ if (require(metaMSdata)) {
   
   ## files 
   files <- list.files(cdfpath, "CDF", full.names=TRUE)
-  
-  
-  ## load the settings for the analysis
-  data(FEMsettings)
-  
-  ## load the annotation DB
-  data(LCDBtest)
     
   ## <-------------    Use the Synapt Q-TOF error function     -------------- >
-  data(errf)
+ 
+  \dontrun{
   result.adaptive <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                            DB = LCDBtest$DB, errf = errf)
   
@@ -102,8 +118,8 @@ if (require(metaMSdata)) {
   ## <--------    Run the analysis with a fixed mass tolerance      --------- >
   result.fixed <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
                         DB = LCDBtest$DB)
-                  
-                 
+            
+}            
 }
 }
 
