@@ -36,9 +36,18 @@
 \maketitle
 
 \section{Introduction}
-\pkg{metaMS} is designed to perform the analysis of LC-MS and GC-MSbased metabolomics assays.
-For LC-MS data, its major function \code{runLC()} is a wrapper around the functions and classes of {\bf xcms} and {\bf CAMERA} and it is designed to process a series of data files producing a peak table with the intensity of each feature - an mz,rt couple -  in each one of the samples.
-The functions and classes of \pkg{xcms} and \pkg{CAMERA} are used to perform the peak picking, grouping and retention correction, peak filling, and CAMERA annotation. The parameters required at each step are collected into a list of settings which is passed as an argument to \code{runLC}. To illustrate the structure of this list an example is included and described in the package:
+\pkg{metaMS} is designed to perform the analysis of LC-MS and
+GC-MSbased metabolomics assays. For LC-MS data, its major function
+\code{runLC()} is a wrapper around the functions and classes of {\bf
+  xcms} and {\bf CAMERA} and it is designed to process a series of
+data files producing a peak table with the intensity of each feature -
+an mz,rt couple -  in each one of the samples. The functions and
+classes of \pkg{xcms} and \pkg{CAMERA} are used to perform the peak
+picking, grouping and retention correction, peak filling, and CAMERA
+annotation. The parameters required at each step are collected into a
+list of settings which is passed as an argument to \code{runLC}. To
+illustrate the structure of this list an example is included and
+described in the package:
 \begin{Schunk}
 \begin{Sinput}
 library(metaMS)
@@ -46,11 +55,28 @@ data(FEMsettings)
 ?FEMsettings
 \end{Sinput}
 \end{Schunk}
-\pkg{metaMS} implements a strategy to generate an annotation database by processing the injections of a list chemical standards, which have been analyzed under the same chromatographic conditions as the samples. The injections of the standards are processed by \pkg{xcms} and \pkg{CAMERA} and the peak lists are matched against a manually validated reference table to identify the set of features associated to each compound. These features are then organized in the database used for the annotation which is included in the output of \code{runLC()}. In the following, database generation and feature annotation are described in details, while for the discussion of \pkg{xcms} and \pkg{CAMERA} the reader should refer to their specific documentation.
+\pkg{metaMS} implements a strategy to generate an annotation database
+by processing the injections of a list chemical standards, which have
+been analyzed under the same chromatographic conditions as the
+samples. The injections of the standards are processed by \pkg{xcms}
+and \pkg{CAMERA} and the peak lists are matched against a manually
+validated reference table to identify the set of features associated
+to each compound. These features are then organized in the database
+used for the annotation which is included in the output of
+\code{runLC()}. In the following, database generation and feature
+annotation are described in details, while for the discussion of
+\pkg{xcms} and \pkg{CAMERA} the reader should refer to their specific
+documentation. 
 
 \section{Example Data}
-A part of the data used to illustrate database creation and feature annotation is included in \code{metaMS}, while the more heavy experimental data have been included in the \pkg{metaMSdata} package. For LC-MS  \pkg{metaMSdata} contains four CDF files referring to the analysis of a mixture of chemical standards. These files have been converted to the open source CDF format by using proprietary vendor software (Waters, Databridge). 
-The system specific position of the example files can be determined as follows:
+A part of the data used to illustrate database creation and feature
+annotation is included in \code{metaMS}, while the more heavy
+experimental data have been included in the \pkg{metaMSdata}
+package. For LC-MS  \pkg{metaMSdata} contains four CDF files referring
+to the analysis of a mixture of chemical standards. These files have
+been converted to the open source CDF format by using proprietary
+vendor software (Waters, Databridge). The system specific position of
+the example files can be determined as follows: 
 <<>>=
 library(metaMSdata)
 cdfpath <- system.file("CDF_LC", package = "metaMSdata")
@@ -58,8 +84,10 @@ files <- list.files(cdfpath, "CDF", full.names=TRUE)
 files
 @
 
-The construction of the database is performed on the basis of a manually validated reference table which contains the key analytical information for each standard. The example table is part of \pkg{metaMS}: 
-
+The construction of the database is performed on the basis of a
+manually validated reference table which contains the key analytical
+information for each standard. The example table is part of
+\pkg{metaMS}:
 <<>>=
 library(metaMS)
 data(exptable)
@@ -70,54 +98,98 @@ head(exptable)
 @
 
 \begin{itemize}
-\item \code{ChemSpiderID}: an unique numeric identifier for a chemical standard from the freeware ChemSpider database (http://www.chemspider.com).
-\item \code{compound}: a string with the human readable name of the standard. This name is used to produce the output of the annotation.
-\item \code{formula}: the chemical formula of the compound. This field is included in view of future developments.
-\item \code{M.ref}: the theoretical mass for the observed ion. This field is included in view of future developments.
-\item \code{mz.observed}: the manually validated {\it m/z} value which identifies the ``main" ion for this specific compound. In the majority of cases, one would choose the most most intense ion of each compound. To avoid wrong assignments the best practice should be to ask to the analyst to ``identify" the nature of the ion (protonated/deprotonated, adduct, dimer, common fragment, ...).  
-\item \code{RTman}: the manually validated retention time for the standard (in minutes).
-\item \code{stdFile}: the complete path which points to the raw file of the injection of the standard.
+\item \code{ChemSpiderID}: an unique numeric identifier for a chemical
+  standard from the freeware ChemSpider database
+  (http://www.chemspider.com). 
+\item \code{compound}: a string with the human readable name of the
+  standard. This name is used to produce the output of the
+  annotation. 
+\item \code{formula}: the chemical formula of the compound. This field
+  is included in view of future developments. 
+\item \code{M.ref}: the theoretical mass for the observed ion. This
+  field is included in view of future developments. 
+\item \code{mz.observed}: the manually validated {\it m/z} value which
+  identifies the ``main" ion for this specific compound. In the
+  majority of cases, one would choose the most most intense ion of
+  each compound. To avoid wrong assignments the best practice should
+  be to ask to the analyst to ``identify" the nature of the ion
+  (protonated/deprotonated, adduct, dimer, common fragment, ...).   
+\item \code{RTman}: the manually validated retention time for the
+  standard (in minutes). 
+\item \code{stdFile}: the complete path which points to the raw file
+  of the injection of the standard. 
 \end{itemize}
 
 
 
 \section{Database Construction}
-In order to create the database, the \code{stdFile} column in \code{exptable} has to be updated with the complete path pointing to the correct CDF file:
+In order to create the database, the \code{stdFile} column in
+\code{exptable} has to be updated with the complete path pointing to
+the correct CDF file: 
 <<>>=
-exptable$stdFile <- sapply(exptable$stdFile, function(x){
-    out <- files[grep(x,files)]
-  })
-
+exptable$stdFile <- sapply(exptable$stdFile, grep, files, value = TRUE)
 exptable$stdFile
 @
-The annotation database is constructed on the basis of \code{exptable} with the following workflow:
+The annotation database is constructed on the basis of \code{exptable}
+with the following workflow: 
 \begin{enumerate}
-\item {\sc Peak picking}. The injections of the standards are processed to produce a feature list by using the parameters specified in the \code{PeakPicking} element of the \code{settings} list. For each feature, the maximum value of the signal on the chromatographic peak (\code{maxo}) is extracted. For a detailed description of the single settings refer to the package documentation.
+\item {\sc Peak picking}. The injections of the standards are
+  processed to produce a feature list by using the parameters
+  specified in the \code{PeakPicking} element of the \code{settings}
+  list. For each feature, the maximum value of the signal on the
+  chromatographic peak (\code{maxo}) is extracted. For a detailed
+  description of the single settings refer to the package
+  documentation. 
 <<>>=
 data(FEMsettings)
 FEMsettings$Synapt.QTOF.RP$PeakPicking
 @
-\item {\sc Feature grouping}. \code{CAMERA} with its default settings is used to group the features in pseudospectra and annotate them looking for isotopes and common adducts. These pseudospectra can be therefore considered as mass spectrometric fingerprints of compounds eluting at a specific retention time. It is important to remember that co-eluting compounds are likely to be grouped together, in particular where chromatographic separation is not optimal (e.g. at the extreme ends of a chromatographic run). 
-\item {\sc Ref. Table Matching}. The full list of feature is matched with \code{exptable} looking for features compatible with \code{M.ref} and \code{RTman}. The {\it m/z} and retention time tolerances are fixed and specified in the \code{DBconstruction} element of the \code{settings} list. 
+\item {\sc Feature grouping}. \code{CAMERA} with its default settings
+  is used to group the features in pseudospectra and annotate them
+  looking for isotopes and common adducts. These pseudospectra can be
+  therefore considered as mass spectrometric fingerprints of compounds
+  eluting at a specific retention time. It is important to remember
+  that co-eluting compounds are likely to be grouped together, in
+  particular where chromatographic separation is not optimal (e.g. at
+  the extreme ends of a chromatographic run).  
+\item {\sc Ref. Table Matching}. The full list of feature is matched
+  with \code{exptable} looking for features compatible with
+  \code{M.ref} and \code{RTman}. The {\it m/z} and retention time
+  tolerances are fixed and specified in the \code{DBconstruction}
+  element of the \code{settings} list.  
 <<>>=
 FEMsettings$Synapt.QTOF.RP$DBconstruction
 @
-The retention time tolerance is specified in minutes, the {\it m/z} one in dalton. The \code{minfeat} parameter is used to prevent the inclusion in the database of standards with a very low number of associated features. This unfortunate situation can happen, for example, when the signal is too low either because a chemical is not efficiently ionized or because it has been injected with low concentration. The absence of a good matching for a specific compound is notified on the output on the screen.
-\item {\sc Database Creation} The features assigned to each standard are collected into a dataframe which can be used for annotation. At this stage an additional filter on the feature intensities is applied: only the ones with an intensity bigger than \code{Ithr} are kept. This is done to avoid inserting in the DB low intensity features coming from the noise.
+The retention time tolerance is specified in minutes, the {\it m/z}
+one in dalton. The \code{minfeat} parameter is used to prevent the
+inclusion in the database of standards with a very low number of
+associated features. This unfortunate situation can happen, for
+example, when the signal is too low either because a chemical is not
+efficiently ionized or because it has been injected with low
+concentration. The absence of a good matching for a specific compound
+is notified on the output on the screen. 
+\item {\sc Database Creation} The features assigned to each standard
+  are collected into a dataframe which can be used for annotation. At
+  this stage an additional filter on the feature intensities is
+  applied: only the ones with an intensity bigger than \code{Ithr} are
+  kept. This is done to avoid inserting in the DB low intensity
+  features coming from the noise. 
 \end{enumerate}
 
-Consider as an example the construction of the database included in the \code{metaMS} package. It contains four chemical standards:
+Consider as an example the construction of the database included in
+the \code{metaMS} package. It contains four chemical standards: 
 <<>>=
 exptable$compound
 @
-The reference table has been already described. The data can be loaded as follows
+The reference table has been already described. The data can be loaded
+as follows:
 <<>>=
 library(metaMSdata)
 cdfpath <- system.file("CDF_LC", package = "metaMSdata")
 files <- list.files(cdfpath, "CDF", full.names=TRUE)
 exptable$stdFile <- sapply(exptable$stdFile,
-            function(x)
-            files[grep(x,files)])
+                           function(x)
+                           files[grep(x,files)])
 @
 
 For this example the \code{minfeat} parameter is set to 2:

@@ -74,6 +74,7 @@ generateStdDBGC(totalXset, settings, extDB = NULL, manualDB = NULL,
 \author{Ron Wehrens}
 \seealso{\code{\link{processStandards}}, \code{\link{generateStdDBGC}}}
 \examples{
+  \dontrun{
 if (require(metaMSdata)) {
   ## Sitation A: create a DB of standards.
   ## first tell the system where to look
@@ -82,24 +83,23 @@ if (require(metaMSdata)) {
     rep(list.files(system.file("CDF_GC", package = "metaMSdata"),
                    full.names = TRUE)[3], 3)
 
-  data(FEMsettings)
+  data(FEMsettings)    ## provides a.o. TSQXLS.GC, the GC settings file
   data(threeStdsNIST)  ## provides object smallDB, excerpt from NIST DB
 
-  \dontrun{
-  DB <- createSTDdbGC(stdInfo, FEMsettings[[3]], extDB = smallDB)
+  DB <- createSTDdbGC(stdInfo, TSQXLS.GC, extDB = smallDB)
   }
   ## saved in "threeStdsDB.RData" in the data directory of the metaMS
   ## package
 
   ## Situation B: do not check the data with an external database. Now
   ## the fields bestDBmatch and validation will be absent.
-  DB <- createSTDdbGC(stdInfo, FEMsettings[[3]], extDB = NULL)
+  DB <- createSTDdbGC(stdInfo, TSQXLS.GC, extDB = NULL)
 
   ## Situation C: create a DB directly from an msp file (manual DB)
   manual.fname <- list.files(system.file("CDF_GC", package = "metaMSdata"),
                              pattern = "msp", full.names = TRUE)
   manual <- read.msp(manual.fname)
-  DB <- createSTDdbGC(stdInfo = NULL, settings = FEMsettings[[3]],
+  DB <- createSTDdbGC(stdInfo = NULL, settings = TSQXLS.GC,
                       manualDB = manual)
 }
 }

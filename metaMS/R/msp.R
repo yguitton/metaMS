@@ -251,7 +251,7 @@ to.msp <- function(object, file = NULL,
                    settings = NULL, ndigit = 0, minfeat, minintens,
                    intensity = c("maxo", "into"), secs2mins = TRUE) {
   if (!is.null(settings)) {
-    intensity <- settings$intensity.measure
+    intensity <- settings$intensityMeasure
     minfeat <- settings$minfeat
     minintens <- settings$minintens
   } else {

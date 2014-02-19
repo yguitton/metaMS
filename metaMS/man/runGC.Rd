@@ -73,9 +73,9 @@ A list with the following elements:
 ## analysis of an xset object
 data(threeStdsDB) 
 data(FEMsettings)
-settings <- FEMsettings[[3]]
+
 \dontrun{
-result.annot <- runGC(xset = GCset, settings = settings, DB = DB)
+result.annot <- runGC(xset = GCset, settings = TSQXLS.GC, DB = DB)
 ## to start directly from the CDF files and include peak picking in the
 ## pipeline, simply provide the "files" argument rather than the "xset" argument
 if (require(metaMSdata)) {
@@ -84,10 +84,12 @@ if (require(metaMSdata)) {
                          full.names = TRUE, ignore.case = TRUE)
 
   ## no annotation database
-  result.noannot <- runGC(files = cdffiles, settings = settings)
+  result.noannot <- runGC(files = cdffiles, settings = TSQXLS.GC)
   ## only three patterns consistently found, one of which is a standard
-  settings$betweenSamples$simthresh <- .8 ## more lenient settings
-  result.noannot2 <- runGC(files = cdffiles, settings = settings)
+
+  ## more lenient settings
+  metaSetting(TSQXLS.GC, "betweenSamples.simthresh") <- .8
+  result.noannot2 <- runGC(files = cdffiles, settings = TSQXLS.GC)
   ## now 15 patterns are found consistently across the samples,
   ## including the three standards
 }

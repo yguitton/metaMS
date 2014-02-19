@@ -28,3 +28,14 @@ created; now we need to give it a manual page that shows how the three
 (four, if we include the orbitrap settings) sets of settings are
 created.
 - add tests - see Laurent comments on Unit Testing
+
+
+
+Changes of 0.99.2 w.r.t 0.99.1
+- added import(methods) and used the devel version of mzR to get rid
+  of warnings during building and checking 
+- Added S4 class for settings, also export class and methods in
+  NAMESPACE. Also included FEMsettings objects as S4 objects and
+  changed where necessary man pages, vignettes and documentation.
+  Also slots instName and chrom are now accessible through the
+  accessor function, as are the individual slots.
