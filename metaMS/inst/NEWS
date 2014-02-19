@@ -33,7 +33,9 @@ created.
 
 Changes of 0.99.2 w.r.t 0.99.1
 - added import(methods) and used the devel version of mzR to get rid
-  of warnings during building and checking 
+  of warnings during building and checking - nevertheless I still get
+Warning: class "C++Object" is defined (with package slot ‘Rcpp’) but no metadata object found to revise subclass information---not exported?  Making a copy in package ‘.GlobalEnv’
+  while building the package...
 - Added S4 class for settings, also export class and methods in
   NAMESPACE. Also included FEMsettings objects as S4 objects and
   changed where necessary man pages, vignettes and documentation.
