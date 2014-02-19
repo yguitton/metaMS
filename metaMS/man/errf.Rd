@@ -31,8 +31,6 @@ metabolomics". Rapid Communications in Mass Spectrometry, 27(21), 2425
 
 \author{Pietro Franceschi}
 \examples{
-
-
 ## <--------------    direct use of the error function     -------------- >
 ## load the Synapt-QTOF error function
 data(errf)
@@ -56,25 +54,26 @@ MErr.data <- data.frame("M" = seq(1,500,2),
 ## create the linear model
 dummy.model <- lm(err~M+logI, data = MErr.data)
 
+\dontrun{
 ## <--------------    Use this for the annotation     -------------- >
-
 ## load the example xcmsSet
 data(LCxset)
+data(FEMsettings)
 
 ## Run the analysis with an adaptive mass tolerance 
-\dontrun{
-result.adaptive.dummy <- runLC(xset = LCxset, settings = FEMsettings$Synapt.QTOF.RP, 
-                                 DB = LCDBtest$DB, errf = dummy.model)
-}
+result.adaptive.dummy <- runLC(xset = LCxset,
+                               settings = Synapt.RP, 
+                               DB = LCDBtest$DB,
+                               errf = dummy.model)
 
 ## <-----------    Use the Synapt Q-TOF error function     ----------- >
 ## load the Synapt-QTOF error function
 data(errf)
 
-\dontrun{
-result.adaptive  <- runLC(xset = LCxset, settings = FEMsettings$Synapt.QTOF.RP, 
-                            DB = LCDBtest$DB, errf = errf)
-                            }
-
+result.adaptive  <- runLC(xset = LCxset,
+                          settings = Synapt.RP, 
+                          DB = LCDBtest$DB,
+                          errf = errf)
+}
 }
 \keyword{datasets}

@@ -28,23 +28,25 @@ runGC <- function(files,
       stop("Nothing to do. Provide a DB or set findUnknowns to TRUE...")
 
   if (findUnknowns & !is.null(DB) &
-      settings$betweenSamples$timeComparison !=
-      settings$match2DB$timeComparison)
+      metaSettings(settings, "betweenSamples.timeComparison") !=
+      metaSettings(settings, "match2DB.timeComparison"))
       stop("Settings error: choose one value for timeComparison only...")
-
+  
   if (is.null(RIstandards) &
-      ((settings$betweenSamples$timeComparison == "RI" & findUnknowns) |
-       (settings$match2DB$timeComparison == "RI" & !is.null(DB))))
+      ((metaSettings(settings, "betweenSamples.timeComparison") == "RI" &
+                     findUnknowns) |
+       (metaSettings(settings, "match2DB.timeComparison") == "RI" &
+        !is.null(DB))))
       stop("Argument RIstandards is mandatory when using RI for matching")
 
   if (!is.null(RIstandards) & 
-      settings$betweenSamples$timeComparison == "rt" &
-      settings$match2DB$timeComparison == "rt")
+      metaSettings(settings, "betweenSamples.timeComparison") == "rt" &
+      metaSettings(settings, "match2DB.timeComparison" == "rt"))
       printWarning("Warning: argument RIstandards provided, but using retention times for matching")
 
   ## Go!
   printString(paste("Experiment of", nexp, "samples"))
-  printString(paste("Instrument:", settings$instName))
+  printString(paste("Instrument:", metaSettings(settings, "instName")))
   if (length(rtrange) == 2)
       printString(paste("Retention time range:", rtrange[1], "to",
                         rtrange[2], "minutes"))
@@ -63,7 +65,8 @@ runGC <- function(files,
   ## Peak picking and CAMERA
   if (!missing(files)) {
     printString("Performing peak picking")
-    xset.l  <-  peakDetection(files, settings$PeakPicking,
+    xset.l  <-  peakDetection(files,
+                              metaSettings(settings, "PeakPicking"),
                               rtrange = rtrange, convert2list = TRUE,
                               nSlaves = nSlaves)
   } else {
@@ -72,14 +75,14 @@ runGC <- function(files,
   }
 
   allSamples <- lapply(xset.l, runCAMERA,
-                       chrom = settings$chrom,
-                       settings = settings$CAMERA)
+                       chrom = metaSettings(settings, "chrom"),
+                       settings = metaSettings(settings, "CAMERA"))
   
   ## convert into msp format (a nested list)
   allSamples.msp <- lapply(allSamples,
                            to.msp,
                            file = NULL,
-                           settings = settings$DBconstruction)
+                           settings = metaSettings(settings, "DBconstruction"))
   names(allSamples.msp) <- sapply(allSamples,
                                   function(x) sampnames(x@xcmsSet))
   if (!is.null(RIstandards))
@@ -100,17 +103,20 @@ runGC <- function(files,
   ## remove Artefacts
   if (!is.null(DB)) {
     if (removeArtefacts) {
-      printString(paste("Removing artefacts (",
-                        paste(settings$matchIrrelevants$irrelevantClasses,
-                              collapse = ", "), ")", sep = ""))
+      printString(
+          paste("Removing artefacts (",
+                paste(metaSettings(settings,
+                                   "matchIrrelevants.irrelevantClasses"),
+                      collapse = ", "), ")", sep = ""))
       irrel.idx <- which(sapply(DB, function(x) x$Class) %in%
-                         settings$matchIrrelevants$irrelevantClasses)
+                         metaSettings(settings,
+                                      "matchIrrelevants.irrelevantClasses"))
       if (length(irrel.idx) > 0) {
         subDB <- DB[irrel.idx]
         junkPatterns <-
             lapply(matchSamples2DB(allSamples.msp.scaled,
                                    subDB,
-                                   settings$matchIrrelevants,
+                                   metaSettings(settings, "matchIrrelevants"),
                                    quick = TRUE)$annotations,
                    function(x) x[,"pattern"])
         
@@ -147,7 +153,7 @@ runGC <- function(files,
     allSam.matches <-
         matchSamples2DB(allSamples.msp,
                         DB = DB,
-                        settings = settings$match2DB,
+                        settings = metaSettings(settings, "match2DB"),
                         quick = FALSE)
   } else {
     allSam.matches <- NULL
@@ -159,7 +165,8 @@ runGC <- function(files,
         matchSamples2Samples(allSamples.msp.scaled,
                              allSamples.msp,
                              annotations = allSam.matches$annotations,
-                             settings = settings$betweenSamples)
+                             settings = metaSettings(settings,
+                                 "betweenSamples"))
   }
   
   printString("Formatting results")

@@ -72,16 +72,16 @@ if (require(metaMSdata)) {
            function(x)
            files[grep(x,files)])
   
+  \dontrun{
   ## load the settings for the analysis
   data(FEMsettings)
   
   ## set the minimum number of features to 2
-  FEMsettings$Synapt.QTOF.RP$DBconstruction$minfeat  <- 2
+  metaSettings(Synapt.RP, "DBconstruction.minfeat")  <- 2
   
   ## create the DB
-  \dontrun{
   LCDBtest <- createSTDdbLC(stdInfo=exptable, 
-                            settings = FEMsettings$Synapt.QTOF.RP,
+                            settings = Synapt.RP,
                             polarity = "positive",
                             Ithr = 20)
   }                 

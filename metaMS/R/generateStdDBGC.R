@@ -30,7 +30,7 @@ generateStdDBGC <- function(totalXset, settings,
     ## DB to the appropriate value
     for (i in 1:length(DBobj))
         colnames(DBobj[[i]]$pspectrum)[2] <-
-            standardSettings$intensity.measure
+            standardSettings$intensityMeasure
     
     ## for those entries in the DB that do not have a date field: add it
     nodate <- which(sapply(DBobj, function(x) is.null(x$date)))
