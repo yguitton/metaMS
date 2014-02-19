@@ -2,8 +2,6 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{metaMSsettings-class}
-\alias{metaSetting<-,metaMSsettings-method}
-\alias{metaSetting,metaMSsettings-method}
 \alias{show,metaMSsettings-method}
 
 \title{Class \code{"metaMSsettings"}}
@@ -39,9 +37,9 @@
       and \code{extra} as a function of the number of samples. LC only.}
     \item{\code{CAMERA}:}{Object of class \code{"list"}: The parameters
       for CAMERA.} 
-    \item{\code{match2DB.rttol}:}{Object of class \code{"numeric"}: the
-      tolerance in retention time to match each feature with the entry
-      in the DB. LC only.} 
+    \item{\code{match2DB.rtdiff}:}{Object of class \code{"numeric"}: the
+      maximal difference in retention time to match each feature with the entry
+      in the DB.} 
     \item{\code{match2DB.minfeat}:}{Object of class \code{"numeric"}:
       for LC, the minimal number of matching features within a retention time
       interval of width \code{rtval} before we speak of a hit. For GC,
@@ -58,8 +56,6 @@
       the minimal match factor to speak of a hit. GC only.}
     \item{\code{match2DB.timeComparison}:}{Object of class
       \code{"character"}: either "rt" or "RI". GC only.}
-    \item{\code{match2DB.rtdiff}:}{Object of class \code{"numeric"}:
-      maximal retention time difference with DB entry (GC only).}
     \item{\code{match2DB.RIdiff}:}{Object of class \code{"numeric"}:
       maximal retention index difference with DB entry (GC only). }
     \item{\code{DBconstruction.minfeat}:}{Object of class

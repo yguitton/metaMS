@@ -45,16 +45,14 @@ an mz,rt couple -  in each one of the samples. The functions and
 classes of \pkg{xcms} and \pkg{CAMERA} are used to perform the peak
 picking, grouping and retention correction, peak filling, and CAMERA
 annotation. The parameters required at each step are collected into a
-list of settings which is passed as an argument to \code{runLC}. To
-illustrate the structure of this list an example is included and
-described in the package:
-\begin{Schunk}
-\begin{Sinput}
+settings object which is passed as an argument to \code{runLC}. Three
+examples, fine-tuned for instruments in our own laboratory, are included:
+<<>>=
 library(metaMS)
 data(FEMsettings)
-?FEMsettings
-\end{Sinput}
-\end{Schunk}
+Synapt.RP
+@ 
+Consult the manual pages for more details. Package
 \pkg{metaMS} implements a strategy to generate an annotation database
 by processing the injections of a list chemical standards, which have
 been analyzed under the same chromatographic conditions as the
@@ -135,14 +133,13 @@ with the following workflow:
 \begin{enumerate}
 \item {\sc Peak picking}. The injections of the standards are
   processed to produce a feature list by using the parameters
-  specified in the \code{PeakPicking} element of the \code{settings}
+  specified in the \code{PeakPicking} slot of the \code{settings}
   list. For each feature, the maximum value of the signal on the
   chromatographic peak (\code{maxo}) is extracted. For a detailed
   description of the single settings refer to the package
   documentation. 
 <<>>=
-data(FEMsettings)
-FEMsettings$Synapt.QTOF.RP$PeakPicking
+metaSetting(Synapt.RP, "PeakPicking")
 @
 \item {\sc Feature grouping}. \code{CAMERA} with its default settings
   is used to group the features in pseudospectra and annotate them
@@ -158,7 +155,7 @@ FEMsettings$Synapt.QTOF.RP$PeakPicking
   tolerances are fixed and specified in the \code{DBconstruction}
   element of the \code{settings} list.  
 <<>>=
-FEMsettings$Synapt.QTOF.RP$DBconstruction
+metaSetting(Synapt.RP, "DBconstruction")
 @
 The retention time tolerance is specified in minutes, the {\it m/z}
 one in dalton. The \code{minfeat} parameter is used to prevent the
@@ -194,13 +191,13 @@ exptable$stdFile <- sapply(exptable$stdFile,
 
 For this example the \code{minfeat} parameter is set to 2:
 <<>>=
-FEMsettings$Synapt.QTOF.RP$DBconstruction$minfeat  <- 2
+metaSetting(Synapt.RP, "DBconstruction.minfeat")  <- 2
 @
 
-The database is constructed by using the\code{createSTDdbLC()} function:
+The database is constructed by using the\code{createSTDdbLC} function:
 <<eval = FALSE, echo = TRUE>>=
 LCDBtest <- createSTDdbLC(stdInfo=exptable, 
-                          settings = FEMsettings$Synapt.QTOF.RP,
+                          settings = Synapt.RP,
                           polarity = "positive",
                           Ithr = 20)
 @
@@ -208,7 +205,8 @@ The messages on the screen can be used to monitor the progress of the analysis.
 In practice, the \code{createSTDdbLC} function is all that users need to
 use. 
 
-The example DB is also available as data object \code{LCDBtest} and can be loaded with
+The example DB is also available as data object \code{LCDBtest} and
+can be loaded with
 <<>>=
 data(LCDBtest)
 @
@@ -228,53 +226,121 @@ The third is the true database:
 <<>>=
 head(LCDBtest$DB)
 @
-Each line of this \code{data.frame} is a feature detected at \code{mz} and \code{rt} with an intensity \code{maxo}. The output of \pkg{CAMERA} annotation are presented in the \code{adduct} and \code{isotopes} fields. \code{ChemSpiderID} and \code{compound} identify the compound which a feature is associated to. The \code{validate} column is set to \code{automatic} to indicate that the feature has been assigned to the neutral by using an automatic algorithm, without performing any manual validation of the results.
+Each line of this \code{data.frame} is a feature detected at \code{mz}
+and \code{rt} with an intensity \code{maxo}. The output of
+\pkg{CAMERA} annotation are presented in the \code{adduct} and
+\code{isotopes} fields. \code{ChemSpiderID} and \code{compound}
+identify the compound which a feature is associated to. The
+\code{validate} column is set to \code{automatic} to indicate that the
+feature has been assigned to the neutral by using an automatic
+algorithm, without performing any manual validation of the results.
 
-It is interesting to see how many features are included in the DB and their association to the four chemical standards included in the reference table.
+It is interesting to see how many features are included in the DB and
+their association to the four chemical standards included in the
+reference table:
 <<>>=
 table(LCDBtest$DB$compound)
 @
 
 
 \section{Annotation}
-In the previous section, we have illustrated how to create a database from a series of injections of standards. This DB can then be used to annotate the results of the analysis of a complete metabolomic experiment by passing it to the main \code{runLC} function. It is important to remember that this type of annotation relies very much on the retention time, so it gives its best results when the standards and the samples have been analyzed under the same chromatographic and mass-spectrometric conditions. 
+In the previous section, we have illustrated how to create a database
+from a series of injections of standards. This DB can then be used to
+annotate the results of the analysis of a complete metabolomic
+experiment by passing it to the main \code{runLC} function. It is
+important to remember that this type of annotation relies very much on
+the retention time, so it gives its best results when the standards
+and the samples have been analyzed under the same chromatographic and
+mass-spectrometric conditions.  
 
-Considering that in LC-MS experiments co-elution of different compounds is the rule rather than the exception, the annotation is performed feature-wise (each feature is independently matched with the DB) and a subsequent validation step is performed. The idea is to retain annotations only if more than one feature associated to a specific compound is found in the peak list. How many ``validation" features are requested is an adjustable parameter included in the settings (\code{minfeat} element of the settings list). For matching and validation it is necessary to specify mass and {\it m/z} tolerances, accounting for mass and retention time shifts. For retention time the tolerance is fixed and it is specified in the settings. For {\it m/z}, the package implements either a {\it fixed tolerance} or an {\it adaptive tolerance}. The use of an {\it adaptive tolerance} to optimize the results of the annotation for Q-TOF spectrometers has been proposed by the authors in \cite{Shahaf2013}. With this approach, the optimal {\it m/z} tolerance is calculated taking into account the {\it m/z} value for a specific ion and its intensity: these two parameters are indeed affecting the accuracy of this specific class of analyzers. A more detailed description of the approach can be found in the manual pages of the package and in the specific reference.    
+Considering that in LC-MS experiments co-elution of different
+compounds is the rule rather than the exception, the annotation is
+performed feature-wise (each feature is independently matched with the
+DB) and a subsequent validation step is performed. The idea is to
+retain annotations only if more than one feature associated to a
+specific compound is found in the peak list. How many ``validation"
+features are requested is an adjustable parameter included in the
+(\code{minfeat} slot of the settings object). For matching
+and validation it is necessary to specify mass and {\it m/z}
+tolerances, accounting for mass and retention time shifts. For
+retention time the tolerance is fixed and it is specified in the
+settings. For {\it m/z}, the package implements either a {\it fixed
+  tolerance} or an {\it adaptive tolerance}. The use of an {\it
+  adaptive tolerance} to optimize the results of the annotation for
+Q-TOF spectrometers has been proposed by the authors in
+\cite{Shahaf2013}. With this approach, the optimal {\it m/z} tolerance
+is calculated taking into account the {\it m/z} value for a specific
+ion and its intensity: these two parameters are indeed affecting the
+accuracy of this specific class of analyzers. A more detailed
+description of the approach can be found in the manual pages of the
+package and in the specific reference.     
 
 The implemented annotation strategy can be broken down in the following steps:
 \begin{enumerate}
-\item {\sc Feature wise Annotation} Each feature detected by \code{runLC} is matched against the database. If the mass error function is provided, the appropriate {\it m/z} tolerance is calculated, otherwise a fixed tolerance is used (\code{mzwindow}). The retention time tolerance is fixed and should be selected on the bases of the characteristics of each chromatographic method (\code{rttol}). Multiple annotations - i.e. features which are associated to more than one compound - are possible. This outcome does not indicate a problem {\it per se}, but is an inherent drawback of co-elution.
-\item {\sc Annotation Validation} The annotated features are organized in ``pseudospectra" collecting all the experimental features which are assigned to a specific compound. A specific annotation is confirmed only if more than \code{minfeat} features which differ in retention time less than \code{rtval} are present in a pseudospectrum. As a  general rule \code{rtval} should be narrower than \code{rttol}. The latter, indeed, accounts for shifts in retention time between the injection of the standards and the metabolomics experiment under investigation. This time can be rather long, considering that the standards are not commonly re-analyzed each time. On the other hand,\code{rtval} represents the shift between the ions of the same compound within the same batch of injections and therefore it has only to account for the smaller shifts occurring during peak picking and alignment.
+\item {\sc Feature wise Annotation} Each feature detected by
+  \code{runLC} is matched against the database. If the mass error
+  function is provided, the appropriate {\it m/z} tolerance is
+  calculated, otherwise a fixed tolerance is used
+  (\code{mzwindow}). The retention time tolerance is fixed and should
+  be selected on the bases of the characteristics of each
+  chromatographic method (\code{rttol}). Multiple annotations -
+  i.e. features which are associated to more than one compound - are
+  possible. This outcome does not indicate a problem {\it per se}, but
+  is an inherent drawback of co-elution. 
+\item {\sc Annotation Validation} The annotated features are organized
+  in ``pseudospectra" collecting all the experimental features which
+  are assigned to a specific compound. A specific annotation is
+  confirmed only if more than \code{minfeat} features which differ in
+  retention time less than \code{rtval} are present in a
+  pseudospectrum. As a  general rule \code{rtval} should be narrower
+  than \code{rttol}. The latter, indeed, accounts for shifts in
+  retention time between the injection of the standards and the
+  metabolomics experiment under investigation. This time can be rather
+  long, considering that the standards are not commonly re-analyzed
+  each time. On the other hand,\code{rtval} represents the shift
+  between the ions of the same compound within the same batch of
+  injections and therefore it has only to account for the smaller
+  shifts occurring during peak picking and alignment. 
 \end{enumerate}
 
-To illustrate the procedure consider the results of the annotation of the example data included in \code{metaMSdata} with the \code{LCDBtest} db.
-Here we set a fixed mass tolerance and we use the settings for a Reverse Phase chromatography.
+To illustrate the procedure consider the results of the annotation of
+the example data included in \code{metaMSdata} with the
+\code{LCDBtest} db. Here we set a fixed mass tolerance and we use the
+settings for a Reverse Phase chromatography.
 <<eval = FALSE, echo = TRUE>>=
-LC <- runLC(files, settings = FEMsettings$Synapt.QTOF.RP, 
-                  DB = LCDBtest$DB)
+LC <- runLC(files, settings = Synapt.RP, DB = LCDBtest$DB)
 @
-The progress of the analysis can be followed from the messages on the screen. As before, the results from this vignette are available
-in data object \code{LCresults} -- this is used here to demonstrate the structure of the output without having to create it on the
+The progress of the analysis can be followed from the messages on the
+screen. As before, the results from this vignette are available 
+in data object \code{LCresults} -- this is used here to demonstrate
+the structure of the output without having to create it on the 
 fly, which simply takes too much time.
 <<>>=
 data(LCresults)
 @
 
-A summary of the results of the annotation can be found in the \code{Annotation} element of \code{LCresults}:
-
+A summary of the results of the annotation can be found in the
+\code{Annotation} element of \code{LCresults}: 
 <<>>=
 head(LCresults$Annotation$annotation.table)
 @
 This dataframe contains the complete results of the annotation. 
 \begin{itemize}
 \item \code{feature}: the index of the annotated feature in the peak table.
-\item \code{ChemSpiderID}: the Chem Spider ID of the neutral the feature is associated to.
+\item \code{ChemSpiderID}: the Chem Spider ID of the neutral the
+  feature is associated to. 
 \item \code{dbposition}: the position inside the DB of the matching entry.
-\item \code{mz,rt,I}: mass, retention time and intensity of the feature.
+\item \code{mz, rt, I}: mass, retention time and intensity of the feature.
 \item \code{compound}: the (human) readable name of the standard.
-\item \code{db\_mz,db\_rt,db\_I,db\_ann}: information relative to the corresponding DB entry.
+\item \code{db\_mz, db\_rt, db\_I, db\_ann}: information relative to
+  the corresponding DB entry. 
 \item \code{mz.err}: the {\it m/z} error used in the matching.
-\item \code{clid}: the results of a hierarchical clustering of the retention times of the annotated features. This can be used to identify the presence of sub groupings of the features which are assigned to the same standard, thus suggesting the presence of co-eluting isomers/compounds. The HC tree is cut at a hight of \code{rtval}.
+\item \code{clid}: the results of a hierarchical clustering of the
+  retention times of the annotated features. This can be used to
+  identify the presence of sub groupings of the features which are
+  assigned to the same standard, thus suggesting the presence of
+  co-eluting isomers/compounds. The HC tree is cut at a hight of
+  \code{rtval}.
 \end{itemize}
 
 <<>>=
@@ -293,7 +359,9 @@ LCresults$Annotation$ann.features
 @
 The list of the features with annotation.
 
-Inside the results,the outputs of the annotation are also included in a more compact form as part of the peak table in the \code{ChemSpiderID} and \code{compound} columns:
+Inside the results,the outputs of the annotation are also included in
+a more compact form as part of the peak table in the
+\code{ChemSpiderID} and \code{compound} columns: 
 <<>>=
 head(LCresults$PeakTable)
 @

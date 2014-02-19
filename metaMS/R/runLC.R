@@ -21,7 +21,7 @@ runLC <- function(files,
   }
     
   printString(paste("Experiment of", nexp, "samples"))
-  printString(paste("Instrument:", metaSettings(settings, "instName"),
+  printString(paste("Instrument:", metaSetting(settings, "instName"),
                     " - polarity:", polarity))
   if (length(rtrange) == 2)
       printString(paste("Retention time range:", rtrange[1], "to",
@@ -34,7 +34,7 @@ runLC <- function(files,
   if (!missing(files)) {
     printString("Performing peak picking")
     xset  <-  peakDetection(files,
-                            metaSettings(settings, "PeakPicking"),
+                            metaSetting(settings, "PeakPicking"),
                             rtrange = rtrange, mzrange = mzrange,
                             nSlaves = nSlaves)
   } else {
@@ -42,13 +42,13 @@ runLC <- function(files,
   }
   
   printString("Grouping and retention time alignment")
-  xset <- alignmentLC(xset, metaSettings(settings, "Alignment"))
+  xset <- alignmentLC(xset, metaSetting(settings, "Alignment"))
  
   ## ------ CAMERA ------------------------------------------------
   if (runCAMERA){
     printString("Performing CAMERA annotation")
     xset <- runCAMERA(xset, chrom = "LC",
-                      metaSettings(settings, "CAMERA"), polarity)
+                      metaSetting(settings, "CAMERA"), polarity)
   }
   
   if (!is.null(DB)){
@@ -56,7 +56,7 @@ runLC <- function(files,
    
    
     annotation <- getAnnotationLC(xset,
-                                  metaSettings(settings, "match2DB"),
+                                  metaSetting(settings, "match2DB"),
                                   DB, errf)
 
     ## To run the annotation we need: table mz,rt,I, errf and DB.
