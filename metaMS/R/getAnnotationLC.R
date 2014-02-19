@@ -37,9 +37,6 @@ getAnnotationLC <- function(xs,
                            errf = errf,
                            DB = DB,
                            settings = settings)
-  ## mzwindow = settings$Annmzwd,
-  ## rttol = settings$Annrt,
-  ## rtval = settings$Annrtval)
   
   ann.ID <- rep("", dim(tobeannotated)[1])
   ann.compound <- rep("", dim(tobeannotated)[1])

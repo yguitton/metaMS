@@ -16,7 +16,7 @@ AnnotateFeature <- function(input,
   ## If the intensity is good match  --------------------------------- #
   ## calculate the mass tolerance for the feature under analysis
   if (is.null(errf)){
-    mztol <-  settings$mzwindow
+    mztol <-  settings$mzdiff
   } else {
     mztolppm <- predict(errf,
                         data.frame(M = input["mz"],
@@ -49,8 +49,8 @@ AnnotateTable <- function(peaktable,
   ## naming the column mz.err
   
   if (is.null(errf)) {
-    DB$mz.err <- settings$mzwindow
-    printInfo("Fixed mass tolerance", settings$mzwindow)
+    DB$mz.err <- settings$mzdiff
+    printInfo("Fixed mass tolerance", settings$mzdiff)
   } else
   { 
     printInfo("Adaptive mass tolerance")
