@@ -26,14 +26,14 @@ metaMSsettings <-
                      rttol = "numeric",                       # LC
                      mztol = "numeric",                       # LC
                      minintens = "numeric",                   # LC
-                     intensityMeasure = "character",         # GC
+                     intensityMeasure = "character",          # GC
                      DBthreshold = "numeric"),                # GC
                  matchIrrelevants = representation(
                      irrelevantClasses = "character",
                      simthresh = "numeric",
                      rtdiff = "numeric"),
                  betweenSamples = representation(
-                     minClassFraction = "numeric",
+                     min.class.fraction = "numeric",
                      min.class.size = "numeric",
                      timeComparison = "character",
                      rtdiff = "numeric",
@@ -75,11 +75,12 @@ setMethod("metaSetting", "metaMSsettings",
                 result <- lapply(allnames, function(x) slot(object, x))
                 names(result) <- lnames
                 
-                result
+                result[sapply(result, length) > 0]
               } else {
                 stop(paste("For ", chromatography,
                            ", 'field' should be a valid slot name, or one of ",
-                           paste(multiFields, collapse = ", "))) 
+                           paste(multiFields, collapse = ", "),
+                           sep = "")) 
               }
             }})
 
@@ -109,7 +110,8 @@ setReplaceMethod(
         } else {
           stop(paste("For ", chromatography,
                      ", 'field' should be a valid slot name, or one of ",
-                     paste(multiFields, collapse = ", "))) 
+                     paste(multiFields, collapse = ", "),
+                     sep = "")) 
         }
       }})
 

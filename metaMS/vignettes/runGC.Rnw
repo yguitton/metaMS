@@ -106,15 +106,15 @@ done, where annotation is based on reliable data of chemical
 standards, often measured in very similar conditions. Package
 \pkg{metaMS} supports building these databases, using exactly the same
 data processing pipeline as is used for real samples. The settings are
-gathered in a list object:
+gathered in an object of class \code{metaMSsettings}:
 <<>>=
 library(metaMS)
 data(FEMsettings)
-GCsettings <- FEMsettings[[3]]
-GCsettings[1:3]
+TSQXLS.GC
+metaSetting(TSQXLS.GC, "PeakPicking")
 @ 
-The example shows that the settings used for this particular set of
-samples are fine-tuned for a triple-quad GC. The \code{PeakPicking}
+The settings used for this particular set of samples are fine-tuned
+for a Thermo Scientific TSQXLS triple-quad GC. The \code{PeakPicking}
 field in the settings contains all elements that are passed to the
 \code{xcmsSet} function from \pkg{xcms}.
 
@@ -139,12 +139,12 @@ library(metaMSdata)
 cdfdir <- system.file("CDF_GC", package = "metaMSdata")
 cdffiles <- list.files(cdfdir, pattern = "cdf",
                        full.names = TRUE, ignore.case = TRUE)
-result <- runGC(files = cdffiles, settings = GCsettings, DB = DB)
+result <- runGC(files = cdffiles, settings = TSQXLS.GC, DB = DB)
 @ 
 Alternatively, if the peak picking by \pkg{xcms} is already done, one
 can provide the \code{xcmsSet} object:
 <<eval = FALSE, echo = TRUE>>=
-result <- runGC(xset = GCset, settings = GCsettings, DB = DB)
+result <- runGC(xset = GCset, settings = TSQXLS.GC, DB = DB)
 @ 
 In both cases, the result is a list containing a set of patterns
 corresponding with the compounds that have been found, either
@@ -172,8 +172,9 @@ list. The result is that the whole of the \pkg{xcms} functionality is
 available, simply by changing the values of some settings, or by
 adding fields. In the \code{runGC} function, this step is performed by
 <<eval = FALSE, echo = TRUE>>=
-GCset <- peakDetection(cdffiles, settings = GCsettings$PeakPicking, 
-                        convert2list = TRUE)
+GCset <- peakDetection(cdffiles, 
+                       settings = metaSettigns(TSQXLS.GC, "PeakPicking"), 
+                       convert2list = TRUE)
 @ 
 Since this part can take quite some time, it is operated in parallel
 wherever possible (using \pkg{Rmpi} or \pkg{snow}, and shows some
@@ -208,11 +209,11 @@ The pseudospectra are obtained by simply clustering on retention time,
 using the \code{runCAMERA} wrapper function, which for GC data calls
 \code{groupFWHM}:
 <<eval = FALSE, echo = TRUE>>=
-allSamples <- lapply(GCset, runCAMERA, chrom = GCsettings$chrom, 
-                     settings = GCsettings$CAMERA)
+allSamples <- lapply(GCset, runCAMERA, chrom = "GC", 
+                     settings = metaSetting(TSQXLS.GC, "CAMERA"))
 @ 
 Again, all the usual parameters for the \code{groupFWHM} function can
-be included in the \code{settings\$CAMERA} argument. The most
+be included in the \code{CAMERA} slot of the settings object. The most
 important parameter is \code{perfwhm}, which determines the maximal
 retention time difference of features in one pseudospectrum.
 
@@ -222,7 +223,7 @@ lists, which are basically the \R\ equivalent of the often-used
 \code{runGC}, this step is implemented as:
 <<eval = FALSE, echo = TRUE>>=
 allSamples.msp <- lapply(allSamples, to.msp, file = NULL, 
-                         settings = GCsettings$DBconstruction)
+                         settings = metaSetting(TSQXLS.GC, "DBconstruction"))
 @ 
 <<>>=
 sapply(allSamples.msp, length)
@@ -260,9 +261,10 @@ and then used in all comparisons:
 <<>>=
 data(threeStdsDB)        ## provides DB
 DB.treated <- treat.DB(DB)
-allSam.matches <- matchSamples2DB(allSamples.msp, DB = DB.treated, 
-                                  settings = GCsettings$match2DB, 
-                                  quick = FALSE)
+allSam.matches <- 
+    matchSamples2DB(allSamples.msp, DB = DB.treated, 
+                    settings = metaSetting(TSQXLS.GC, "match2DB"), 
+                    quick = FALSE)
 allSam.matches
 @ 
 This returns a table where all patterns that have a match with a DB
@@ -292,7 +294,7 @@ Samples may contain compounds that are not of any interest, such as
 plasticizers, internal standards, column material etcetera. These can
 be filtered out before doing an annotation: \pkg{metaMS} allows
 certain categories of database entries (defined in slot
-\code{matchIrrelevants} of the settings list) to be removed before
+\code{matchIrrelevants} of the settings object) to be removed before
 further annotation. If the spectra of these compounds are very
 specific (and they often are), the retention criterion may be bypassed
 by setting the maximal retention time difference to very high values,
@@ -315,7 +317,7 @@ differences are rather small. In addition, one would expect
 reproducible spectra for a single compound. A true unknown, or at
 least an interesting one, is also present in a significant fraction of
 the samples. All these parameters are gathered in the
-\code{betweenSamples} element of the settings list. 
+\code{betweenSamples} element of the settings object. 
 
 Since the
 matching is done using scaled patterns, we need to created a scaled
@@ -327,7 +329,7 @@ allSam.matches <-
     matchSamples2Samples(allSamples.msp.scaled, 
                          allSamples.msp, 
                          annotations = allSam.matches$annotations, 
-                         settings = GCsettings$betweenSamples)
+                         settings = metaSetting(TSQXLS.GC, "betweenSamples"))
 names(allSam.matches)
 @
 For large numbers of samples, this process can take quite some time
@@ -439,10 +441,9 @@ pipeline. The main benefit of setting up one's own database is the exact
 retention time information, something that will be essential in the
 annotation phase lateron. Continuing the example for the three
 standards, the in-house database can simply be created by issuing
-<<>>=
-data(FEMsettings)
+<<eval = FALSE, echo = TRUE>>=
 data(threeStdsNIST)  ## provides smallDB
-DB <- createSTDdbGC(threeStdsInfo, GCsettings, extDB = smallDB)
+DB <- createSTDdbGC(threeStdsInfo, TSQXLS.GC, extDB = smallDB)
 @ 
 The system returns some feedback about the process, which for large
 numbers of files can take some time. If parallel processing is
@@ -451,6 +452,9 @@ If no validation by comparing to an external database of spectra is
 possible, \pkg{metaMS} allows to add manually validated spectra to the
 data base using the \code{manualDB} argument to the
 \code{createSTDdbGC} function.
+<<echo = FALSE>>=
+data(threeStdsDB)
+@ 
 <<>>=
 names(DB[[1]])
 @ 
