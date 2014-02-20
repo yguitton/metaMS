@@ -89,7 +89,7 @@ data(LCDBtest)
 data(errf)
 
 ## load the example xcmsSet
-data(LCxset)
+data(LCresults)
 
 results.xset  <- runLC(xset = LCxset, settings = Synapt.RP, 
                        DB = LCDBtest$DB)
