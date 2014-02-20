@@ -30,7 +30,7 @@ AnnotateFeature <- function(input,
   ## combine the tolerances ----------------------------------------- #
   ## Squared sum 
   idm <- deltam < sqrt((DB[,"mz.err"])^2 + (mztol)^2)
-  idt <- deltart < settings$rttol
+  idt <- deltart < settings$rtdiff
   
   which(idm & idt)
 }
