@@ -41,7 +41,7 @@ runGC <- function(files,
 
   if (!is.null(RIstandards) & 
       metaSetting(settings, "betweenSamples.timeComparison") == "rt" &
-      metaSetting(settings, "match2DB.timeComparison" == "rt"))
+      metaSetting(settings, "match2DB.timeComparison") == "rt")
       printWarning("Warning: argument RIstandards provided, but using retention times for matching")
 
   ## Go!
