@@ -9,7 +9,8 @@
 
 processStandards <- function(stdInfo,
                              settings,
-                             polarity = NULL)
+                             polarity = NULL,
+                             nSlaves)
 {
 
   chrom <- metaSetting(settings,"chrom")
@@ -22,7 +23,8 @@ processStandards <- function(stdInfo,
   stdNames <- sort(unique(stdInfo[,"stdFile"]))
   xset.l <- peakDetection(stdNames,
                           metaSetting(settings,"PeakPicking"),
-                          convert2list = TRUE)
+                          convert2list = TRUE,
+                          nSlaves = nSlaves)
   fn <- names(xset.l)
 
   xset.l.small <- 

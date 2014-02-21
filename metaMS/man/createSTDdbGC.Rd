@@ -11,7 +11,7 @@
   \code{generateStdDBGC} is not meant to be called directly by the user.}
 \usage{
 createSTDdbGC(stdInfo, settings, extDB = NULL, manualDB = NULL,
-              RIstandards = NULL)
+              RIstandards = NULL, nSlaves = 0)
 generateStdDBGC(totalXset, settings, extDB = NULL, manualDB = NULL,
                 RIstandards = NULL)
 }
@@ -35,6 +35,7 @@ generateStdDBGC(totalXset, settings, extDB = NULL, manualDB = NULL,
     defining the RI scale both retention times and retention indices. If
     not given, no RI values will be calculated and retention times will
     be used instead.}
+  \item{nSlaves}{Number of cores to be used in peak picking.}
 }
 \details{Function \code{createSTDdbGC} creates a database object
   containing validated pseudospectra for a number of compounds. The

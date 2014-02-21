@@ -2,7 +2,8 @@ createSTDdbGC <- function(stdInfo,
                           settings,
                           extDB = NULL,
                           manualDB = NULL,
-                          RIstandards = NULL)
+                          RIstandards = NULL,
+                          nSlaves = 0)
 {
   if (is.null(stdInfo)) {
     if (is.null(manualDB)) {
@@ -22,7 +23,7 @@ createSTDdbGC <- function(stdInfo,
                 "input files for", nrow(stdInfo), "standards")
     printString("Running XCMS and CAMERA")
     
-    totalXset <- processStandards(stdInfo, settings)
+    totalXset <- processStandards(stdInfo, settings, nSlaves = nSlaves)
   }
   
   generateStdDBGC(totalXset,
