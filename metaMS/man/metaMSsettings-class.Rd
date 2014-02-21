@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{metaMSsettings-class}
+\alias{metaMSsettings}
 \alias{metaSetting<-, metaMSsettings-method}
 \alias{metaSetting, metaMSsettings-method}
 \alias{show, metaMSsettings-method}
