@@ -3,9 +3,9 @@
 \docType{class}
 \alias{metaMSsettings-class}
 \alias{metaMSsettings}
-\alias{metaSetting<-, metaMSsettings-method}
-\alias{metaSetting, metaMSsettings-method}
-\alias{show, metaMSsettings-method}
+%\alias{metaSetting<-,metaMSsettings}
+%\alias{metaSetting,metaMSsettings}
+\alias{show,metaMSsettings-method}
 
 \title{Class \code{"metaMSsettings"}}
 \description{
