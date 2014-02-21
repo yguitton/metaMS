@@ -13,7 +13,7 @@ of the standard. \cr
 The function \code{generateSTDdbLC} is not meant to be
   called directly - use \code{createSTDdbLC} instead.}
 \usage{
-createSTDdbLC(stdInfo, settings, polarity, Ithr = 10)
+createSTDdbLC(stdInfo, settings, polarity, Ithr = 10, nSlaves = 0)
 generateStdDBLC(stdxsets, settings, Ithr) 
 }
 \arguments{
@@ -31,6 +31,7 @@ generateStdDBLC(stdxsets, settings, Ithr)
   \item{stdxsets}{A list of CAMERA objects resulting from the analysis
     (performed by \code{processStandards}) of the standard injections
     listed in the \code{stdInfo} table.}
+  \item{nSlaves}{Number of cores to be used in peak picking.}
 }
 \details{
  The DB is created with the following workflow. Peak picking is
