@@ -14,47 +14,44 @@ matchSamples2DB <- function(xset.msp,
                             DB,
                             settings,
                             quick) {
-  if (is.null(settings$timeComparison) ||
-      ((settings$timeComparison == "RI" & is.null(settings$RIdiff)) |
-       (settings$timeComparison == "rt" & is.null(settings$rtdiff)))) {
-    ## don't use any rt or RI information in the matching phase
-    rt.matches <- lapply(1:length(xset.msp),
-                         function(ii)
-                         cbind(rep(1:length(DB),
-                                   length(xset.msp[[ii]])),
-                               rep(1:length(xset.msp[[ii]]),
-                                   each = length(DB))))
+  ## if ((settings$timeComparison == "RI" & is.null(settings$RIdiff)) |
+  ##     (settings$timeComparison == "rt" & is.null(settings$rtdiff)))) {
+  ##    ## don't use any rt or RI information in the matching phase
+  ##    rt.matches <- lapply(1:length(xset.msp),
+  ##                         function(ii)
+  ##                         cbind(rep(1:length(DB),
+  ##                                   length(xset.msp[[ii]])),
+  ##                               rep(1:length(xset.msp[[ii]]),
+  ##                                   each = length(DB))))
+  ##  } else {
+  if (settings$timeComparison == "RI") {
+    standard.rts <- sapply(DB, function(x) x$std.RI)
+    ## rt.matches is a list of two-column matrices, one for each
+    ## xset.msp element. The first column gives the DB entry that
+    ## matches with the sample entry in the second column. This is very
+    ## fast to calculate.
+    rt.matches <-
+        lapply(1:length(xset.msp),
+               function(ii) {
+                 group.rts <- sapply(xset.msp[[ii]],
+                                     function(x)
+                                     mean(x[,"RI"]))
+                 which(abs(outer(standard.rts, group.rts, FUN = "-")) <
+                       settings$RIdiff,
+                       arr.ind = TRUE)
+               })
   } else {
-    if (!is.null(settings$timeComparison) &
-        settings$timeComparison == "RI") {
-      standard.rts <- sapply(DB, function(x) x$std.RI)
-      ## rt.matches is a list of two-column matrices, one for each
-      ## xset.msp element. The first column gives the DB entry that
-      ## matches with the sample entry in the second column. This is very
-      ## fast to calculate.
-      rt.matches <-
-          lapply(1:length(xset.msp),
-                 function(ii) {
-                   group.rts <- sapply(xset.msp[[ii]],
-                                       function(x)
-                                       mean(x[,"RI"]))
-                   which(abs(outer(standard.rts, group.rts, FUN = "-")) <
-                         settings$RIdiff,
-                         arr.ind = TRUE)
-                 })
-    } else {
-      standard.rts <- sapply(DB, function(x) x$std.rt)
-      rt.matches <-
-          lapply(1:length(xset.msp),
-                 function(ii) {
-                   group.rts <- sapply(xset.msp[[ii]],
-                                       function(x)
-                                       mean(x[,"rt"]))
-                   which(abs(outer(standard.rts, group.rts, FUN = "-")) <
-                         settings$rtdiff,
-                         arr.ind = TRUE)
-                 })
-    }
+    standard.rts <- sapply(DB, function(x) x$std.rt)
+    rt.matches <-
+        lapply(1:length(xset.msp),
+               function(ii) {
+                 group.rts <- sapply(xset.msp[[ii]],
+                                     function(x)
+                                     mean(x[,"rt"]))
+                 which(abs(outer(standard.rts, group.rts, FUN = "-")) <
+                       settings$rtdiff,
+                       arr.ind = TRUE)
+               })
   }
 
   if (quick) { ## xset.msp has already been scaled
@@ -102,7 +99,7 @@ matchSamples2DB <- function(xset.msp,
                  result})
   }
   names(match.results) <- names(xset.msp)
-
+  
   annotations <- 
       lapply(match.results,
              function(xx) {

@@ -12,7 +12,7 @@ if (require("metaMSdata", quietly = TRUE)){
       rep(list.files(system.file("CDF_GC", package = "metaMSdata"),
                      full.names = TRUE)[3], 3)
   
-  DB.live <- createSTDdbGC(stdInfo, TSQXLS.GC, extDB = smallDB)
+  DB.live <- createSTDdbGC(stdInfo, TSQXLS.GC, extDB = smallDB, nSlaves = 2)
   ## load the pre-compiled version
   data(threeStdsDB)
   
@@ -31,8 +31,8 @@ if (require("metaMSdata", quietly = TRUE)){
   cdffiles <- list.files(cdfdir, pattern = "cdf",
                          full.names = TRUE, ignore.case = TRUE)
   
-  metaSetting(TSQXLS.GC, "betweenSamples.simthresh") <- .8
-  result.live <- runGC(files = cdffiles, settings = TSQXLS.GC, DB = DB)
+  result.live <- runGC(files = cdffiles, settings = TSQXLS.GC,
+                       DB = DB, nSlaves = 2)
 
   ## load the precompiled version, result.annot
   data(GCresults)
@@ -45,7 +45,8 @@ if (require("metaMSdata", quietly = TRUE)){
     
   ## Annotation gives the same results...
   test_that("Annotation consistent with precompiled results.", {
-    expect_equal(LC$Annotation$ann.features,LCresults$Annotation$ann.features)
+    expect_equal(result.annot$PeakTable[,"Name"],
+                 result.live$PeakTable[,"Name"])
   })
 } else{
   warning("cannot run tests --  package metaMSdata not available")

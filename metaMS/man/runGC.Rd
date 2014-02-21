@@ -74,10 +74,16 @@ A list with the following elements:
 data(threeStdsDB) 
 data(FEMsettings)
 
+data(GCresults) ## pre-compiled results
+names(result.annot)
+
 \dontrun{
+## object result.annot is created by
 result.annot <- runGC(xset = GCset, settings = TSQXLS.GC, DB = DB)
+
 ## to start directly from the CDF files and include peak picking in the
-## pipeline, simply provide the "files" argument rather than the "xset" argument
+## pipeline, simply provide the "files" argument rather than the "xset"
+## argument
 if (require(metaMSdata)) {
   cdfdir <- system.file("CDF_GC", package = "metaMSdata")
   cdffiles <- list.files(cdfdir, pattern = "cdf",
@@ -93,8 +99,6 @@ if (require(metaMSdata)) {
   ## now 15 patterns are found consistently across the samples,
   ## including the three standards
 }
-data(GCresults) ## pre-compiled results
-names(result.annot)
 }
 
 }
