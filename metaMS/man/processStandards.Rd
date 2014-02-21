@@ -5,7 +5,7 @@
   standards, including CAMERA processing. This function is not meant to be
   called directly - use \code{createSTDdbLC} or \code{createSTDdbGC}
   instead.}
-\usage{processStandards(stdInfo, settings, polarity = NULL)}
+\usage{processStandards(stdInfo, settings, polarity = NULL, nSlaves)}
 \arguments{
   \item{stdInfo}{Object describing the pure standards: a data.frame
     containing, e.g., the name of the file, the name of the standard,
@@ -14,6 +14,7 @@
     and CAMERA grouping (GC-MS) or annotation (LC-MS).}
   \item{polarity}{Polarity of the analysis (used for CAMERA). Possible
     values are \dQuote{positive} or \dQuote{negative}. Ignored for GC-MS.}
+  \item{nSlaves}{Number of cores to be used in peak picking.}
 }
 \value{
   A list of CAMERA objects resulting from the analysis of the

@@ -14,7 +14,7 @@ if (require("metaMSdata", quietly = TRUE)){
   
   DB.live <- createSTDdbGC(stdInfo, TSQXLS.GC, extDB = smallDB)
   ## load the pre-compiled version
-  load("threeStdsDB.RData")
+  data(threeStdsDB)
   
   ## Run some tests on the output
   test_that("DB creation: equal number of DB elements",{
