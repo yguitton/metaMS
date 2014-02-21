@@ -2,7 +2,9 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{metaMSsettings-class}
-\alias{show,metaMSsettings-method}
+\alias{metaSetting<-, metaMSsettings-method}
+\alias{metaSetting, metaMSsettings-method}
+\alias{show, metaMSsettings-method}
 
 \title{Class \code{"metaMSsettings"}}
 \description{
