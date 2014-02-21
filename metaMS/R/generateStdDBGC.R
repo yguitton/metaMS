@@ -4,8 +4,6 @@ generateStdDBGC <- function(totalXset, settings,
                             extDB = NULL, manualDB = NULL,
                             RIstandards = NULL)
 {
-  standardSettings <- settings$DBconstruction
-
   if (!is.null(manualDB)) {
     for (i in 1:length(manualDB))
         if (is.null(manualDB[[i]]$Class))
@@ -14,10 +12,10 @@ generateStdDBGC <- function(totalXset, settings,
 
   if (!is.null(totalXset)) {
     if (!is.null(extDB)) {
-      DBobj <- match2ExtDB(totalXset, extDB, standardSettings)
+      DBobj <- match2ExtDB(totalXset, extDB, settings)
     } else {
       if (!is.null(totalXset)) {
-        DBobj <- xset2msp(totalXset, standardSettings)
+        DBobj <- xset2msp(totalXset, settings)
       }
     }
     for (i in 1:length(DBobj))
@@ -30,7 +28,7 @@ generateStdDBGC <- function(totalXset, settings,
     ## DB to the appropriate value
     for (i in 1:length(DBobj))
         colnames(DBobj[[i]]$pspectrum)[2] <-
-            standardSettings$intensityMeasure
+            settings$intensityMeasure
     
     ## for those entries in the DB that do not have a date field: add it
     nodate <- which(sapply(DBobj, function(x) is.null(x$date)))

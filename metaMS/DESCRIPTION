@@ -9,3 +9,11 @@ Suggests: metaMSdata, testthat
 Description: MS-based metabolomics data processing and compound annotation pipeline. 
 License: GPL (>= 2)
 biocViews: MassSpectrometry, Metabolomics
+Packaged: 2014-02-21 13:18:08 UTC; ron
+Author: Ron Wehrens [aut, cre] (author of GC-MS part),
+  Pietro Franceschi [aut] (author of LC-MS part),
+  Nir Shahaf [ctb],
+  Matthias Scholz [ctb],
+  Georg Weingart [ctb] (development of GC-MS approach),
+  Elisabete Carvalho [ctb] (testing and feedback of GC-MS pipeline)
+Maintainer: Ron Wehrens <ron.wehrens@fmach.it>

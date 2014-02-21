@@ -25,8 +25,10 @@ createSTDdbGC <- function(stdInfo,
     totalXset <- processStandards(stdInfo, settings)
   }
   
-  generateStdDBGC(totalXset, settings,
-                  extDB = extDB, manualDB = manualDB,
+  generateStdDBGC(totalXset,
+                  settings = metaSetting(settings, "DBconstruction"),
+                  extDB = extDB,
+                  manualDB = manualDB,
                   RIstandards = RIstandards)
 }
   
