@@ -77,7 +77,7 @@ if (require(metaMSdata)) {
   data(FEMsettings)
   
   ## set the minimum number of features to 2
-  metaSettings(Synapt.RP, "DBconstruction.minfeat")  <- 2
+  metaSetting(Synapt.RP, "DBconstruction")$minfeat  <- 2
   
   ## create the DB
   LCDBtest <- createSTDdbLC(stdInfo=exptable, 

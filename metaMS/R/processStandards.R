@@ -12,7 +12,7 @@ processStandards <- function(stdInfo,
                              polarity = NULL)
 {
 
-  chrom <- settings$chrom
+  chrom <- metaSetting(settings,"chrom")
   if (chrom == "LC") {
     if (!polarity %in% c("positive", "negative")) {
       stop("For LC data, 'polarity' should either be 'positive' or 'negative'")
@@ -21,7 +21,7 @@ processStandards <- function(stdInfo,
   
   stdNames <- sort(unique(stdInfo[,"stdFile"]))
   xset.l <- peakDetection(stdNames,
-                          settings$PeakPicking,
+                          metaSetting(settings,"PeakPicking"),
                           convert2list = TRUE)
   fn <- names(xset.l)
 
@@ -38,9 +38,10 @@ processStandards <- function(stdInfo,
                    standard.info <- stdInfo[standard.hits,]
                    
                    rts <- stdInfo[standard.hits, "RTman"]
+                   rttol <- metaSetting(settings,"DBconstruction")$rttol
                    rt.ranges <-
-                       cbind(rts - settings$DBconstruction$rttol,
-                             rts + settings$DBconstruction$rttol) * 60
+                       cbind(rts - rttol,
+                             rts + rttol) * 60
                    
                    idx <- which(apply(sapply(1:nrow(rt.ranges),
                                              function(ii)
@@ -49,7 +50,7 @@ processStandards <- function(stdInfo,
                                              xset.l[[ i ]]@peaks[,"rt"] <
                                              rt.ranges[ii,2]),
                                       1, any))
-                   if (length(idx) <= settings$DBconstruction$minfeat) {
+                   if (length(idx) <= metaSetting(settings,"DBconstruction")$minfeat) {
                      warning("No peaks with the right retention time found in file ",
                              fn[i], "...skipping\n")
                      
@@ -70,7 +71,7 @@ processStandards <- function(stdInfo,
             list(info = xx$info,
                  xset = runCAMERA(xx$xset,
                      chrom = chrom,
-                     settings = settings$CAMERA,
+                     settings = metaSetting(settings, "CAMERA"),
                      polarity = polarity,
                      quick = FALSE)))
 }

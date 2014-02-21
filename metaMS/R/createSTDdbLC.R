@@ -14,7 +14,7 @@ createSTDdbLC <- function(stdInfo,
   stdxsets<- processStandards(stdInfo,settings,polarity)
   
   ## match with the reference table
-  db <- generateStdDBLC(stdxsets, settings$DBconstruction,Ithr)
+  db <- generateStdDBLC(stdxsets, metaSetting(settings, "DBconstruction"),Ithr)
   
   ## prepare an output object with some infos
   printString("Done !")

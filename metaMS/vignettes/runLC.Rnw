@@ -281,9 +281,9 @@ The implemented annotation strategy can be broken down in the following steps:
   \code{runLC} is matched against the database. If the mass error
   function is provided, the appropriate {\it m/z} tolerance is
   calculated, otherwise a fixed tolerance is used
-  (\code{mzwindow}). The retention time tolerance is fixed and should
+  (\code{mzdiff}). The retention time tolerance is fixed and should
   be selected on the bases of the characteristics of each
-  chromatographic method (\code{rttol}). Multiple annotations -
+  chromatographic method (\code{rtdiff}). Multiple annotations -
   i.e. features which are associated to more than one compound - are
   possible. This outcome does not indicate a problem {\it per se}, but
   is an inherent drawback of co-elution. 
@@ -293,7 +293,7 @@ The implemented annotation strategy can be broken down in the following steps:
   confirmed only if more than \code{minfeat} features which differ in
   retention time less than \code{rtval} are present in a
   pseudospectrum. As a  general rule \code{rtval} should be narrower
-  than \code{rttol}. The latter, indeed, accounts for shifts in
+  than \code{rtdiff}. The latter, indeed, accounts for shifts in
   retention time between the injection of the standards and the
   metabolomics experiment under investigation. This time can be rather
   long, considering that the standards are not commonly re-analyzed
