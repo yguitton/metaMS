@@ -3,8 +3,8 @@
 %\alias{metaSetting-methods}
 \alias{metaSetting}
 \alias{metaSetting<-}
-\alias{metaSetting, metaMSsettings-method}
-\alias{metaSetting<-, metaMSsettings-method}
+\alias{metaSetting,metaMSsettings-method}
+\alias{metaSetting<-,metaMSsettings-method}
 \title{Get or set values in metaMSsettings objects}
 \description{
   Accessor function for \code{metaMSsettings} objects, allowing to get
