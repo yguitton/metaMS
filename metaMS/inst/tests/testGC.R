@@ -6,6 +6,7 @@ if (require("metaMSdata", quietly = TRUE)){
   ## <----------------   createSTDdbGC -------------------------- >
   
   ## create the DB
+  data(threeStdsNIST)
   data(threeStdsInfo)
   stdInfo[,"stdFile"] <-
       rep(list.files(system.file("CDF_GC", package = "metaMSdata"),
