@@ -10,8 +10,8 @@
 runCAMERA(xset, chrom = c("LC", "GC"), settings, polarity, quick = TRUE)
 }
 \arguments{
-  \item{xset}{
-    The \code{xcmsSet} object.}
+  \item{xset}{For LC, an \code{xcmsSet} object; for GC, a list of
+    \code{xcmsSet} objects.}
   \item{chrom}{
     The type of chromatography. Either "LC" or "GC".}
   \item{settings}{
