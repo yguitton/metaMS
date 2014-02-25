@@ -9,7 +9,8 @@ runGC <- function(files,
                   RIstandards = NULL,
                   nSlaves = 0)
 {
-  ## Some preliminary sanity checks
+  ## ###################################################################
+  ## some preliminary sanity checks
   if (!missing(files)) {
     nexp <- length(files)
   } else {
@@ -18,12 +19,13 @@ runGC <- function(files,
 
     if (class(xset) == "xcmsSet") {
       nexp <- length(sampnames(xset))
-      xset <- split(xset, factor(sampnames(xset), levels = sampnames(xset)))
+      xset.l <- split(xset, factor(sampnames(xset), levels = sampnames(xset)))
     } else { ## a list of xcmsSet objects
-      nexp <- length(xset)
+      xset.l <- xset
+      nexp <- length(xset.l)
     }
   }
-    
+
   if (is.null(DB) & !findUnknowns)
       stop("Nothing to do. Provide a DB or set findUnknowns to TRUE...")
 
@@ -44,14 +46,12 @@ runGC <- function(files,
       metaSetting(settings, "match2DB.timeComparison") == "rt")
       printWarning("Warning: argument RIstandards provided, but using retention times for matching")
 
-  ## Go!
   printString(paste("Experiment of", nexp, "samples"))
   printString(paste("Instrument:", metaSetting(settings, "instName")))
   if (length(rtrange) == 2)
       printString(paste("Retention time range:", rtrange[1], "to",
                         rtrange[2], "minutes"))
   
-
   if (!is.null(DB)) {
     DB.orig <- DB
     DB <- treat.DB(DB.orig)
@@ -62,22 +62,23 @@ runGC <- function(files,
     DB.orig <- NULL
   }
 
+  ## ###################################################################
   ## Peak picking and CAMERA
   if (!missing(files)) {
-    printString("Performing peak picking")
+    printString("Performing peak picking and CAMERA")
     xset.l  <-  peakDetection(files,
                               metaSetting(settings, "PeakPicking"),
                               rtrange = rtrange, convert2list = TRUE,
                               nSlaves = nSlaves)
   } else {
-    printString("Using xcmsSet object, no peak picking performed.")
-    xset.l <- split(xset, factor(sampnames(xset), levels = sampnames(xset)))
+    printString("Using xcmsSet object, performing CAMERA")
   }
 
   allSamples <- lapply(xset.l, runCAMERA,
                        chrom = metaSetting(settings, "chrom"),
                        settings = metaSetting(settings, "CAMERA"))
   
+  ## ###################################################################
   ## convert into msp format (a nested list)
   allSamples.msp <- lapply(allSamples,
                            to.msp,
