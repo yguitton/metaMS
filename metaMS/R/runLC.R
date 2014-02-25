@@ -16,10 +16,10 @@ runLC <- function(files,
   } else {
     if (missing(xset))
         stop("Either 'files' or 'xset' should be given")
-
+    
     nexp <- length(sampnames(xset))
   }
-    
+  
   printString(paste("Experiment of", nexp, "samples"))
   printString(paste("Instrument:", metaSetting(settings, "instName"),
                     " - polarity:", polarity))
@@ -30,46 +30,44 @@ runLC <- function(files,
   if (!is.null(DB)){
     printString("Database of", length(unique(DB$ChemSpiderID)), "compounds")
   }
-
+  
   if (!missing(files)) {
     printString("Performing peak picking")
     xset  <-  peakDetection(files,
                             metaSetting(settings, "PeakPicking"),
                             rtrange = rtrange, mzrange = mzrange,
                             nSlaves = nSlaves)
-
+    
     printString("Grouping and retention time alignment")
     xset <- alignmentLC(xset, metaSetting(settings, "Alignment"))
     
     ## ------ CAMERA ------------------------------------------------
     if (runCAMERA){
-      printString("Performing CAMERA annotation")
+      printString("Performing CAMERA grouping")
       xset <- runCAMERA(xset, chrom = "LC",
                         metaSetting(settings, "CAMERA"), polarity)
     }
   } else {
-    printString("Using xcmsSet object.")
+    printString("Using xcmsSet object - only doing annotation")
   }
   
   if (!is.null(DB)){
     printString("Performing annotation")
-   
-   
+    
     annotation <- getAnnotationLC(xset,
                                   metaSetting(settings, "match2DB"),
                                   DB, errf)
-
+    
     ## To run the annotation we need: table mz,rt,I, errf and DB.
     ## With the additional functions AnnotateFeaturesAnnotateTable 
     ## on the configurations I need the rt tol, the rt4validation,
     ## mass tolerance if no surface. 
   } else {
-    
     annotation  <- list("raw" = data.frame(),
                         "for_table" = data.frame())
   }
   
- 
+  
   ## ------ Create the Peak Table  ------------------------------------
   peakTable <- getPeakTable(xset, intval = intensity) 
   
@@ -79,9 +77,8 @@ runLC <- function(files,
     peakTable <- cbind(annotation$for_table, peakTable)
   }
   
-    
-
-  # ----------------- Prepare the outputs ------------------------
+  
+  ## ----------------- Prepare the outputs ------------------------
   printString("Done !")
   if (returnXset) {
     list("PeakTable" = peakTable,
@@ -93,5 +90,4 @@ runLC <- function(files,
          "Annotation" = annotation$raw,
          "Settings" = settings)
   }
-
 }

@@ -26,7 +26,7 @@ if (require("metaMSdata", quietly = TRUE)){
   })
 } else {
   message("Not testing building the data base of standards:\n\tpackage metaMSdata is necessary for that...")
-
+}
 
 ## <----------------   runGC -------------------------- >
 

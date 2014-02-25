@@ -58,7 +58,9 @@ A list with the following elements:
 \item{PseudoSpecra}{A list of pseudospectra in msp format, in the
   same order as the rows in the PeakTable.}
 \item{xset}{optionally, the xcmsSet object is returned, which can be
-  useful for more detailed inspection of the results.}
+  useful for more detailed inspection of the results. It can also be
+  used as an input for \code{runGC}, e.g., to test different annotation
+  settings independently of the xcms/CAMERA part.}
 }
 \references{
   R. Wehrens, G. Weingart and F. Mattivi: "An open-source pipeline for
@@ -75,7 +77,7 @@ A list with the following elements:
 data(threeStdsDB) 
 data(FEMsettings)
 
-data(GCresults) ## pre-compiled results
+data(GCresults) ## pre-compiled results, a.o. GCset
 names(result.annot)
 
 \dontrun{
