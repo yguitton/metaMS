@@ -3,28 +3,6 @@ data(FEMsettings)  ## The settings
 data(LCDBtest)     ## The database
 data(LCresults)    ## The reference output
 
-## Script to test the main metaMS functions for LC
-if (require("metaMSdata", quietly = TRUE)) {
-  ## <----------------   createSTDdbLC -------------------------- >
-
-  data(exptable)       ## the manually curated reference table
-  exptable$stdFile <- sapply(exptable$stdFile,
-                             function(x)
-                             files[grep(x,files)])
-  metaSetting(Synapt.RP, "DBconstruction.minfeat")  <- 2
-  
-  LCDB <- createSTDdbLC(stdInfo=exptable, 
-                        settings = Synapt.RP,
-                        polarity = "positive",
-                        Ithr = 20, nSlaves = 2)
-  
-  ## Run some tests on the output
-  test_that("DB creation works fine",{
-    expect_equal(nrow(LCDB$DB), nrow(LCDBtest$DB))
-  })  
-} else{
-  message("Not testing building the data base of standards:\n\tpackage metaMSdata is necessary for that...")
-}
 
 ## <----------------   runLC -------------------------- >
 
