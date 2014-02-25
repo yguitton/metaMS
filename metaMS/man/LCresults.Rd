@@ -12,5 +12,5 @@
 \usage{data(LCresults)}
 \details{Data object \code{LCresult} contains the output list of
   \code{runLC}, whereas \code{LCxset} contains the result of XCMS peak
-  picking only.}
+  picking and CAMERA.}
 \keyword{datasets}
