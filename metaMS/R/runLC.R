@@ -37,18 +37,18 @@ runLC <- function(files,
                             metaSetting(settings, "PeakPicking"),
                             rtrange = rtrange, mzrange = mzrange,
                             nSlaves = nSlaves)
+
+    printString("Grouping and retention time alignment")
+    xset <- alignmentLC(xset, metaSetting(settings, "Alignment"))
+    
+    ## ------ CAMERA ------------------------------------------------
+    if (runCAMERA){
+      printString("Performing CAMERA annotation")
+      xset <- runCAMERA(xset, chrom = "LC",
+                        metaSetting(settings, "CAMERA"), polarity)
+    }
   } else {
-    printString("Using xcmsSet object, no peak picking performed.")
-  }
-  
-  printString("Grouping and retention time alignment")
-  xset <- alignmentLC(xset, metaSetting(settings, "Alignment"))
- 
-  ## ------ CAMERA ------------------------------------------------
-  if (runCAMERA){
-    printString("Performing CAMERA annotation")
-    xset <- runCAMERA(xset, chrom = "LC",
-                      metaSetting(settings, "CAMERA"), polarity)
+    printString("Using xcmsSet object.")
   }
   
   if (!is.null(DB)){

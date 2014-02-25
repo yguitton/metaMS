@@ -18,12 +18,10 @@ runGC <- function(files,
         stop("Either 'files' or 'xset' should be given")
 
     if (class(xset) == "xcmsSet") {
-      nexp <- length(sampnames(xset))
-      xset.l <- split(xset, factor(sampnames(xset), levels = sampnames(xset)))
-    } else { ## a list of xcmsSet objects
-      xset.l <- xset
-      nexp <- length(xset.l)
-    }
+      stop("xset should be a list of xcmsSet objects, see man page")
+      
+    xset.l <- xset
+    nexp <- length(xset.l)
   }
 
   if (is.null(DB) & !findUnknowns)
@@ -70,13 +68,15 @@ runGC <- function(files,
                               metaSetting(settings, "PeakPicking"),
                               rtrange = rtrange, convert2list = TRUE,
                               nSlaves = nSlaves)
+
+    allSamples <- lapply(xset.l, runCAMERA,
+                         chrom = metaSetting(settings, "chrom"),
+                         settings = metaSetting(settings, "CAMERA"))
   } else {
-    printString("Using xcmsSet object, performing CAMERA")
+    printString("Using xcmsSet object - only doing annotation")
+    allSamples <- xset.l
   }
 
-  allSamples <- lapply(xset.l, runCAMERA,
-                       chrom = metaSetting(settings, "chrom"),
-                       settings = metaSetting(settings, "CAMERA"))
   
   ## ###################################################################
   ## convert into msp format (a nested list)
