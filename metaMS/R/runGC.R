@@ -16,17 +16,17 @@ runGC <- function(files,
   } else {
     if (missing(xset))
         stop("Either 'files' or 'xset' should be given")
-
-    if (class(xset) == "xcmsSet") {
-      stop("xset should be a list of xcmsSet objects, see man page")
-      
+    
+    if (class(xset) == "xcmsSet") 
+        stop("xset should be a list of CAMERA-grouped xcmsSet objects, see man page")
+    
     xset.l <- xset
     nexp <- length(xset.l)
   }
-
+  
   if (is.null(DB) & !findUnknowns)
       stop("Nothing to do. Provide a DB or set findUnknowns to TRUE...")
-
+  
   if (findUnknowns & !is.null(DB) &
       metaSetting(settings, "betweenSamples.timeComparison") !=
       metaSetting(settings, "match2DB.timeComparison"))
@@ -34,16 +34,16 @@ runGC <- function(files,
   
   if (is.null(RIstandards) &
       ((metaSetting(settings, "betweenSamples.timeComparison") == "RI" &
-                     findUnknowns) |
+        findUnknowns) |
        (metaSetting(settings, "match2DB.timeComparison") == "RI" &
         !is.null(DB))))
       stop("Argument RIstandards is mandatory when using RI for matching")
-
+  
   if (!is.null(RIstandards) & 
       metaSetting(settings, "betweenSamples.timeComparison") == "rt" &
       metaSetting(settings, "match2DB.timeComparison") == "rt")
       printWarning("Warning: argument RIstandards provided, but using retention times for matching")
-
+  
   printString(paste("Experiment of", nexp, "samples"))
   printString(paste("Instrument:", metaSetting(settings, "instName")))
   if (length(rtrange) == 2)
@@ -53,13 +53,13 @@ runGC <- function(files,
   if (!is.null(DB)) {
     DB.orig <- DB
     DB <- treat.DB(DB.orig)
-
+    
     printString(paste("Annotation using database of", length(DB), "spectra"))
   } else {
     printString("No annotation performed")
     DB.orig <- NULL
   }
-
+  
   ## ###################################################################
   ## Peak picking and CAMERA
   if (!missing(files)) {
@@ -68,7 +68,7 @@ runGC <- function(files,
                               metaSetting(settings, "PeakPicking"),
                               rtrange = rtrange, convert2list = TRUE,
                               nSlaves = nSlaves)
-
+    
     allSamples <- lapply(xset.l, runCAMERA,
                          chrom = metaSetting(settings, "chrom"),
                          settings = metaSetting(settings, "CAMERA"))
@@ -76,7 +76,7 @@ runGC <- function(files,
     printString("Using xcmsSet object - only doing annotation")
     allSamples <- xset.l
   }
-
+  
   
   ## ###################################################################
   ## convert into msp format (a nested list)
@@ -206,7 +206,7 @@ runGC <- function(files,
              data.frame(round(ann.df2))),
          PseudoSpectra = PseudoSpectra,
          settings = settings,
-         xset = xset.l,
+         xset = allSamples,
          annotation = allSam.matches$annotation,
          samples.msp = allSamples.msp)
   } else {
