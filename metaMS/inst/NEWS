@@ -12,4 +12,5 @@ Warning: class "C++Object" is defined (with package slot ‘Rcpp’) but no meta
   precalculated results.
 - added tests using the testthat package, specifically focusing on the
   metaMS part (so not testing xcms peak picking which can lead to
-  different results across versions)
+  different results across versions). Also added BiocGenerics and
+  RUnit to the "Suggests" packages in the description file.

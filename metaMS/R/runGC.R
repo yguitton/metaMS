@@ -45,7 +45,7 @@ runGC <- function(files,
       printWarning("Warning: argument RIstandards provided, but using retention times for matching")
   
   printString(paste("Experiment of", nexp, "samples"))
-  printString(paste("Instrument:", metaSetting(settings, "instName")))
+  printString(paste("Instrument:", metaSetting(settings, "protocolName")))
   if (length(rtrange) == 2)
       printString(paste("Retention time range:", rtrange[1], "to",
                         rtrange[2], "minutes"))

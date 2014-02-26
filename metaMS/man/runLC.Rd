@@ -10,20 +10,20 @@
 }
 \usage{
 runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
-      polarity = "positive", errf = NULL, runCAMERA = TRUE,
-      returnXset = FALSE, intensity = "into", nSlaves = 0)
+      polarity = "positive", errf = NULL, returnXset = FALSE,
+      intensity = "into", nSlaves = 0)
 }
 
 \arguments{
   \item{files}{input files, given as a vector of strings containing the
     complete paths. All formats supported by XCMS can be used.}
-  \item{xset}{alternatively, one can present an xcmsSet object, instead
-    of the input files. In that case all of the XCMS and CAMERA tools:
-    peak picking, CAMERA grouping, retention time correction and filling
-    of missing peaks will be considered already done, and only annotation
-    will be performed. This can be useful if one wants to compare
-    different settings for annotation. If both \code{files} and
-    \code{xset} are given, the former takes precedence.}
+  \item{xset}{alternatively, one can present an object of class
+    \code{xsAnnotate}, instead of the input files. In that case all of the
+    XCMS and CAMERA tools: peak picking, CAMERA grouping, retention time
+    correction and filling of missing peaks will be considered already
+    done, and only annotation will be performed. This can be useful if one
+    wants to compare different settings for annotation. If both
+    \code{files} and \code{xset} are given, the former takes precedence.}
   \item{settings}{nested list of settings, to be used at individual
     steps of the pipeline. See the help of \code{FEMsettings} for details.}
   \item{rtrange}{An optional vector to slice the retention time range
@@ -36,7 +36,6 @@ runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
   \item{errf}{A model used to calculate the mass tolerance in ppm
     for each features on the bases of its mass, retention time and intensity.
     For further details refer to the help of \code{AnnotateTable}.}
-  \item{runCAMERA}{Logical. Should CAMERA annotation be performed?}
   \item{returnXset}{logical: should the XCMS output be returned? If yes,
     this is a a list of \code{xcmsSet} objects, one element for each
     input file.}
@@ -69,7 +68,7 @@ runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
     the features.}
   \item{Annoation}{The complete output of the \code{AnnotateTable} function.}
   \item{Settings}{The settings used in the pipeline.}
-  \item{xset}{optionally, the xcmsSet (CAMERA) object is returned, which can be
+  \item{xset}{optionally, the xcmsSet/CAMERA object is returned, which can be
     useful for more detailed inspection of the results.}
 }
 \references{
