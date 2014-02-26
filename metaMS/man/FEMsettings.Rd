@@ -18,7 +18,7 @@
 \examples{
 \dontrun{
 ## The three sets of settings are created as follows:
-Synapt.NP <- metaMSsettings(instName = "Synapt.QTOF.NP",
+Synapt.NP <- metaMSsettings(protocolName = "Synapt.QTOF.NP",
                             chrom = "LC",
                             PeakPicking = list(
                               method = "matchedFilter",
@@ -54,7 +54,7 @@ metaSetting(Synapt.NP, "DBconstruction") <- list(
 ## For reverse-phase LC, settings are very similar: the only difference
 ## is in the alignment settings
 Synapt.RP <- Synapt.NP
-metaSetting(Synapt.RP, "instName") <- "Synapt.QTOF.RP"
+metaSetting(Synapt.RP, "protocolName") <- "Synapt.QTOF.RP"
 metaSetting(Synapt.RP, "Alignment") <- list(
             min.class.fraction = .3,
             min.class.size = 3,
@@ -67,7 +67,7 @@ metaSetting(Synapt.RP, "Alignment") <- list(
             fillPeaks = TRUE)
 
 
-TSQXLS.GC <- metaMSsettings("instName" = "TSQXLS.QQQ.GC",
+TSQXLS.GC <- metaMSsettings("protocolName" = "TSQXLS.QQQ.GC",
                             "chrom" = "GC",
                             PeakPicking = list(
                               method = "matchedFilter",

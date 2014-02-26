@@ -23,7 +23,7 @@
   minutes and not seconds. If a slot is only relevant for either GCMS or
   LCMS, this is indicated explicitly.
   \describe{
-    \item{\code{instName}:}{Object of class \code{"character"}: the name
+    \item{\code{protocolName}:}{Object of class \code{"character"}: the name
     of the instrumental protocol, a unique identifier.}
     \item{\code{chrom}:}{Object of class \code{"character"}:
       chromatography. Either "LC" or "GC".}

@@ -6,7 +6,6 @@ runLC <- function(files,
                   DB = NULL,
                   polarity = "positive",                  
                   errf = NULL,
-                  runCAMERA = TRUE,
                   returnXset = FALSE,
                   intensity = "into",
                   nSlaves = 0)
@@ -16,12 +15,14 @@ runLC <- function(files,
   } else {
     if (missing(xset))
         stop("Either 'files' or 'xset' should be given")
+    if (class(xset) != "xsAnnotate")
+        stop("xset should be of class 'xsAnnotate'")
     
-    nexp <- length(sampnames(xset))
+    nexp <- length(sampnames(xset@xcmsSet))
   }
   
   printString(paste("Experiment of", nexp, "samples"))
-  printString(paste("Instrument:", metaSetting(settings, "instName"),
+  printString(paste("Instrument:", metaSetting(settings, "protocolName"),
                     " - polarity:", polarity))
   if (length(rtrange) == 2)
       printString(paste("Retention time range:", rtrange[1], "to",
@@ -42,11 +43,9 @@ runLC <- function(files,
     xset <- alignmentLC(xset, metaSetting(settings, "Alignment"))
     
     ## ------ CAMERA ------------------------------------------------
-    if (runCAMERA){
-      printString("Performing CAMERA grouping")
-      xset <- runCAMERA(xset, chrom = "LC",
-                        metaSetting(settings, "CAMERA"), polarity)
-    }
+    printString("Performing CAMERA grouping")
+    xset <- runCAMERA(xset, chrom = "LC",
+                      metaSetting(settings, "CAMERA"), polarity)
   } else {
     printString("Using xcmsSet object - only doing annotation")
   }
