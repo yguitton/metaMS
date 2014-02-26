@@ -1,6 +1,6 @@
 metaMSsettings <-
     setClass("metaMSsettings", 
-             slots = c(instName = "character",
+             slots = c(protocolName = "character",
                  chrom = "character",
                  PeakPicking = "list",
                  Alignment = "list", 
@@ -44,7 +44,7 @@ metaMSsettings <-
 setMethod("show", "metaMSsettings",
           function(object) {
             cat("Object of class '", class(object), "'\n", sep = "")
-            cat("Instrument:", object@instName, "\n")
+            cat("Instrument:", object@protocolName, "\n")
             cat("Chromatography:", object@chrom, "\n")
           })
 
