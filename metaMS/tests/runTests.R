@@ -1,1 +1,1 @@
-BiocGenerics:::testPackage("MyPackage")
+BiocGenerics:::testPackage("metaMS")
