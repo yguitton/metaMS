@@ -77,32 +77,24 @@ A list with the following elements:
 data(threeStdsDB) 
 data(FEMsettings)
 
-data(GCresults) ## pre-compiled results, a.o. GCset
-names(result.annot)
+data(GCresults) ## pre-compiled results
+names(GCresults)
 
 \dontrun{
-## object result.annot is created by
-result.annot <- runGC(xset = GCset, settings = TSQXLS.GC, DB = DB)
-
-## to start directly from the CDF files and include peak picking in the
-## pipeline, simply provide the "files" argument rather than the "xset"
-## argument
 if (require(metaMSdata)) {
-  cdfdir <- system.file("CDF_GC", package = "metaMSdata")
-  cdffiles <- list.files(cdfdir, pattern = "cdf",
+  ## object GCresults is created by
+  cdfdir <- system.file("extdata", package = "metaMSdata")
+  cdffiles <- list.files(cdfdir, pattern = "_GC_",
                          full.names = TRUE, ignore.case = TRUE)
+  GCresults <- runGC(xset = cdffiles, settings = TSQXLS.GC, DB = DB)
+
+  ## to start directly from the XCMS/CAMERA results and not include
+  ## peak picking in the pipeline, simply provide the "xset" argument
+  ## rather than the "files" argument.
 
   ## no annotation database
-  result.noannot <- runGC(files = cdffiles, settings = TSQXLS.GC)
-  ## only three patterns consistently found, one of which is a standard
-
-  ## more lenient settings
-  metaSetting(TSQXLS.GC, "betweenSamples.simthresh") <- .8
-  result.noannot2 <- runGC(files = cdffiles, settings = TSQXLS.GC)
-  ## now 15 patterns are found consistently across the samples,
-  ## including the three standards
+  result.noannot <- runGC(xset = GCresults$xset, settings = TSQXLS.GC)
+  }
 }
-}
-
 }
 \keyword{manip}

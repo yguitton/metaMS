@@ -77,8 +77,8 @@ vendor software (Waters, Databridge). The system specific position of
 the example files can be determined as follows: 
 <<>>=
 library(metaMSdata)
-cdfpath <- system.file("CDF_LC", package = "metaMSdata")
-files <- list.files(cdfpath, "CDF", full.names=TRUE)
+cdfpath <- system.file("extdata", package = "metaMSdata")
+files <- list.files(cdfpath, "_RP_", full.names=TRUE)
 files
 @
 
@@ -182,8 +182,8 @@ The reference table has been already described. The data can be loaded
 as follows:
 <<>>=
 library(metaMSdata)
-cdfpath <- system.file("CDF_LC", package = "metaMSdata")
-files <- list.files(cdfpath, "CDF", full.names=TRUE)
+cdfpath <- system.file("extdata", package = "metaMSdata")
+files <- list.files(cdfpath, "_RP_", full.names=TRUE)
 exptable$stdFile <- sapply(exptable$stdFile,
                            function(x)
                            files[grep(x,files)])

@@ -27,10 +27,10 @@ if (require(metaMSdata)) {
   ## available by typing "data(threeStdsInfo)", now containing the
   ## directory information that is not available in the RData object.
 
-  input.file <- list.files(system.file("CDF_GC", package = "metaMSdata"),
+  input.file <- list.files(system.file("extdata", package = "metaMSdata"),
                            pattern = "csv", full.names = TRUE)
   threeStdsInfo <- readStdInfo(input.file,
-                               system.file("CDF_GC", package = "metaMSdata"),
+                               system.file("extdata", package = "metaMSdata"),
                                sep = ";", dec = ",")
   ## only one of the files is used to set up the database, the others
   ## are for testing annotation
