@@ -100,7 +100,6 @@ results.xset  <- runLC(xset = LCresults$xset, settings = Synapt.RP,
 ## pipeline, simply provide the "files" argument rather than the "xset" argument
 
 if (require(metaMSdata)) {
-  
   ## get the path 
   cdfpath <- system.file("extdata", package = "metaMSdata")
   
@@ -108,10 +107,8 @@ if (require(metaMSdata)) {
   files <- list.files(cdfpath, "_RP_", full.names=TRUE)
     
   ## <-------------    Use the Synapt Q-TOF error function     -------------- >
- 
   result.adaptive <- runLC(files, settings = Synapt.RP, 
                            DB = LCDBtest$DB, errf = errf)
-  
   
   ## <--------    Run the analysis with a fixed mass tolerance      --------- >
   result.fixed <- runLC(files, settings = Synapt.RP, 

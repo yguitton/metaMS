@@ -13,18 +13,6 @@
   compounds. Such databases can then be used for annotation purposes.
 }
 \details{
-\tabular{ll}{
-Package: \tab metaMS\cr
-Type: \tab Package\cr
-Version: \tab 0.8.5\cr
-Date: \tab 2013-09-12\cr
-Depends: \tab tools, xcms (>= 1.35), CAMERA, robustbase, Matrix\cr
-Suggests: \tab metaMSdata\cr
-License: \tab GPL (>= 2)\cr
-LazyLoad: \tab yes\cr
-Built: \tab R 3.0.2; ; 2013-10-04 13:25:32 UTC; unix\cr
-}
-
 Index:
 \preformatted{
 AnnotateFeature         Feature Wise Annotation
@@ -32,8 +20,6 @@ AnnotateTable           AnnotateTable
 FEMsettings             FEM Settings for 'metaMS'
 LCDBtest                Sample DB for LC-MS annotation
 alignmentLC             LC alignment
-annotations2tab         Conversion of a list of annotation results into
-                        a table
 construct.msp           Functions to handle msp-type objects (GC-MS)
 constructExpPseudoSpectra
                         Create a list of all pseudospectra found in a
@@ -62,8 +48,6 @@ processStandards        Process input files containing raw data for
                         pure standards.
 readStdInfo             Read information of injections of standards
                         from a csv file.
-relInt                  Subfunction GC-MS processing (annotGCfunc.R)
-removeDoubleMasses      Subfunction GC-MS processing (matchfuns.R)
 runCAMERA               Run CAMERA
 runGC                   Wrapper for processing of GC-MS data files
 runLC                   Wrapper for processing of LC-MS data files

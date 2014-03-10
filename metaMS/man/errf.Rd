@@ -57,11 +57,11 @@ dummy.model <- lm(err~M+logI, data = MErr.data)
 \dontrun{
 ## <--------------    Use this for the annotation     -------------- >
 ## load the example xcmsSet
-data(LCxset)
+data(LCresults)
 data(FEMsettings)
 
 ## Run the analysis with an adaptive mass tolerance 
-result.adaptive.dummy <- runLC(xset = LCxset,
+result.adaptive.dummy <- runLC(xset = LCresults$xset,
                                settings = Synapt.RP, 
                                DB = LCDBtest$DB,
                                errf = dummy.model)
@@ -70,7 +70,7 @@ result.adaptive.dummy <- runLC(xset = LCxset,
 ## load the Synapt-QTOF error function
 data(errf)
 
-result.adaptive  <- runLC(xset = LCxset,
+result.adaptive  <- runLC(xset = LCresults$xset,
                           settings = Synapt.RP, 
                           DB = LCDBtest$DB,
                           errf = errf)
