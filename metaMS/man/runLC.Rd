@@ -80,6 +80,9 @@ runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
 }
 \author{Pietro Franceschi}
 \examples{
+data(LCresults)
+names(LCresults)
+
 \dontrun{
 ## load the settings for the analysis
 data(FEMsettings)
@@ -90,10 +93,7 @@ data(LCDBtest)
 ## load the Synapt Q-TOF error function
 data(errf)
 
-## load the example xcmsSet
-data(LCresults)
-
-results.xset  <- runLC(xset = LCxset, settings = Synapt.RP, 
+results.xset  <- runLC(xset = LCresults$xset, settings = Synapt.RP, 
                        DB = LCDBtest$DB)
 
 ## to start directly from the CDF files and include peak picking in the

@@ -16,7 +16,8 @@
   all other slots contain settings for \pkg{metaMS} functions.
 }
 \section{Objects from the Class}{
-  Objects can be created by calls of the form \code{new("metaMSsettings", ...)}.
+  Objects can be created by calls of the form
+  \code{metaMSsettings(...)}. See the example below.
 }
 \section{Slots}{
   Note: all slots describing retention times or retention time differences use
@@ -125,5 +126,41 @@
 \seealso{\code{\link{FEMsettings}}}
 \examples{
 showClass("metaMSsettings")
+
+\dontrun{
+## The three sets of settings are created as follows:
+Synapt.NP <- metaMSsettings(protocolName = "Synapt.QTOF.NP",
+                            chrom = "LC",
+                            PeakPicking = list(
+                              method = "matchedFilter",
+                              step = 0.05,
+                              fwhm = 20,
+                              snthresh = 4,
+                              max = 50),
+                            Alignment = list(
+                              min.class.fraction = .3,
+                              min.class.size = 3,
+                              mzwid = 0.1,
+                              bws = c(130, 10),
+                              missingratio = 0.2,
+                              extraratio = 0.1,
+                              retcormethod = "linear",
+                              retcorfamily = "symmetric",            
+                              fillPeaks = TRUE),
+                            CAMERA = list(
+                              perfwhm = 0.6,
+                              cor_eic_th = 0.7,
+                              ppm= 5))
+metaSetting(Synapt.NP, "match2DB") <- list(
+            rtdiff = 1.5,
+            rtval = .1,
+            mzdiff = 0.005,
+            ppm = 5,
+            minfeat = 2)
+metaSetting(Synapt.NP, "DBconstruction") <- list(
+            minfeat = 3,
+            rttol = .3,
+            mztol = .01)
+}
 }
 \keyword{classes}
