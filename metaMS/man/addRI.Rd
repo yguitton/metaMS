@@ -25,7 +25,7 @@ addRI(mspobj, RIstandards, isMSP = TRUE)
 }
 \examples{
 if (require(metaMSdata)) {
-  manual.fname <- list.files(system.file("CDF_GC", package = "metaMSdata"),
+  manual.fname <- list.files(system.file("extdata", package = "metaMSdata"),
                              pattern = "msp", full.names = TRUE)
   manual <- read.msp(manual.fname)
   RIstandards <- cbind("rt" = c(1.54, 1.68, 1.99, 2.7, 4.36, 6.81, 9.43,

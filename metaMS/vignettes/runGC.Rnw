@@ -141,8 +141,8 @@ data(threeStdsDB)
 library(metaMSdata)
 data(threeStdsDB)        ## provides DB
 
-cdfdir <- system.file("CDF_GC", package = "metaMSdata")
-cdffiles <- list.files(cdfdir, pattern = "cdf",
+cdfdir <- system.file("extdata", package = "metaMSdata")
+cdffiles <- list.files(cdfdir, pattern = "_GC_",
                        full.names = TRUE, ignore.case = TRUE)
 result <- runGC(files = cdffiles, settings = TSQXLS.GC, DB = DB,
                 nSlaves = 2)
@@ -167,6 +167,9 @@ the structure of the data objects without having to create them on the
 fly, which simply takes too much time:
 <<>>=
 data("GCresults")
+@
+<<eval=TRUE,echo=FALSE>>=
+allSamples.msp <- GCresults$samples.msp
 @ 
 
 \subsubsection{Peak picking}
@@ -425,11 +428,11 @@ standards in the \pkg{metaMSdata} package, this leads to the following
 information:
 <<>>=
 library(metaMSdata)
-stddir <- system.file("CDF_GC", package = "metaMSdata")
+stddir <- system.file("extdata", package = "metaMSdata")
 input.file <- list.files(stddir, pattern = "csv", full.names = TRUE)
 threeStdsInfo <- readStdInfo(input.file, stddir, sep = ";", dec = ",")
 threeStdsInfo[,"stdFile"] <- paste(stddir, 
-                                   "GW_130820_12.cdf",
+                                   "STDmix_GC_03.CDF",
                                    sep = "/")
 threeStdsInfo[,c(1:4, 8)]
 @ 

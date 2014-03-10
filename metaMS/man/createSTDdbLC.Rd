@@ -65,7 +65,7 @@ if (require(metaMSdata)) {
   cdfpath <- system.file("CDF_LC", package = "metaMSdata")
   
   ## files 
-  files <- list.files(cdfpath, "CDF", full.names=TRUE)
+  files <- list.files(cdfpath, "_RP_", full.names=TRUE)
   
   ## get the complete names for the files
   exptable$stdFile <-
