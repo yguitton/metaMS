@@ -80,9 +80,9 @@ if (require(metaMSdata)) {
   ## Sitation A: create a DB of standards.
   ## first tell the system where to look
   data(threeStdsInfo)
-  stdInfo[,"stdFile"] <-
-    rep(list.files(system.file("CDF_GC", package = "metaMSdata"),
-                   full.names = TRUE)[3], 3)
+  all.files <- list.files(system.file("extdata", package = "metaMSdata"),
+                          pattern = "_GC_", full.names = TRUE)
+  stdInfo[,"stdFile"] <- rep(all.files[3], 3)
 
   data(FEMsettings)    ## provides a.o. TSQXLS.GC, the GC settings file
   data(threeStdsNIST)  ## provides object smallDB, excerpt from NIST DB
@@ -97,7 +97,7 @@ if (require(metaMSdata)) {
   DB <- createSTDdbGC(stdInfo, TSQXLS.GC, extDB = NULL)
 
   ## Situation C: create a DB directly from an msp file (manual DB)
-  manual.fname <- list.files(system.file("CDF_GC", package = "metaMSdata"),
+  manual.fname <- list.files(system.file("extdata", package = "metaMSdata"),
                              pattern = "msp", full.names = TRUE)
   manual <- read.msp(manual.fname)
   DB <- createSTDdbGC(stdInfo = NULL, settings = TSQXLS.GC,

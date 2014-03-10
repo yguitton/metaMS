@@ -1,11 +1,7 @@
 test_LC <- function() {
-  ## library(metaMS)
   data(FEMsettings)  ## The settings
   data(LCDBtest)     ## The database
   data(LCresults)    ## The reference output
-  
-  
-  ## <----------------   runLC -------------------------- >
   
   ## Peak picking in xcms returns different numbers of features in
   ## different versions. We are not interested in
