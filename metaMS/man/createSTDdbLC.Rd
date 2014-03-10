@@ -62,7 +62,7 @@ if (require(metaMSdata)) {
   data(exptable)
   ## add location of cdf file from which the standards DB is going to be
   ## built - this depends on your platform and requires the metaMSdata package
-  cdfpath <- system.file("CDF_LC", package = "metaMSdata")
+  cdfpath <- system.file("extdata", package = "metaMSdata")
   
   ## files 
   files <- list.files(cdfpath, "_RP_", full.names=TRUE)
