@@ -1,4 +1,5 @@
 ## load specific functions from tools and robustbase
+import(BiocGenerics)
 import(methods)
 import(xcms)
 import(CAMERA)
