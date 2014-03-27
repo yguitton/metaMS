@@ -92,6 +92,9 @@ metaSetting(TSQXLS.GC, "match2DB") <- list(
             minfeat = 2)
 metaSetting(TSQXLS.GC, "matchIrrelevants") <- list(
             irrelevantClasses = c("Bleeding", "Plasticizers"),
+            timeComparison = "rt",
+            RIdiff = 2,    
+            rtdiff = .05,
             simthresh = 0.70)
 metaSetting(TSQXLS.GC, "betweenSamples") <- list(
             min.class.fraction = .5,
