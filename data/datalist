@@ -1,0 +1,9 @@
+FEMsettings: Synapt.NP Synapt.RP TSQXLS.GC
+GCresults
+LCDBtest
+LCresults
+errf
+exptable
+threeStdsDB: DB
+threeStdsInfo: stdInfo
+threeStdsNIST: smallDB
