@@ -1,0 +1,511 @@
+\documentclass[a4paper]{article}
+%\VignetteIndexEntry{runGC}
+
+\usepackage{geometry}
+\usepackage{layout}
+
+\geometry{
+  includeheadfoot,
+  margin=2.54cm
+}
+
+\newcommand{\pkg}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\newcommand{\proglang}[1]{{\sffamily #1}}
+\newcommand{\code}[1]{{\ttfamily #1}}
+\newcommand{\R}{\proglang{R}}
+
+\newcommand{\bC}{\mbox{\boldmath{$C$}}}
+\newcommand{\bE}{\mbox{\boldmath{$E$}}}
+\newcommand{\bS}{\mbox{\boldmath{$S$}}}
+\newcommand{\bX}{\mbox{\boldmath{$X$}}}
+
+\newcommand{\compresslist}{%
+  \setlength{\itemsep}{1pt}%
+  \setlength{\parskip}{0pt}%
+  \setlength{\parsep}{0pt}%
+}
+
+\renewcommand{\textfraction}{0}
+
+\title{Analysis of GC-MS metabolomics data with metaMS}
+\author{Ron Wehrens}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+Many packages are available for the analysis of data from GC-MS and
+LC-MS experiments -- typically, hardware vendors provide software that
+is optimized for the instrument and allow for a direct interaction of
+the lab scientist with the data. For high-throughput applications,
+however, more automatic pipelines are needed. Open-source alternatives
+such as \pkg{xcms}~\cite{Smith2006} not only are able to handle data
+from several different types of spectrometers, but can also be
+integrated easily in web interfaces~\cite{Tautenhahn2012}, allowing
+large numbers of files to be processed simultaneously.
+
+Because of the generality of packages like \pkg{xcms}, several other
+packages have been written to tweak the functionality of \pkg{xcms}
+for optimal performance in a particular context. Package \pkg{metaMS}
+does so for the field of untargeted metabolomics; this vignette
+focuses on the analysis of GC-MS data. In comparison with the usual
+\pkg{xcms} pipeline several changes have been implemented, the most
+important of which are:
+\begin{itemize}
+  \item the package collects all user-changeable settings in one list,
+    with elements for the individual stages of the data processing
+    pipeline. This improves consistency and maintainability;
+  \item rather than a feature-based analysis, as is the case with
+    \pkg{xcms}, \pkg{metaMS} performs a pseudospectrum-based analysis,
+    where the basic entity is a collection of (mz, I) pairs at
+    specific retention times. This avoids the alignment step, which
+    can be extremely difficult for GC-MS data;
+  \item support has been added for the creation of in-house databases of
+    standards; these in-house databases can then be used for
+    annotation purposes;
+  \item comparison with databases of standard spectra is made on the
+    bases of the pseudospectra, using a tried and tested similarity
+    function that is fast enough to also search databases of hundreds
+    of thousands of compounds.
+\end{itemize}
+One of the goals of setting up \pkg{metaMS} was to set up a simple
+system with few user-settable parameters, capable of handling the vast
+majority of untargeted metabolomics experiments. Users not proficient
+in \R\ can be accomodated by setting up web interfaces, e.g. using
+RWui~\cite{Newton2007} -- in our institute, the only pieces of
+information the users have to provide in such a web interface are the
+location of the data, and the protocol used (e.g. GC
+triple-quad). This will automatically link the appropriate database
+for annotation and use the optimized settings. Results are returned
+both in the form of spreadsheets and R objects.
+
+\section{Example data}
+Because experimental data are quite big in general, this part has been
+split off in a separate package called \pkg{metaMSdata}; since the
+data are unlikely to see many updates, the user of \pkg{metaMS} can
+download future versions without having to download the example data again.
+Package \pkg{metaMSdata} provides a small number of example data
+files that illustrate the functionality of \pkg{metaMS}. For the GC-MS
+part, they consist of four injections of mixtures of
+chemical standards~\cite{Wehrens2014}. One of these injections will be
+used to create a database for three of the compounds present:
+Linalool, Methyl salicylate and Ethyl hexanoate. Once the database of
+standards has been created, it can be used for annotation
+purposes. Intermediate results are typically orders of magnitude
+smaller than the raw data files, and \pkg{metaMS} itself contains a
+number of these to illustrate the concepts and to speed up the
+examples in the manual pages.
+
+\section{GC-MS data processing in \pkg{metaMS}}
+In untargeted metabolomics, the application of MS/MS and related
+techniques is usually restricted to follow-up experiments, where
+identification of potentially interesting features is the goal. In
+initial experiments most often simple LC-MS and GC-MS experiments are
+done, where annotation is based on reliable data of chemical
+standards, often measured in very similar conditions. Package
+\pkg{metaMS} supports building these databases, using exactly the same
+data processing pipeline as is used for real samples. The settings are
+gathered in an object of class \code{metaMSsettings}:
+<<>>=
+library(metaMS)
+data(FEMsettings)
+TSQXLS.GC
+metaSetting(TSQXLS.GC, "PeakPicking")
+@ 
+The settings used for this particular set of samples are fine-tuned
+for a Thermo Scientific TSQXLS triple-quad GC. The \code{PeakPicking}
+field in the settings contains all elements that are passed to the
+\code{xcmsSet} function from \pkg{xcms}.
+
+\subsection{Analysis of samples}
+The standard workflow of \pkg{metaMS} for GC-MS data is the following:
+\begin{enumerate} \compresslist
+\item peak picking;
+\item definition of pseudospectra;
+\item identification and elimination of artefacts;
+\item annotation by comparison to a database of standards;
+\item definition of unknowns;
+\item output.
+\end{enumerate}
+This has been implemeted in function \code{runGC}, which takes a
+vector of file names, corresponding to the samples, and a settings
+list as mandatory arguments. In addition, some extra arguments can be
+provided. In particular, a database of standards, as discussed in the
+previous section, can be provided for annotation purposes. The call
+therefore can be as simple as:
+<<echo = FALSE>>=
+data(threeStdsDB)
+@ 
+<<eval = FALSE, echo = TRUE>>=
+library(metaMSdata)
+data(threeStdsDB)        ## provides DB
+
+cdfdir <- system.file("extdata", package = "metaMSdata")
+cdffiles <- list.files(cdfdir, pattern = "_GC_",
+                       full.names = TRUE, ignore.case = TRUE)
+result <- runGC(files = cdffiles, settings = TSQXLS.GC, DB = DB,
+                nSlaves = 2)
+@ 
+Alternatively, if the peak picking by \pkg{xcms} is already done, one
+can provide the \code{xcmsSet} object:
+<<eval = FALSE, echo = TRUE>>=
+result <- runGC(xset = GCset, settings = TSQXLS.GC, DB = DB)
+@ 
+In both cases, the result is a list containing a set of patterns
+corresponding with the compounds that have been found, either
+annotated or unknown, the relative intensities of these patterns in
+the individual annotations, and possibly the \code{xcmsSet} object for
+further inspection.
+In practice, the \code{runGC} function is all that users need to
+use. However, to give more details, each of the steps in the workflow
+will be discussed briefly below. 
+
+All results and intermediate results from this vignette are available
+in data object \code{GCresults} -- this is used here to demonstrate
+the structure of the data objects without having to create them on the
+fly, which simply takes too much time:
+<<>>=
+data("GCresults")
+@
+<<eval=TRUE,echo=FALSE>>=
+allSamples.msp <- GCresults$samples.msp
+@ 
+
+\subsubsection{Peak picking}
+The peak picking is performed by the usual \pkg{xcms} functions. A
+wrapper function, \code{peakDetection}, has been written in
+\pkg{metaMS} to allow the 
+individual parameters to be passed to the function as a settings
+list. The result is that the whole of the \pkg{xcms} functionality is
+available, simply by changing the values of some settings, or by
+adding fields. In the \code{runGC} function, this step is performed by
+<<eval = FALSE, echo = TRUE>>=
+GCset <- peakDetection(cdffiles, 
+                       settings = metaSetting(TSQXLS.GC, "PeakPicking"), 
+                       convert2list = TRUE, nSlaves = 2)
+@ 
+Since this part can take quite some time, it is operated in parallel
+wherever possible (using \pkg{Rmpi} or \pkg{snow}, and shows some
+feedback to the user. The last 
+argument of the function determines whether the results are to be
+presented for all samples together (the format of \pkg{xcms}), or
+should be split into a list with one entry for each individual
+file. The latter case is useful here, in the analysis of GC data, but
+also when setting up a database of standards.
+
+\subsubsection{Definition of pseudospectra}
+Rather than individual peaks, the basic data structure in the GC-MS
+part of \pkg{metaMS} is a pseudospectrum, i.e. a set of \emph{m/z}
+values showing a chromatographic peak at the same retention time. This
+choice is motivated by several 
+considerations. First of all, in GC the amount of overlap is much less
+than in LC: peaks are much narrower. This means that even a one- or
+two-second difference in retention time can be enough to separate the
+corresponding mass spectra. Secondly, fragmentation patterns for many
+compounds are 
+available in extensive libraries like the NIST
+library (see {\tt http://www.nist.gov/srd/nist1a.cfm}). In addition,
+the spectra are somewhat 
+easier to interpret since adducts, such as found in LC, are not
+present. The main advantage of pseudospectra, however, is that their
+use allows the results to be interpreted directly as relative
+concentrations of chemical compounds: a fingerprint in terms of
+chemical composition is obtained, rather than a fingerprint in terms
+of hard-to-interpret features.
+
+The pseudospectra are obtained by simply clustering on retention time,
+using the \code{runCAMERA} wrapper function, which for GC data calls
+\code{groupFWHM}:
+<<eval = FALSE, echo = TRUE>>=
+allSamples <- lapply(GCset, runCAMERA, chrom = "GC", 
+                     settings = metaSetting(TSQXLS.GC, "CAMERA"))
+@ 
+Again, all the usual parameters for the \code{groupFWHM} function can
+be included in the \code{CAMERA} slot of the settings object. The most
+important parameter is \code{perfwhm}, which determines the maximal
+retention time difference of features in one pseudospectrum.
+
+The final step is to convert the CAMERA objects into easily handled
+lists, which are basically the \R\ equivalent of the often-used
+\code{msp} format from the AMDIS software~\cite{Stein1999}. In
+\code{runGC}, this step is implemented as:
+<<eval = FALSE, echo = TRUE>>=
+allSamples.msp <- lapply(allSamples, to.msp, file = NULL, 
+                         settings = metaSetting(TSQXLS.GC, "DBconstruction"))
+@ 
+<<>>=
+sapply(allSamples.msp, length)
+allSamples.msp[[1]][[26]]
+@ 
+Object \code{allsamples.msp} is a nested list, with one entry for each
+sample, and each sample represented by a number of fields. In this
+case, more than 300 pseudospectra are found in each sample (even
+though the samples are mixtures of only fourteen chemical
+standards). The pseudospectra are three-column matrices, containing
+\emph{m/z}, intensity and retention time information, respectively.
+One can plot the individual spectra for visual inspection using the
+function \code{plotPseudoSpectrum} -- an example is shown in
+Figure~\ref{fig:pspectrum}. 
+\begin{figure}[tb]
+  \centering
+<<fig=TRUE,height=4.5,width=10>>=
+plotPseudoSpectrum(allSamples.msp[[1]][[26]])
+@ 
+\caption{A pseudospectrum from one of the samples.}
+\label{fig:pspectrum}
+\end{figure}
+
+\subsubsection{Annotation}
+Once we have identified our pseudospectra, we can start the annotation
+process. This is done by comparing every pseudospectrum to a database
+of spectra. As a similarity measure, we use the weighted dot
+product as it is fast, simple, and gives good
+results~\cite{Stein1994a}. The first step in the comparison is based on
+retention, since a comparison of either retention time or retention
+index is much faster than a spectral comparison. The corresponding
+function is \code{matchSamples2DB}. Since the weighted dot product
+uses scaled mass spectra, the scaling of the database is done once,
+and then used in all comparisons:
+<<>>=
+DB.treated <- treat.DB(DB)
+allSam.matches <- 
+    matchSamples2DB(allSamples.msp, DB = DB.treated, 
+                    settings = metaSetting(TSQXLS.GC, "match2DB"), 
+                    quick = FALSE)
+allSam.matches
+@ 
+This returns a table where all patterns that have a match with a DB
+entry are shown in the first column, and the DB entry itself in the
+second column. If for a particular experimental pattern more than one
+match is found, the alternatives (with a lower match factor) are shown
+in the last column. In this case, all three patterns in the database
+match with exactly one pattern in each of the experimental samples.
+
+To see the match for a particular pattern, one can
+use the function \code{matchExpSpec}, returning match factors (numbers
+between 0 and 1, where the latter means a perfect match) for all
+entries in the database. If the \code{plotIt} argument is \code{TRUE},
+the best match is shown -- see Figure~\ref{fig:match}.
+\begin{figure}[tb]
+  \centering
+<<fig=TRUE,height=5.5,width=9.5>>=
+matchExpSpec(allSamples.msp[[1]][[4]], DB.treated, 
+             DB.treated = TRUE, plotIt = TRUE)
+@ 
+\caption{Best match between an experimental pattern (in red) and a
+  database entry (in blue).}
+\label{fig:match}
+\end{figure}
+
+Samples may contain compounds that are not of any interest, such as
+plasticizers, internal standards, column material etcetera. These can
+be filtered out before doing an annotation: \pkg{metaMS} allows
+certain categories of database entries (defined in slot
+\code{matchIrrelevants} of the settings object) to be removed before
+further annotation. If the spectra of these compounds are very
+specific (and they often are), the retention criterion may be bypassed
+by setting the maximal retention time difference to very high values,
+which leads to the removal of such spectra wherever they occur in the
+chromatogram.
+
+\subsubsection{Unknowns}
+The most important aspect of untargeted metabolomics is the definition
+of unknowns, patterns that occur repeatedly in several samples, but
+for which no annotation has been found. In \pkg{metaMS} these unknowns
+are found by comparing all patterns within a certain retention time
+(or retention index) difference on their spectral characteristics. The
+same match function is used, but the threshold may be different from
+the threshold used to match with the database of standards. Likewise,
+the maximum retention time (index) difference may be different,
+too. In defining unknowns we have so far used settings that are more
+strict than when comparing to a database: since all samples are
+typically measured in one single run, expected retention time
+differences are rather small. In addition, one would expect
+reproducible spectra for a single compound. A true unknown, or at
+least an interesting one, is also present in a significant fraction of
+the samples. All these parameters are gathered in the
+\code{betweenSamples} element of the settings object. 
+
+Since the
+matching is done using scaled patterns, we need to created a scaled
+version of the experimental pseudospectra first:
+<<>>=
+allSamples.msp.scaled <- lapply(allSamples.msp, treat.DB, 
+                                isMSP = FALSE)
+allSam.matches <- 
+    matchSamples2Samples(allSamples.msp.scaled, 
+                         allSamples.msp, 
+                         annotations = allSam.matches$annotations, 
+                         settings = metaSetting(TSQXLS.GC, "betweenSamples"))
+names(allSam.matches)
+@
+For large numbers of samples, this process can take quite some time
+(it scales quadratically), especially if the allowed difference in
+retention time is large.
+The result now is a list of two elements: the first is the annotation
+table that we also saw after the comparison with the database, and the
+second is a list of pseudospectra corresponding to unknowns. In the
+annotation table, negative indices correspond to the pseudospectra in
+this list.
+<<>>=
+allSam.matches$annotations[[1]]
+@ 
+In the example above we see that pattern 10 in the first sample
+corresponds to the first unknown.
+
+\subsubsection{Output}
+At this stage, all elements are complete: we have the list of
+pseudospectra with an annotation, either as a chemical standard from
+the database, or an unknown occurring in a sizeable fraction of the
+injections. The only things left to do is to calculate relative
+intensities for the pseudospectra, and to put the results in an
+easy-to-use table. This table consists of two parts. The first part is
+the information on the ``features'', which here are the pseudospectra:
+<<>>=
+features.df <- getFeatureInfo(stdDB = DB, allMatches = allSam.matches, 
+                              sampleList = allSamples.msp)
+features.df[, c(1:3, ncol(features.df) - 2:0)]
+@ 
+The first three lines are the standards, and the next two are the two
+unknowns that are identified by the pipeline. The second part of the
+table contains the intensities of these features in the individual
+injections.
+
+In manual interpretation of this kind of data, the intensities
+of one or two ``highly specific'' features are often used to achieve
+relative quantitation. In an automatic pipeline, this is a risky
+strategy: not only can the intensity of a peak vary quite dramatically
+(relative standard deviations of up to 30\% are assumed acceptable in
+GC-MS, e.g. when SPME is applied), but these errors are all the more
+pronounced in high-intensity peaks (hence the common use of a relative
+standard deviation). In addition, one is ignoring the information in
+the other peaks of the pseudospectrum. In \pkg{metaMS}, pseudospectrum
+intensity is expressed as a multiple of the corresponding reference
+pattern (either a database pattern or an unknown), where the intensity
+ratio is determined using robust regression to avoid one deviating
+feature to influence the results too much~\cite{Wehrens2014}.
+First, we define an object containing all relevant pseudospectra, and
+next the intensities are generated:
+<<>>=
+PseudoSpectra <- constructExpPseudoSpectra(allMatches = allSam.matches, 
+                                           standardsDB = DB)
+ann.df <- getAnnotationMat(exp.msp = allSamples.msp, pspectra = PseudoSpectra, 
+                           allMatches = allSam.matches)
+ann.df
+@ 
+Since relative intensities are hard to interpret for mass
+spectrometrists, these are converted into numbers corresponding to
+peak heights or peak areas. This is done by multiplication by the
+highest intensity in the reference spectrum:
+<<>>=
+ann.df2 <- sweep(ann.df, 1, sapply(PseudoSpectra, 
+                                   function(x) max(x$pspectrum[, 2])), 
+                 FUN = "*")
+ann.df2
+@ 
+The three standards (the first three lines) have been identified in
+all four samples; the two unknowns in three and two cases, respectively.
+The final result is obtained by simply concatenating the two tables
+column-wise.
+
+\subsection{Building a database of standards}
+From the previous discussion it should be clear how important an
+in-house database of standards, measured on the same system as the
+samples, really is. The point is that the retention behaviour of
+chemical compounds can differ substantially across systems -- an
+in-house database is the best way to avoid many false negative and
+false positive hits.
+
+Fortunately, the pipeline as discussed so far can be used easily to
+also process injections of standards. These may be injected as
+mixtures, provided that their retention 
+times are not completely overlapping. Additional information is
+obtained from a user-provided \code{csv} file containing information like
+CAS number, retention time, and molecular weight. Such a file is
+processed with the function \code{readStdInfo}. For the three chemical
+standards in the \pkg{metaMSdata} package, this leads to the following
+information:
+<<>>=
+library(metaMSdata)
+stddir <- system.file("extdata", package = "metaMSdata")
+input.file <- list.files(stddir, pattern = "csv", full.names = TRUE)
+threeStdsInfo <- readStdInfo(input.file, stddir, sep = ";", dec = ",")
+threeStdsInfo[,"stdFile"] <- file.path(stddir, "STDmix_GC_03.CDF")
+threeStdsInfo[,c(1:4, 8)]
+@ 
+The system gives a warning that some \code{CDF} files in the data
+directory are not used, which can be useful feedback -- in this case,
+it is so by design. The result is a \code{data.frame} object containing
+all information about the chemical standards: where to look for them,
+but also it provides identifiers such as a CAS number that can be used
+to compare the data to other databases. This is an essential step,
+since many patterns will be identified in the raw data, even when the
+samples consist of clean mixtures of chemical standards: for automatic
+DB construction, a validation step of some kind has to be part of the
+pipeline. The main benefit of setting up one's own database is the exact
+retention time information, something that will be essential in the
+annotation phase lateron. Continuing the example for the three
+standards, the in-house database can simply be created by issuing
+<<eval = FALSE, echo = TRUE>>=
+data(threeStdsNIST)                       ## provides smallDB
+DB <- createSTDdbGC(threeStdsInfo, TSQXLS.GC, extDB = smallDB,
+                    nSlaves = 2)
+@ 
+The system returns some feedback about the process, which for large
+numbers of files can take some time. If parallel processing is
+supported (\code{Rmpi} or \code{snow}), this is shown, too.
+If no validation by comparing to an external database of spectra is
+possible, \pkg{metaMS} allows to add manually validated spectra to the
+data base using the \code{manualDB} argument to the
+\code{createSTDdbGC} function.
+<<>>=
+names(DB[[1]])
+@ 
+The database contains all information from the input file, as well as
+information on the match with the external database, and
+the validated spectrum. 
+
+\section{Alternative annotation strategies}
+Instead of the strategy outlined above, one could also use the
+building blocks provided by \pkg{metaMS} in different ways.
+Instead of first comparing all pseudospectra in the injections with
+the database patterns, one could also first identify all
+unknowns. Then the pseudospectra corresponding to the unknowns could
+be compared with the database to see if any of them matches known
+standards. This strategy would get rid of ``single hits'',
+i.e. chemical compounds that are identified in only one or very few
+injections, and would make full use of the fact that all injections
+have been done in a single run, so would lead to very similar
+retention time behaviour and very similar spectra. One could
+hypothesize that over the course of several months or even years, a
+database of spectra of standards could show bigger and bigger
+deviations with actual measurements, and this alternative strategy
+could possibly lead to more easily interpretable, or at least
+easier-to-correct results.
+
+There are also downsides to this strategy, as can be imagined: first
+of all, it is slower, especially with large numbers of samples. Since
+the comparison with a database scales linearly with the number of
+injections, and the defintion of unknowns quadratically, this can be
+quite a big issue. In addition, the definition of what is an unknown
+not only depends on spectral and chromatographic similarities, but
+also on the fraction of injections in which this pattern is found: an
+additional parameter that can make quite a big difference in the
+outcome. Finally, it is easy to remove annotations from the
+``standard'' strategy that occur in only very few samples: one can
+even assess whether alternative annotations are present that are more
+in line with what is found in the other samples.
+
+Whichever strategy is most useful depends on the data and the
+scientific questions at hand. Given the building blocks provided by
+\pkg{xcms} and \pkg{CAMERA}, and on a more abstract level by
+\pkg{metaMS}, it is now quite easy to implement different strategies
+for different purposes.
+
+\clearpage
+
+\bibliographystyle{unsrt}
+\bibliography{GC} 
+
+\end{document}
