@@ -1,0 +1,3 @@
+CHANGES IN VERSION 0.99.6
+-------------------------
+ o replaced paste(..., "/") with file.path() in runLC.Rnw 
