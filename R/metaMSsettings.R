@@ -31,6 +31,8 @@ metaMSsettings <-
                  matchIrrelevants = representation(
                      irrelevantClasses = "character",
                      simthresh = "numeric",
+                     timeComparison = "character",
+                     RIdiff = "numeric",    
                      rtdiff = "numeric"),
                  betweenSamples = representation(
                      min.class.fraction = "numeric",
