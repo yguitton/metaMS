@@ -89,10 +89,16 @@
     \item{\code{matchIrrelevants.simthresh}:}{Object of class
       \code{"numeric"}: the minimal match factor to speak of a
       hit. GC only.}
+    \item{\code{matchIrrelevants.timeComparison}:}{Object of class
+      \code{"character"}: either "rt" or "RI". GC only.}
     \item{\code{matchIrrelevants.rtdiff}:}{Object of class
-      \code{"numeric"}: maximal retention time difference with DB
-      entry - this can be set to a very high value if a
+      \code{"numeric"}: maximal retention time difference between two
+      unknowns - this can be set to a very high value if a 
       pattern is to be removed whatever the retention time. GC only.}
+    \item{\code{matchIrrelevants.RIdiff}:}{Object of class \code{"numeric"}:
+      maximal retention index difference between two unknowns - this can
+      be set to a very high value if a pattern is to be removed whatever
+      the Retention Index. GC only.}
     \item{\code{betweenSamples.min.class.fraction}:}{Object of class
       \code{"numeric"}: fraction of samples in which a pseudospectrum is
       present before it is regarded as an unknown. GC only.}
