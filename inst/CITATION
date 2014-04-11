@@ -1,0 +1,16 @@
+citHeader("To cite the metaMS package publications use:")
+
+citEntry(entry="Article",
+         title = "metaMS: An open-source pipeline for GC-MS-based untargeted metabolomics",
+         author = personList(as.person("R. Wehrens"), 
+             as.person("G. Weingart"),
+             as.person("F. Mattivi")),
+         year         = 2014,
+         journal      = "J. Chrom. B",
+         volume         = "In press",
+         
+         textVersion = 
+         paste("R. Wehrens, G. Weingart and F. Mattivi,", 
+               "metaMS: An open-source pipeline for GC-MS-based untargeted metabolomics",
+               "J. Chrom. B (2014), in press.")
+         )
