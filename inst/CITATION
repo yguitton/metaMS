@@ -7,10 +7,11 @@ citEntry(entry="Article",
              as.person("F. Mattivi")),
          year         = 2014,
          journal      = "J. Chrom. B",
-         volume         = "In press",
+         volume         = "966",
+         pages        = "109-116",
          
          textVersion = 
          paste("R. Wehrens, G. Weingart and F. Mattivi,", 
                "metaMS: An open-source pipeline for GC-MS-based untargeted metabolomics",
-               "J. Chrom. B (2014), in press.")
+               "J. Chrom. B (2014), v966, 109-116.")
          )
