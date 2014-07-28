@@ -1,13 +1,9 @@
-CHANGES IN VERSION 0.99.8
--------------------------
- o fixed documentation for previous fix...
+ DEVELOPMENT VERSION 1.1.0
+  * updated email address maintainer
+  * fixed an issue in GC pipeline when fewer files are analysed than
+    the min.class.size value of the "betweenSamples" setting. Changes
+    in runGC.R and matchSamples2Samples.R
 
 
-CHANGES IN VERSION 0.99.7
--------------------------
- o fixed incomplete GC settings
-
-
-CHANGES IN VERSION 0.99.6
--------------------------
- o replaced paste(..., "/") with file.path() in runLC.Rnw 
+VERSION 1.0.0
+  * Original Bioconductor release.
