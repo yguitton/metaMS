@@ -93,9 +93,11 @@ matchSamples2Samples <- function(xset.msp.scaled,
     }
   }
 
-  ## check for minimal cluster size
-  minsize <- min(settings$min.class.size,
-                 settings$min.class.fraction * length(xset.msp))
+  ## check for minimal cluster size - for a meaningful value should be
+  ## at least 2...
+  minsize <- max(2,
+                 min(settings$min.class.size,
+                     settings$min.class.fraction * length(xset.msp)))
   bigClusters <- which(table(pmr.classes[pmr.classes > 0]) >= minsize)
   if (length(bigClusters) == 0) { ## nothing found
     return(list(annotations = annotations, unknowns = NULL))

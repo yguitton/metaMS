@@ -4,7 +4,7 @@ runGC <- function(files,
                   rtrange = NULL,
                   DB = NULL,
                   removeArtefacts = TRUE,
-                  findUnknowns = nexp > 1,
+                  findUnknowns = nexp >= mcs,
                   returnXset = FALSE,
                   RIstandards = NULL,
                   nSlaves = 0)
@@ -23,9 +23,21 @@ runGC <- function(files,
     xset.l <- xset
     nexp <- length(xset.l)
   }
+
+  ## same criterion as in matchSamples2Samples
+  mcs <-
+      max(2,
+          min(metaSetting(settings, "betweenSamples.min.class.size"),
+              metaSetting(settings, "betweenSamples.min.class.fraction") *
+              nexp))
+  ## check for unrealistic expectations: findUnknowns can only be
+  ## relevant if enough samples are present.
+  if (findUnknowns & nexp < mcs) {
+    stop("Number of samples too small to define unknowns - either provide more samples or change the settings.")
+  }
   
   if (is.null(DB) & !findUnknowns)
-      stop("Nothing to do. Provide a DB or set findUnknowns to TRUE...")
+      stop("Nothing to do. Provide a DB or set 'findUnknowns' to TRUE...")
   
   if (findUnknowns & !is.null(DB) &
       metaSetting(settings, "betweenSamples.timeComparison") !=
