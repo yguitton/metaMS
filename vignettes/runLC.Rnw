@@ -1,5 +1,5 @@
 \documentclass[a4paper]{article}
-%\VignetteIndexEntry{alsace}
+%\VignetteIndexEntry{runLC}
 
 \usepackage{geometry}
 \usepackage{layout}
