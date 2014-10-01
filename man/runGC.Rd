@@ -10,7 +10,7 @@
   samples.}
 \usage{
 runGC(files, xset, settings, rtrange = NULL, DB = NULL,
-      removeArtefacts = TRUE, findUnknowns = nexp > 1,
+      removeArtefacts = TRUE, findUnknowns = nexp > mcs,
       returnXset = FALSE, RIstandards = NULL, nSlaves = 0)
       
 }
@@ -33,7 +33,9 @@ runGC(files, xset, settings, rtrange = NULL, DB = NULL,
     identified as (e.g.) column bleeding. Only performed if a database
     containing such patterns is available.}
   \item{findUnknowns}{logical, whether to find patterns without
-    identification that are present consistently in several samples.}
+    identification that are present consistently in several samples. The
+    default is to use TRUE if the number of samples is larger than the
+    min.class.size setting in the 'betweenSamples' metaSetting.}
   \item{returnXset}{logical: should the XCMS output be returned? If yes,
     this is a a list of \code{xcmsSet} objects, one element for each
     input file.}
