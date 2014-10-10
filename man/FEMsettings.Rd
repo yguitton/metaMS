@@ -6,13 +6,13 @@
 \docType{data}
 \title{Example settings for \code{metaMS}}
 \description{Examples of settings needed for functions \code{runLC} and
-  \code{runGC}: Synapt.RP, Synapt.NP and TSQXLS.GC. These three
+  \code{runGC}: Synapt.RP, Synapt.NP, TSQXLS.GC and Orbitrap.RP. These four
   particular settings are fine-tuned for the analysis of LC-MS runs,
   both normal-phase and reverse-phase chromatography (Waters Synapt
-  G1)and GC-MS experiments (ThermoXLS TQQ).
+  G1- Thermo Orbitrap)and GC-MS experiments (ThermoXLS TQQ).
 }
 \usage{data(FEMsettings)}
-\format{Three objects of class \code{metaMSsettings}.}
+\format{Four objects of class \code{metaMSsettings}.}
 \seealso{\code{\link{findPeaks}}, \code{\link{annotate}}}
 \author{Ron Wehrens and Pietro Franceschi}
 \examples{
@@ -66,6 +66,39 @@ metaSetting(Synapt.RP, "Alignment") <- list(
             retcorfamily = "symmetric",            
             fillPeaks = TRUE)
 
+
+## For the orbitrap.RP
+Orbitrap.RP <- metaMSsettings(protocolName = "Orbitrap",
+                              chrom = "LC",
+                               PeakPicking = list(
+                                 method = "centWave",
+                                 ppm = 5,
+                                 prefilter = c(3,10000),
+                                 peakwidth = c(15,40)),
+                             Alignment = list(
+                                 method = "obiwarp",
+                                 profStep = 0.2,
+                                 bw = 30,
+                                 min.class.fraction = 0.3,
+                                 min.class.size = 3,
+                                 mzwid = 0.01,
+                                 fillPeaks = TRUE),
+                             CAMERA = list(
+                                 perfwhm = 0.6,
+                                 cor_eic_th = 0.7,
+                                 ppm = 5))
+metaSetting(Orbitrap.RP, "match2DB") <- list(
+            rtdiff = 1.5,
+            rtval = .1,
+            mzdiff = 0.005,
+            ppm = 5,
+            minfeat = 2)
+metaSetting(Orbitrap.RP, "DBconstruction") <- list(
+            minfeat = 3,
+            rttol = .3,
+            mztol = .01)
+
+## For the thermo TQ
 
 TSQXLS.GC <- metaMSsettings("protocolName" = "TSQXLS.QQQ.GC",
                             "chrom" = "GC",
