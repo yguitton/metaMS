@@ -63,6 +63,8 @@ A list with the following elements:
   useful for more detailed inspection of the results. It can also be
   used as an input for \code{runGC}, e.g., to test different annotation
   settings independently of the xcms/CAMERA part.}
+\item{sessionInfo}{The output of \code{sessionInfo()} to keep track of the sw
+  version used for the processing}
 }
 \references{
   R. Wehrens, G. Weingart and F. Mattivi: "An open-source pipeline for
