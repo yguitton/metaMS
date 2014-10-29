@@ -83,10 +83,12 @@ runLC <- function(files,
     list("PeakTable" = peakTable,
          "xset" = xset,
          "Annotation" = annotation$raw,
-         "Settings" = settings)
+         "Settings" = settings,
+         "SessionInfo" = sessionInfo())
   } else {
     list("PeakTable" = peakTable,
          "Annotation" = annotation$raw,
-         "Settings" = settings)
+         "Settings" = settings,
+         "SessionInfo" = sessionInfo())
   }
 }
