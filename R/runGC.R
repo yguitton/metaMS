@@ -220,11 +220,13 @@ runGC <- function(files,
          settings = settings,
          xset = allSamples,
          annotation = allSam.matches$annotation,
-         samples.msp = allSamples.msp)
+         samples.msp = allSamples.msp,
+         SessionInfo = sessionInfo())
   } else {
     list(PeakTable = cbind(data.frame(features.df),
              data.frame(round(ann.df2))),
          PseudoSpectra = PseudoSpectra,
-         settings = settings)
+         settings = settings,
+         SessionInfo = sessionInfo())
   }
 }
