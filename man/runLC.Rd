@@ -70,6 +70,8 @@ runLC(files, xset, settings, rtrange = NULL, mzrange = NULL, DB = NULL,
   \item{Settings}{The settings used in the pipeline.}
   \item{xset}{optionally, the xcmsSet/CAMERA object is returned, which can be
     useful for more detailed inspection of the results.}
+  \item{sessionInfo}{The output of \code{sessionInfo()} to keep track of the sw
+  version used for the processing}
 }
 \references{
   N. Shahaf, P. Franceschi, P. Arapitsas, I. Rogachev, U. Vrhovsek and
