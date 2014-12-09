@@ -1,4 +1,13 @@
- DEVELOPMENT VERSION 1.1.0
+Version 1.3.1
+  * Changed LC settings so that the retcor algorithm is passed
+    correctly to the underlying XCMS function
+  * Changed LC pipeline so that all user-defined settings are actually used
+
+Version 1.2.0
+  * Adopted Oct 2014
+
+
+DEVELOPMENT VERSION 1.1.0
   * updated email address maintainer
   * fixed an issue in GC pipeline when fewer files are analysed than
     the min.class.size value of the "betweenSamples" setting. Changes
