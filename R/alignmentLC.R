@@ -8,27 +8,24 @@ alignmentLC <- function (xset, settings){
         ceiling(length(sampnames(xset))*settings$min.class.fraction)))
       printString("minsamp:",myminsamp)
 
-      ## check if "method" is among the settings ...
-       if ("method" %in% names(settings)){
-        ## check if it is obiwarp ...
-        if (settings$method == "obiwarp") {
-        ## Do it with obiwarp ....
-         printString("obiwarp retcor")
-         xset <- retcor(xset,  
+      ## check if obiwarp retcor is required
+       if (settings$retcormethod == "obiwarp"){
+       ## Do it with obiwarp ....
+        printString("obiwarp retcor")
+        xset <- retcor(xset,
           method  = settings$method,
           profStep = settings$profStep)
          ## Grouping 
-         xset <- do.call(group,
+        xset <- do.call(group,
           c(list(object = xset, 
             bw = settings$bw,
             minsamp = myminsamp,
             minfrac = 0),
           settings["mzwid"]))
-      }
-    } else {
-        ## use the default density based approach
-        ## set the extra and missing on the bases of the 
-        ## number of samples
+      } else {
+      ## use the default density based approach
+      ## set the extra and missing on the bases of the 
+      ## number of samples
         missing <- ceiling((settings$missingratio) * length(xset@filepaths))
         extra <- ceiling((settings$extraratio) * length(xset@filepaths))
         ## --------  xcms grouping ----------------------------
