@@ -9,7 +9,7 @@
   \code{runGC}: Synapt.RP, Synapt.NP, TSQXLS.GC and Orbitrap.RP. These four
   particular settings are fine-tuned for the analysis of LC-MS runs,
   both normal-phase and reverse-phase chromatography (Waters Synapt
-  G1- Thermo Orbitrap)and GC-MS experiments (ThermoXLS TQQ).
+  G1-Thermo Orbitrap)and GC-MS experiments (ThermoXLS TQQ).
 }
 \usage{data(FEMsettings)}
 \format{Four objects of class \code{metaMSsettings}.}
@@ -76,7 +76,7 @@ Orbitrap.RP <- metaMSsettings(protocolName = "Orbitrap",
                                  prefilter = c(3,10000),
                                  peakwidth = c(15,40)),
                              Alignment = list(
-                                 method = "obiwarp",
+                                 retcormethod = "obiwarp",
                                  profStep = 0.2,
                                  bw = 30,
                                  min.class.fraction = 0.3,
