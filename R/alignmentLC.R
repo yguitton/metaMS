@@ -13,7 +13,7 @@ alignmentLC <- function (xset, settings){
        ## Do it with obiwarp ....
         printString("obiwarp retcor")
         xset <- retcor(xset,
-          method  = settings$method,
+          method  = settings$retcormethod,
           profStep = settings$profStep)
          ## Grouping 
         xset <- do.call(group,
