@@ -4,10 +4,7 @@
 \description{
 Performs grouping and retention time correction via \code{xcms}. The
 settings are specified as a list with a form similar to the one
-discussed in the help of \code{FEMsettings}. The sequence of actions depends on 
-the algorithm used for alignment. If the default density based approach is used 
-the sequence is (xcms) grouping, retention time correction, a second run of
-(xcms) grouping. If "obiwarp" is used instead, the first grouping is not performed.
+discussed in the help of \code{FEMsettings}. The sequence of actions is the following:  (xcms) grouping, retention time correction and a second run of (xcms) grouping.
 Integration of areas of missing peaks is performed depending on the \code{fillPeaks} setting.
 }
 \usage{alignmentLC(xset, settings)}
@@ -29,6 +26,8 @@ Integration of areas of missing peaks is performed depending on the \code{fillPe
   XCMS parameters \code{missing} and \code{extra} as fractions. 
   When "obiwarp" is used for retention time correction, the sample with the bigger
   number of features is automatically selected as the "reference" sample.  
+  The \code{xcms} parameters for the \code{retcor} function can be specified
+  in the Retcor list included in the Alignment slot of \code{FEMsettings}. 
 }
 \seealso{\code{\link{FEMsettings}}}
 \value{A grouped and rt-aligned \code{xcmsSet} object.}

@@ -1,63 +1,56 @@
 alignmentLC <- function (xset, settings){
-  ## if only one sample do not retcor ....
+## if only one sample do not retcor ....
   if (length(sampnames(xset)) == 1){
-      return(xset)
-    } else {
-      ## calculate min frac 
-      myminsamp  <- min(c(settings$min.class.size, 
-        ceiling(length(sampnames(xset))*settings$min.class.fraction)))
-      printString("minsamp:",myminsamp)
+    return(xset)
+  }
+  ## calculate min samp / min frac 
+  myminsamp  <- min(c(settings$min.class.size, 
+    ceiling(length(sampnames(xset))*settings$min.class.fraction)))
+  printString("minsamp:",myminsamp)
+  
+  ## The workflow is 1) grouping, 2) retcor, 3) grouping, optionally fillpeaks 
+  ## for density based two grouping runs are required (before and after retcor)
+  ##  for obiwarp only on eis necessary (the first one is useless)
+      
+  ## identify the two bandwidths for grouping ------------------------------- >
+  if (length(settings$bws) == 2) {
+    bw1 = settings$bws[1]
+    bw2 = settings$bws[2]
+  } else {
+    bw1 = settings$bws[1]
+    bw2 = settings$bws[1]
+  }
+  ## perform the first grouping --------------------------------------------- >
+  xset <- do.call(group, c(list(object = xset, bw = bw1, minsamp = myminsamp,minfrac = 0),settings["mzwid"]))
+  
+  ## perform the retention time correction ---------------------------------- >
+  ## create a list of parameters to use do.call 
+  if ("obiwarp" %in% settings$Retcor) {   
+    ## if obiwarp use only the provided parameters
+    printString("Obiwarp retcor")
+    retcorlist <- c(list(object = xset),settings$Retcor)
+  } else {
+    ## use the "standard" density based idea
+    printString("Density-based retcor")
+    ## calculate missing and extra ....
+    missing <- ceiling((settings$missingratio) * length(xset@filepaths))
+    extra <- ceiling((settings$extraratio) * length(xset@filepaths))
+    printString("missing:", missing)
+    printString("extra:", extra)
+    retcorlist <- c(list(object = xset, missing = missing, extra = extra), settings$Retcor)
+  }
+  # do the real retention time correction
+  xset <- do.call(retcor,retcorlist)
 
-      ## check if obiwarp retcor is required
-       if (settings$retcormethod == "obiwarp"){
-       ## Do it with obiwarp ....
-        printString("obiwarp retcor")
-        xset <- retcor(xset,
-          method  = settings$retcormethod,
-          profStep = settings$profStep)
-         ## Grouping 
-        xset <- do.call(group,
-          c(list(object = xset, 
-            bw = settings$bw,
-            minsamp = myminsamp,
-            minfrac = 0),
-          settings["mzwid"]))
-      } else {
-      ## use the default density based approach
-      ## set the extra and missing on the bases of the 
-      ## number of samples
-        missing <- ceiling((settings$missingratio) * length(xset@filepaths))
-        extra <- ceiling((settings$extraratio) * length(xset@filepaths))
-        ## --------  xcms grouping ----------------------------
-        xset <- do.call(group,
-          c(list(object = xset, 
-            bw = settings$bws[1],
-            minsamp = myminsamp,
-            minfrac = 0),
-          settings["mzwid"]))
-         ## ------- Retention time correction  ------------------
-        printString("missing:", missing)
-        printString("extra:", extra)
-        xset <- retcor(xset,  
-          method  = settings$retcormethod,
-          family = settings$retcorfamily,
-          missing = missing,
-          extra = extra) 
-        ## --------- Second Grouping  
-        xset <- do.call(group,
-          c(list(object = xset, 
-            bw = settings$bws[2],
-            minsamp = myminsamp,
-            minfrac = 0),
-          settings["mzwid"]))
-   }
-    if (settings$fillPeaks) {
-      printString("Filling missing peaks")
-      fillPeaks(xset)
-    } else {
-      xset
+  # perform the second round of grouping  ------------------------------------- >
+  xset <- do.call(group,c(list(object = xset,  bw = bw2, minsamp = myminsamp, minfrac = 0), settings["mzwid"]))
+
+  # optional fill missing peaks ----------------------------------------------- >
+  if (settings$fillPeaks) {
+    printString("Filling missing peaks")
+    fillPeaks(xset)
     }
-  }  
+  return(xset)
 }
 
 

@@ -8,8 +8,8 @@ runLC <- function(files,
                   errf = NULL,
                   returnXset = FALSE,
                   intensity = "into",
-                  nSlaves = 0)
-{
+                  nSlaves = 0) {
+  ## initial check on the inputs.
   if (!missing(files)) {
     nexp <- length(files)
   } else {
@@ -17,42 +17,51 @@ runLC <- function(files,
         stop("Either 'files' or 'xset' should be given")
     if (class(xset) != "xsAnnotate")
         stop("xset should be of class 'xsAnnotate'")
-    
     nexp <- length(sampnames(xset@xcmsSet))
   }
-  
+  ## Ok let's start the analysis
   printString(paste("Experiment of", nexp, "samples"))
   printString(paste("Instrument:", metaSetting(settings, "protocolName"),
                     " - polarity:", polarity))
-  if (length(rtrange) == 2)
-      printString(paste("Retention time range:", rtrange[1], "to",
-                        rtrange[2], "minutes"))
   
+  ## limit the retention time
+  if (length(rtrange) == 2){
+    printString(paste("Retention time range:", rtrange[1], "to", rtrange[2], "minutes"))
+  }
+  ## a short echo on the size of the DB
   if (!is.null(DB)){
     printString("Database of", length(unique(DB$ChemSpiderID)), "compounds")
   }
-  
+  ## if there are samples ...
   if (!missing(files)) {
-    printString("Performing peak picking")
+
+    #------------------------- Peak picking  ------------------------------ >
+    printString("Performing peak picking") 
     xset  <-  peakDetection(files,
                             metaSetting(settings, "PeakPicking"),
                             rtrange = rtrange, mzrange = mzrange,
                             nSlaves = nSlaves)
-    
-    printString("Grouping and retention time alignment")
+
+    #------------------------- Grouping and alignment  -------------------- >
+    printString("Grouping and retention time alignment") 
     xset <- alignmentLC(xset, metaSetting(settings, "Alignment"))
     
-    ## ------ CAMERA ------------------------------------------------
+    #------------------------- CAMERA ---------------- -------------------- >
     printString("Performing CAMERA grouping")
     xset <- runCAMERA(xset, chrom = "LC",
                       metaSetting(settings, "CAMERA"), polarity)
-  } else {
+  } else { 
+    ## If I provide already the CAMERA
     printString("Using xcmsSet object - only doing annotation")
-  }
-  
-  if (!is.null(DB)){
-    printString("Performing annotation")
-    
+  } 
+
+  #------------------------- Get The Peak Table---------------------------- >
+  peakTable <- getPeakTable(xset, intval = intensity) 
+
+  #------------------------- Annotation ----------------------------------- >
+
+  if (!is.null(DB)){ ## if an annotation DB is provided
+    printString("Performing annotation")      # --------------------------- >
     annotation <- getAnnotationLC(xset,
                                   metaSetting(settings, "match2DB"),
                                   DB, errf)
@@ -61,23 +70,18 @@ runLC <- function(files,
     ## With the additional functions AnnotateFeaturesAnnotateTable 
     ## on the configurations I need the rt tol, the rt4validation,
     ## mass tolerance if no surface. 
-  } else {
+  } else {           ## else return an empty annotation object
     annotation  <- list("raw" = data.frame(),
                         "for_table" = data.frame())
   }
   
-  
-  ## ------ Create the Peak Table  ------------------------------------
-  peakTable <- getPeakTable(xset, intval = intensity) 
-  
-  ## ----- If the annotation is required add the output ---------------
-  
+  ## If the annotation is required add the output ---------------
   if (!is.null(DB)){ 
     peakTable <- cbind(annotation$for_table, peakTable)
   }
   
   
-  ## ----------------- Prepare the outputs ------------------------
+  ## ----------------- Prepare the outputs ------------------------------ >
   printString("Done !")
   if (returnXset) {
     list("PeakTable" = peakTable,
