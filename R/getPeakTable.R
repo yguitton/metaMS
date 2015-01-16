@@ -2,7 +2,7 @@ getPeakTable <- function (xs, intval = "into")
 {
   ## get peak table from XCMS object  ------------------------------------------
   if (class(xs)[1] == "xcmsSet") { 
-    if (length(xs@filepaths) == 1){     
+    if (length(sampnames(xs)) == 1){     
       sortorder <- order(xs@peaks[,"rt"])   ## order by retention time  
       peakTable <- data.frame("mz" = xs@peaks[sortorder, "mz"],
                               "rt" = xs@peaks[sortorder, "rt"]/60,
@@ -28,7 +28,7 @@ getPeakTable <- function (xs, intval = "into")
     sortorder <- order(pt[,"rt"])           ## rt ordering
     pt <- pt[sortorder,]
     ## also here one sample ....
-    if (length(xs@xcmsSet@filepaths) == 1){
+    if (length(sampnames(xs@xcmsSet)) == 1){
       peakTable <- data.frame("pcgroup" = as.numeric(pt$pcgroup),
                               "adduct" = pt$adduct,
                               "isotopes" = pt$isotopes,
@@ -41,7 +41,7 @@ getPeakTable <- function (xs, intval = "into")
       colnames(peakTable)[colnames(peakTable) == "intensity"] <- intval
       return(peakTable)
     } ## more samples
-    dataMatrix <- pt[,rownames(xs@xcmsSet@phenoData)]  ## get only the columns with the intensities
+    dataMatrix <- pt[,sampnames(xs@xcmsSet)]  ## get only the columns with the intensities
     peakTable <- data.frame("pcgroup" = as.numeric(pt$pcgroup),
                             "adduct" = pt$adduct,
                             "isotopes" = pt$isotopes,
