@@ -34,7 +34,7 @@ Synapt.NP <- metaMSsettings(protocolName = "Synapt.QTOF.NP",
                               missingratio = 0.2,
                               extraratio = 0.1,
                               Retcor = list(
-                                method = "linear", 
+                                method = "linear",
                                 family = "symmetric"),            
                               fillPeaks = TRUE),
                             CAMERA = list(
@@ -64,7 +64,7 @@ metaSetting(Synapt.RP, "Alignment") <- list(
             missingratio = 0.2,
             extraratio = 0.1,
             Retcor = list(
-              method = "linear", 
+              method = "linear",
               family = "symmetric"),           
             fillPeaks = TRUE)
 
