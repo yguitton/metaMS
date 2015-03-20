@@ -1,3 +1,5 @@
+Version 1.3.3
+
 Version 1.3.2
   * Changed LC settings to explicitly include retcor arguments
   * Corrected LC bug on the PeakTable export when data files 
