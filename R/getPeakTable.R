@@ -1,6 +1,6 @@
 getPeakTable <- function (xs, intval = "into")
 {
-  ## get peak table from XCMS object  ------------------------------------------
+  ## get peak table from XCMS object  -----------------------------------------
   if (class(xs)[1] == "xcmsSet") { 
     if (length(sampnames(xs)) == 1){     
       sortorder <- order(xs@peaks[,"rt"])   ## order by retention time  
@@ -23,7 +23,7 @@ getPeakTable <- function (xs, intval = "into")
                             stringsAsFactors = FALSE)
     return(peakTable)
 
-  } else {   ## get peak table from CAMERA object  ------------------------------    
+  } else {   ## get peak table from CAMERA object  ---------------------------- 
     pt  <-  getPeaklist(xs, intval=intval)  ## function of CAMERA package
     sortorder <- order(pt[,"rt"])           ## rt ordering
     pt <- pt[sortorder,]
