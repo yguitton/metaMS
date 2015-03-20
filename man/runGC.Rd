@@ -90,7 +90,8 @@ if (require(metaMSdata)) {
   cdfdir <- system.file("extdata", package = "metaMSdata")
   cdffiles <- list.files(cdfdir, pattern = "_GC_",
                          full.names = TRUE, ignore.case = TRUE)
-  GCresults <- runGC(files = cdffiles, settings = TSQXLS.GC, DB = DB)
+  GCresults <- runGC(files = cdffiles, settings = TSQXLS.GC, DB = DB,
+                     returnXset = TRUE)
 
   ## to start directly from the XCMS/CAMERA results and not include
   ## peak picking in the pipeline, simply provide the "xset" argument
