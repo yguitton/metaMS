@@ -116,7 +116,7 @@ if (require(metaMSdata)) {
   result.fixed <- runLC(files, settings = Synapt.RP, 
                         DB = LCDBtest$DB)
 }            
-}q
+}
 }
 \keyword{manip}
 

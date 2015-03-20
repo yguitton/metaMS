@@ -1,10 +1,16 @@
+Version 1.3.5
+  * Include xset object in GCresults data file
+
+Version 1.3.4
+  * Optimize alignmentLC function
+
 Version 1.3.3
+  * various small changes in code (esthetic only)
 
 Version 1.3.2
   * Changed LC settings to explicitly include retcor arguments
   * Corrected LC bug on the PeakTable export when data files 
     are stored into multiple subfolders
-
 
 Version 1.3.1
   * Changed LC settings so that the retcor algorithm is passed
@@ -13,7 +19,6 @@ Version 1.3.1
 
 Version 1.2.0
   * Adopted Oct 2014
-
 
 DEVELOPMENT VERSION 1.1.0
   * updated email address maintainer
