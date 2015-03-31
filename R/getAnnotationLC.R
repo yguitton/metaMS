@@ -6,14 +6,14 @@ getAnnotationLC <- function(xs,
 {
   
   # ------- Peak table with maxo  --------------------------------- > 
-  
   PkT4ann <- getPeakTable(xs, intval = "maxo")
-  dataMatrix <- PkT4ann[,rownames(xs@xcmsSet@phenoData),drop = FALSE]
-
-  ## check the number of samples
-  if ( length(xs@xcmsSet@filepaths) == 1) {
+  
+  ## check the number of samples 
+  if ( length(sampnames(xs@xcmsSet)) == 1) {
+    dataMatrix <- PkT4ann[,"maxo",drop = FALSE]
     I <- dataMatrix
   } else {
+    dataMatrix <- PkT4ann[,make.names(sampnames(xs@xcmsSet)),drop = FALSE]
     I <- apply(dataMatrix,1,median) ## use the median intensity in DM for annotation
   }
 
