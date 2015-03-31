@@ -41,7 +41,7 @@ getPeakTable <- function (xs, intval = "into")
       colnames(peakTable)[colnames(peakTable) == "intensity"] <- intval
       return(peakTable)
     } ## more samples
-    dataMatrix <- pt[,sampnames(xs@xcmsSet)]  ## get only the columns with the intensities
+    dataMatrix <- pt[,make.names(sampnames(xs@xcmsSet))]  ## get only the columns with the intensities works also for banes with special characters
     peakTable <- data.frame("pcgroup" = as.numeric(pt$pcgroup),
                             "adduct" = pt$adduct,
                             "isotopes" = pt$isotopes,
