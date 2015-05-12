@@ -1,6 +1,6 @@
 getPeakTable <- function (xs, intval = "into")
 {
-  ## get peak table from XCMS object  ------------------------------------------
+  ## get peak table from XCMS object  -----------------------------------------
   if (class(xs)[1] == "xcmsSet") { 
     if (length(sampnames(xs)) == 1){     
       sortorder <- order(xs@peaks[,"rt"])   ## order by retention time  
@@ -23,7 +23,7 @@ getPeakTable <- function (xs, intval = "into")
                             stringsAsFactors = FALSE)
     return(peakTable)
 
-  } else {   ## get peak table from CAMERA object  ------------------------------    
+  } else {   ## get peak table from CAMERA object  ---------------------------- 
     pt  <-  getPeaklist(xs, intval=intval)  ## function of CAMERA package
     sortorder <- order(pt[,"rt"])           ## rt ordering
     pt <- pt[sortorder,]
@@ -41,7 +41,7 @@ getPeakTable <- function (xs, intval = "into")
       colnames(peakTable)[colnames(peakTable) == "intensity"] <- intval
       return(peakTable)
     } ## more samples
-    dataMatrix <- pt[,sampnames(xs@xcmsSet)]  ## get only the columns with the intensities
+    dataMatrix <- pt[,make.names(sampnames(xs@xcmsSet))]  ## get only the columns with the intensities works also for banes with special characters
     peakTable <- data.frame("pcgroup" = as.numeric(pt$pcgroup),
                             "adduct" = pt$adduct,
                             "isotopes" = pt$isotopes,
