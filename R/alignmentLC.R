@@ -78,7 +78,7 @@ alignmentLC <- function (xset, settings){
   ## optional fill missing peaks -------------------------------------------- >
   if (settings$fillPeaks) {
     printString("Filling missing peaks")
-    fillPeaks(xset)
-  }
+    xset <- fillPeaks(xset)
+    }
   return(xset)
 }
