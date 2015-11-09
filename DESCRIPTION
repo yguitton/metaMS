@@ -15,6 +15,7 @@ Imports: Matrix, tools, robustbase, BiocGenerics
 Suggests: metaMSdata, RUnit
 Description: MS-based metabolomics data processing and compound
         annotation pipeline.
+URL: https://github.com/rwehrens/metaMS
 License: GPL (>= 2)
 biocViews: MassSpectrometry, Metabolomics
 Author: Ron Wehrens [aut, cre] (author of GC-MS part), Pietro
