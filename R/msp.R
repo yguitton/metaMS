@@ -4,13 +4,15 @@
 
 ## Creates an msp object from a list of two-column matrices, supplemented by
 ## meta-information such as Name, rt, etc. In case three-column
-## matrices are given, this will be used for rt iff rt is not a field
-## in extra.info
+## matrices are given, this will be used for rt and will override any
+## rt or rt.sd present in extra.info.
 
 ## For consistency: only two-column spectra will be written in the msp
 ## file, so any retention time information is summarized in the rt and
 ## rt.sd slots. (Aug 1, 2013)
 
+## bug in construct.msp: current function works only for data.frames
+## and not for nested lists, as is promised in the documentation.
 construct.msp <- function(spectra, extra.info) {
   if (!(all(sapply(extra.info, length) == length(spectra))))
     stop("Unequal lengths in arguments")
@@ -22,7 +24,7 @@ construct.msp <- function(spectra, extra.info) {
 
   lapply(1:length(spectra),
          function(ii) 
-           c(as.list(extra.info[ii,]),
+           c(lapply(extra.info, "[", ii),
              list(pspectrum = spectra[[ii]][,1:2])))
 }
 
