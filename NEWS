@@ -1,3 +1,9 @@
+Version 1.9.1
+  * removed a bug in construct.msp which took a data.frame as the
+  second argument where the documentation was claiming it could handle
+  a nested list. Since the latter option is more general, the code was
+  changed to match the documentation (signalled by Wenzhang Chen).
+
 Version 1.3.5
   * Include xset object in GCresults data file
 
