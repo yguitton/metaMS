@@ -6,14 +6,10 @@
 \description{
   Function \code{matchExpSpec} calculates match factors for a
   pseudospectrum with all entries in the database. A plot of the best
-  match can be provided. Function \code{mzmatch} is an auxiliary
-  function, not meant to be called directly, that provides the match
-  factor, given two appropriately scaled patterns.
-}
+  match can be provided.}
 \usage{
 matchExpSpec(pspec, DB, DB.treated, plotIt = FALSE,
              scale.p = c("sqrt", "none"), mass.weight = TRUE, ...)
-mzmatch(spec1, spec2)
 }
 \arguments{
   \item{pspec}{The pseudospectrum, a two- or three-column matrix where
