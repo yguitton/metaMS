@@ -82,7 +82,7 @@ to.msp(object, file = NULL, settings = NULL, ndigit = 0,
   \dQuote{monoMW}, and \dQuote{Class}. The final 
   keyword is always \dQuote{Num Peaks}, and should be followed by the list of
   mz-I combinations.
-  }
+}
 \author{Ron Wehrens}
 \examples{
 data("threeStdsDB")
