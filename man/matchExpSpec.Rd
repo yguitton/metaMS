@@ -24,9 +24,6 @@ matchExpSpec(pspec, DB, DB.treated, plotIt = FALSE,
     higher weight. Should usually be TRUE.}
   \item{\dots}{Further arguments for the pseudospectrum plot (if
     shown).}
-  \item{spec1, spec2}{Preprocessed pseudospectra, here two-column
-    matrices where the first column is the (integer) m/z value, and the
-    second column the (scaled) intensity.}
 }
 \value{A vector of match factors.}
 \author{Ron Wehrens}
