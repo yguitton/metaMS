@@ -3,3 +3,12 @@
 language: R
 sudo: false
 cache: packages
+
+addons:
+  apt:
+    packages:
+      - libnetcdf-dev
+#      - netcdf-bin # libnetcdf-dev doesn't contain nc-config in ubuntu 12.04 (in 16.04 it is part of libnetcdf-dev)
+      - libhdf5-dev
+#      - texlive-latex-recommended
+#      - texlive-fonts-extra
