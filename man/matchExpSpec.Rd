@@ -1,6 +1,5 @@
 \name{matchExpSpec}
 \alias{matchExpSpec}
-\alias{mzmatch}
 \title{Match a GC-MS pseudospectrum to a database with a weighted
   crossproduct criterion.}
 \description{
