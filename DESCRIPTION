@@ -1,7 +1,7 @@
 Package: metaMS
 Type: Package
 Title: MS-Based Metabolomics Annotation Pipeline
-Version: 1.19.0
+Version: 1.19.1
 Authors@R: c(person("Ron", "Wehrens", role = c("aut", "cre"), comment =
         "author of GC-MS part", email = "ron.wehrens@gmail.com"),
         person("Pietro", "Franceschi", role = "aut", comment = "author
@@ -17,7 +17,7 @@ Description: MS-based metabolomics data processing and compound
         annotation pipeline.
 URL: https://github.com/rwehrens/metaMS
 License: GPL (>= 2)
-biocViews: MassSpectrometry, Metabolomics
+biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
 Author: Ron Wehrens [aut, cre] (author of GC-MS part), Pietro
         Franceschi [aut] (author of LC-MS part), Nir Shahaf [ctb],
         Matthias Scholz [ctb], Georg Weingart [ctb] (development of
