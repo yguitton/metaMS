@@ -54,7 +54,7 @@ write.msp <- function(msp, file, newFile = TRUE) {
     cat("Num Peaks:", nI, file = file, append = TRUE)
     for (j in 1:nI) {
       if ((j-1) %% 5 == 0) cat("\n", file = file, append = TRUE)
-      cat(" ", pspec[j,1], " ", pspec[j,2], "; ",
+      cat(" ", pspec[j,1], " ", pspec[j,2], ";",
           sep = "", file = file, append = TRUE)
     }
 
