@@ -32,6 +32,7 @@ matchSamples2DB <- function(xset.msp,
                })
   } else {
     standard.rts <- sapply(DB, function(x) x$std.rt)
+
     rt.matches <-
         lapply(1:length(xset.msp),
                function(ii) {
@@ -48,15 +49,16 @@ matchSamples2DB <- function(xset.msp,
     match.results <-
         lapply(1:length(xset.msp),
                function(ii) {
-                 result <- matrix(0, length(DB), length(xset.msp[[ii]]))
-                 for (i in 1:nrow(rt.matches[[ii]])) {
-                   DB.idx <- rt.matches[[ii]][i,1]
-                   sample.idx <- rt.matches[[ii]][i,2]
-                   result[DB.idx, sample.idx] <-
+                 if(nrow(rt.matches[[ii]] > 0)){
+                   result <- matrix(0, length(DB), length(xset.msp[[ii]]))
+                   for (i in 1:nrow(rt.matches[[ii]])) {
+                     DB.idx <- rt.matches[[ii]][i,1]
+                     sample.idx <- rt.matches[[ii]][i,2]
+                     result[DB.idx, sample.idx] <-
                        mzmatch(DB[[DB.idx]]$pspectrum,
                                xset.msp[[ii]][[sample.idx]])
+                   }
                  }
-                 
                  result})
   } else {
     ## scaling is done for each comparison separately, since
@@ -66,26 +68,27 @@ matchSamples2DB <- function(xset.msp,
         lapply(1:length(xset.msp),
                function(ii) {
                  result <- matrix(0, length(DB), length(xset.msp[[ii]]))
-                 for (i in 1:nrow(rt.matches[[ii]])) {
-                   DB.idx <- rt.matches[[ii]][i,1]
-                   sample.idx <- rt.matches[[ii]][i,2]
-                   exp.pat <- xset.msp[[ii]][[sample.idx]]
+	         if(nrow(rt.matches[[ii]] > 0)){
+                   for (i in 1:nrow(rt.matches[[ii]])) {
+                     DB.idx <- rt.matches[[ii]][i,1]
+                     sample.idx <- rt.matches[[ii]][i,2]
+                     exp.pat <- xset.msp[[ii]][[sample.idx]]
 
-                   MWlimit <- DB[[DB.idx]]$monoMW + 4
-                   ## sometimes, with manually added spectra, monoMW
-                   ## is not present... then we use everything up
-                   ## until the highest mass present.
-                   if (length(MWlimit) == 0)
+                     MWlimit <- DB[[DB.idx]]$monoMW + 4
+                     ## sometimes, with manually added spectra, monoMW
+                     ## is not present... then we use everything up
+                     ## until the highest mass present.
+                     if (length(MWlimit) == 0)
                        MWlimit <- max(DB[[DB.idx]]$pspectrum[,1])
                    
-                   ok.mz <- which(exp.pat[,"mz"] <= MWlimit)
-                   if (length(ok.mz) > settings$minfeat) {
-                     exp.pat <- treat.DB(list(exp.pat[ok.mz,]), isMSP = FALSE)
-                     result[DB.idx, sample.idx] <-
+                     ok.mz <- which(exp.pat[,"mz"] <= MWlimit)
+                     if (length(ok.mz) > settings$minfeat) {
+                       exp.pat <- treat.DB(list(exp.pat[ok.mz,]), isMSP = FALSE)
+                       result[DB.idx, sample.idx] <-
                          mzmatch(DB[[DB.idx]]$pspectrum, exp.pat[[1]])
+                     }
                    }
                  }
-                 
                  result})
   }
   names(match.results) <- names(xset.msp)
