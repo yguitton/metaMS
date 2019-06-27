@@ -32,6 +32,7 @@ matchSamples2DB <- function(xset.msp,
                })
   } else {
     standard.rts <- sapply(DB, function(x) x$std.rt)
+
     rt.matches <-
         lapply(1:length(xset.msp),
                function(ii) {
@@ -60,6 +61,7 @@ matchSamples2DB <- function(xset.msp,
                   }
                  
                   result})
+
   } else {
     ## scaling is done for each comparison separately, since
     ## high mz values may be removed depending on MonoMW of the
@@ -89,6 +91,7 @@ matchSamples2DB <- function(xset.msp,
                   }
                 }
                 result})
+
   }
   names(match.results) <- names(xset.msp)
 
