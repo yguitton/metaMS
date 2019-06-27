@@ -59,9 +59,7 @@ matchSamples2DB <- function(xset.msp,
                                xset.msp[[ii]][[sample.idx]])
                     }
                   }
-                 
                   result})
-
   } else {
     ## scaling is done for each comparison separately, since
     ## high mz values may be removed depending on MonoMW of the
@@ -91,18 +89,15 @@ matchSamples2DB <- function(xset.msp,
                   }
                 }
                 result})
-
   }
   names(match.results) <- names(xset.msp)
-
+  
   annotations <- 
       lapply(match.results,
              function(xx) {
                sapply(1:ncol(xx),
                       function(ii){
-                      which(xx[,ii] > settings$simthresh)
-                      })
-              } )
+                      which(xx[,ii] > settings$simthresh)})})
   list(annotations = mapply(annotations2tab,
            annotations,
            match.results, SIMPLIFY = FALSE))
