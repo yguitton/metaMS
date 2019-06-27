@@ -50,14 +50,16 @@ matchSamples2DB <- function(xset.msp,
                function(ii) {
                  result <- matrix(0, length(DB), length(xset.msp[[ii]]))
                  for (i in 1:nrow(rt.matches[[ii]])) {
-                   DB.idx <- rt.matches[[ii]][i,1]
-                   sample.idx <- rt.matches[[ii]][i,2]
-                   result[DB.idx, sample.idx] <-
-                       mzmatch(DB[[DB.idx]]$pspectrum,
+                    if(nrow(rt.matches[[ii]] > 0)){
+                      DB.idx <- rt.matches[[ii]][i,1]
+                      sample.idx <- rt.matches[[ii]][i,2]
+                      result[DB.idx, sample.idx] <-
+                        mzmatch(DB[[DB.idx]]$pspectrum,
                                xset.msp[[ii]][[sample.idx]])
-                 }
+                    }
+                  }
                  
-                 result})
+                  result})
   } else {
     ## scaling is done for each comparison separately, since
     ## high mz values may be removed depending on MonoMW of the
@@ -89,7 +91,7 @@ matchSamples2DB <- function(xset.msp,
                 result})
   }
   names(match.results) <- names(xset.msp)
-  
+
   annotations <- 
       lapply(match.results,
              function(xx) {
