@@ -12,13 +12,13 @@ constructExpPseudoSpectra <- function(allMatches, standardsDB) {
   stdDB <- lapply(allAnnotations[allAnnotations > 0],
                   function(x)
                   c(standardsDB[[x]], list(DB.idx = x)))
-  
+
   if (min(allAnnotations) < 0) { ## write known unknowns
     unknDB <- allMatches$unknowns
 
     if ("RI" %in% colnames(unknDB[[1]])) {
       extra.info <- data.frame(Name = paste("Unknown", 1:length(unknDB)),
-                               DB.idx = sort(allAnnotations[allAnnotations < 0],
+                               DB.idx = sort(allAnnotations[allAnnotations < 0], #Select negative values corresponding to unknowns
                                    decreasing = TRUE),
                                rt = sapply(unknDB,
                                    function(x) round(mean(x[,"rt"]), 2)),
@@ -28,7 +28,7 @@ constructExpPseudoSpectra <- function(allMatches, standardsDB) {
                                stringsAsFactors = FALSE)
     } else {
       extra.info <- data.frame(Name = paste("Unknown", 1:length(unknDB)),
-                               DB.idx = sort(allAnnotations[allAnnotations < 0],
+                               DB.idx = sort(allAnnotations[allAnnotations < 0], #Select negative values corresponding to unknowns
                                    decreasing = TRUE),
                                rt = sapply(unknDB,
                                    function(x) round(mean(x[,"rt"]), 2)),
