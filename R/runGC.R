@@ -23,7 +23,7 @@ runGC <- function(files,
     xset.l <- xset
     nexp <- length(xset.l)
   }
-
+print(nexp)
   ## same criterion as in matchSamples2Samples
   mcs <-
       max(2,
@@ -88,7 +88,8 @@ runGC <- function(files,
     printString("Using xcmsSet object - only doing annotation")
     allSamples <- xset.l
   }
-  
+  print("allSamples")
+  print(allSamples)
   
   ## ###################################################################
   ## convert into msp format (a nested list)
@@ -101,7 +102,8 @@ runGC <- function(files,
   if (!is.null(RIstandards))
       allSamples.msp <- lapply(allSamples.msp, addRI,
                                RIstandards, isMSP = FALSE)
-
+print("allSamples.msp")
+print(allSamples.msp)
   ## check: files without any features - should not happen very often...
   nofeats <- which(sapply(allSamples.msp, length) == 0)
   if ((nnof <- length(nofeats)) > 0) {
@@ -109,6 +111,7 @@ runGC <- function(files,
                  paste(names(allSamples)[nofeats], collapse = "\n\t "))
     allSamples.msp <- allSamples.msp[-nofeats]
   }
+
   ## now scale the rest...
   allSamples.msp.scaled <- lapply(allSamples.msp, treat.DB,
                                   isMSP = FALSE)
@@ -181,52 +184,57 @@ runGC <- function(files,
                              settings = metaSetting(settings,
                                  "betweenSamples"))
   }
-  
-  printString("Formatting results")
-  
-  ## First obtain the pseudospectra 
-  PseudoSpectra <-
+
+  #Add this if because when you obtain no result, there was an error during "sweep" function for ann.df2
+  if(sum(sapply(allSam.matches$annotations,nrow)) > 0){
+    
+    ## First obtain the pseudospectra 
+    PseudoSpectra <-
       constructExpPseudoSpectra(allMatches = allSam.matches,
                                 standardsDB = DB.orig)
-  ## and replace the DB indices of the identified standards with the
-  ## indices in the pseudospec DB - they are simply ordered. The
-  ## alternatives should also be there!
-  
-  ## Then export the quantitations. The first part is a data.frame
-  ## describing the features
-  features.df <- getFeatureInfo(stdDB = DB.orig,
-                                allMatches = allSam.matches,
-                                sampleList = allSamples.msp)
-  
-  ## Second data.frame contains the actual annotations, for the moment
-  ## as relative intensities
-  ann.df <- getAnnotationMat(exp.msp = allSamples.msp,
-                             pspectra = PseudoSpectra,
-                             allMatches = allSam.matches)
+    ## and replace the DB indices of the identified standards with the
+    ## indices in the pseudospec DB - they are simply ordered. The
+    ## alternatives should also be there!
+    ## Then export the quantitations. The first part is a data.frame
+    ## describing the features
+    features.df <- getFeatureInfo(stdDB = DB.orig,
+                                  allMatches = allSam.matches,
+                                  sampleList = allSamples.msp)
 
-  ## To get to intensities comparable to the ones identified by xcms,
-  ## use largest peak in PseudoSpectra as the common intensity measure
-  ann.df2 <-
+    ## Second data.frame contains the actual annotations, for the moment
+    ## as relative intensities
+    ann.df <- getAnnotationMat(exp.msp = allSamples.msp,
+                               pspectra = PseudoSpectra,
+                               allMatches = allSam.matches)
+
+    ## To get to intensities comparable to the ones identified by xcms,
+    ## use largest peak in PseudoSpectra as the common intensity measure
+    ann.df2 <-
       sweep(ann.df, 1,
             sapply(PseudoSpectra, function(x) max(x$pspectrum[,2])),
             FUN = "*")
 
-  printString("Done!")
+    printString("Done!")
 
-  if (returnXset) {
-    list(PeakTable = cbind(data.frame(features.df),
+    if (returnXset) {
+      list(PeakTable = cbind(data.frame(features.df),
              data.frame(round(ann.df2))),
-         PseudoSpectra = PseudoSpectra,
-         settings = settings,
-         xset = allSamples,
-         annotation = allSam.matches$annotation,
-         samples.msp = allSamples.msp,
-         SessionInfo = sessionInfo())
-  } else {
-    list(PeakTable = cbind(data.frame(features.df),
+           PseudoSpectra = PseudoSpectra,
+           settings = settings,
+           xset = allSamples,
+           annotation = allSam.matches$annotation,
+           samples.msp = allSamples.msp,
+           SessionInfo = sessionInfo())
+    } else {
+      list(PeakTable = cbind(data.frame(features.df),
              data.frame(round(ann.df2))),
-         PseudoSpectra = PseudoSpectra,
-         settings = settings,
-         SessionInfo = sessionInfo())
+           PseudoSpectra = PseudoSpectra,
+           settings = settings,
+           SessionInfo = sessionInfo())
+    }
+  }else{
+    error_message="No results for these files..."
+    print(error_message)
+    stop(error_message)
   }
 }

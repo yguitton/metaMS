@@ -6,7 +6,7 @@
 
 constructExpPseudoSpectra <- function(allMatches, standardsDB) {
   allAnnotations <-
-      sort(unique(unlist(sapply(allMatches$annotations,
+      sort(unique(unlist(lapply(allMatches$annotations,
                                 function(x) x[,"annotation"]))))
 
   stdDB <- lapply(allAnnotations[allAnnotations > 0],
