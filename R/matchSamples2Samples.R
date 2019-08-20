@@ -41,13 +41,12 @@ matchSamples2Samples <- function(xset.msp.scaled,
                           annotations)
     xset.work <- mapply(function(x, y) x[y], xset.msp.scaled, noannot.idx)
   }
-  
+
   ## do the matching: a simple double loop over all unassigned patterns
   npatterns <- sum(sapply(xset.work, length))
   cumpatterns <- c(0, cumsum(sapply(xset.work, length)))
   names(cumpatterns) <-  NULL
-  
-  pattern.match.result <- Matrix(0, npatterns, npatterns, sparse = TRUE)
+  pattern.match.result <- Matrix::Matrix(0, npatterns, npatterns, sparse = TRUE)
   for (i in 1:(length(xset.work) - 1)) {
     for (j in (i+1):length(xset.work)) {
       matchmat <- match.unannot.patterns(xset.work[[i]],
@@ -55,10 +54,11 @@ matchSamples2Samples <- function(xset.msp.scaled,
                                          settings = settings)
       if (length(matchmat) > 0) {
         for (k in 1:nrow(matchmat)) {
-	id1 <- cumpatterns[i] + matchmat[k, "ID1"]  
-	id2 <- cumpatterns[j] + matchmat[k, "ID2"]  
-        pattern.match.result[id1, id2] <- 1         
-	pattern.match.result[id2, id1] <- 1}        
+	        id1 <- cumpatterns[i] + matchmat[k, "ID1"]  
+	        id2 <- cumpatterns[j] + matchmat[k, "ID2"]  
+          pattern.match.result[id1, id2] <- 1         
+	        pattern.match.result[id2, id1] <- 1
+        }        
       }
     }
   }
@@ -108,7 +108,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
       as.integer(factor(pmr.classes[pmr.classes > 0]))
     clusters <- 1:max(pmr.classes)
     nclus <- length(clusters)
-    
+
     ## every cluster now leads to one pattern in a msp-like structure,
     ## that is found in several samples. As the example pseudospectrum
     ## we take the one that is in the middle of the cluster.
@@ -120,7 +120,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
     new.annotations <- lapply(xset.work,
                               function(x)
                               makeAnnotation(nclus))
-    
+
     for (cl in 1:nclus) {
       p.idx <- which(pmr.classes == cl)
       ## for these ids we need to find the samples as well as the
@@ -157,7 +157,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
                             function(x)
                             x[!x[,"pattern"] == 0,])
   
-  list(annotations = mapply(rbind, annotations, new.annotations,
+  list(annotations = mapply(rbind, new.annotations, annotations,
            SIMPLIFY = FALSE),
        unknowns = pspc.DB)
 }
