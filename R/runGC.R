@@ -23,6 +23,7 @@ runGC <- function(files,
     xset.l <- xset
     nexp <- length(xset.l)
   }
+
   ## same criterion as in matchSamples2Samples
   mcs <-
       max(2,
@@ -87,6 +88,8 @@ runGC <- function(files,
     printString("Using xcmsSet object - only doing annotation")
     allSamples <- xset.l
   }
+
+
   ## ###################################################################
   ## convert into msp format (a nested list)
   allSamples.msp <- lapply(allSamples,
@@ -98,6 +101,7 @@ runGC <- function(files,
   if (!is.null(RIstandards))
       allSamples.msp <- lapply(allSamples.msp, addRI,
                                RIstandards, isMSP = FALSE)
+  
   ## check: files without any features - should not happen very often...
   nofeats <- which(sapply(allSamples.msp, length) == 0)
   if ((nnof <- length(nofeats)) > 0) {
@@ -105,7 +109,6 @@ runGC <- function(files,
                  paste(names(allSamples)[nofeats], collapse = "\n\t "))
     allSamples.msp <- allSamples.msp[-nofeats]
   }
-
   ## now scale the rest...
   allSamples.msp.scaled <- lapply(allSamples.msp, treat.DB,
                                   isMSP = FALSE)
@@ -181,6 +184,8 @@ runGC <- function(files,
 
   #Add this if because when you obtain no result, there was an error during "sweep" function for ann.df2
   if(sum(sapply(allSam.matches$annotations,nrow)) > 0){
+    
+    printString("Formatting results")
     
     ## First obtain the pseudospectra 
     PseudoSpectra <-
