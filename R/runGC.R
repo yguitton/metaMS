@@ -23,7 +23,6 @@ runGC <- function(files,
     xset.l <- xset
     nexp <- length(xset.l)
   }
-
   ## same criterion as in matchSamples2Samples
   mcs <-
       max(2,
@@ -35,6 +34,7 @@ runGC <- function(files,
   if (findUnknowns & nexp < mcs) {
     stop("Number of samples too small to define unknowns - either provide more samples or change the settings.")
   }
+
   if (is.null(DB) & !findUnknowns)
       stop("Nothing to do. Provide a DB or set 'findUnknowns' to TRUE...")
   
@@ -87,7 +87,6 @@ runGC <- function(files,
     printString("Using xcmsSet object - only doing annotation")
     allSamples <- xset.l
   }
-
   ## ###################################################################
   ## convert into msp format (a nested list)
   allSamples.msp <- lapply(allSamples,
@@ -99,7 +98,6 @@ runGC <- function(files,
   if (!is.null(RIstandards))
       allSamples.msp <- lapply(allSamples.msp, addRI,
                                RIstandards, isMSP = FALSE)
-
   ## check: files without any features - should not happen very often...
   nofeats <- which(sapply(allSamples.msp, length) == 0)
   if ((nnof <- length(nofeats)) > 0) {
@@ -202,6 +200,7 @@ runGC <- function(files,
     ann.df <- getAnnotationMat(exp.msp = allSamples.msp,
                                pspectra = PseudoSpectra,
                                allMatches = allSam.matches)
+
     ## To get to intensities comparable to the ones identified by xcms,
     ## use largest peak in PseudoSpectra as the common intensity measure
     ann.df2 <-
