@@ -41,11 +41,12 @@ matchSamples2Samples <- function(xset.msp.scaled,
                           annotations)
     xset.work <- mapply(function(x, y) x[y], xset.msp.scaled, noannot.idx)
   }
-
+  
   ## do the matching: a simple double loop over all unassigned patterns
   npatterns <- sum(sapply(xset.work, length))
   cumpatterns <- c(0, cumsum(sapply(xset.work, length)))
   names(cumpatterns) <-  NULL
+
   pattern.match.result <- Matrix::Matrix(0, npatterns, npatterns, sparse = TRUE)
   for (i in 1:(length(xset.work) - 1)) {
     for (j in (i+1):length(xset.work)) {
@@ -54,10 +55,10 @@ matchSamples2Samples <- function(xset.msp.scaled,
                                          settings = settings)
       if (length(matchmat) > 0) {
         for (k in 1:nrow(matchmat)) {
-	        id1 <- cumpatterns[i] + matchmat[k, "ID1"]  
-	        id2 <- cumpatterns[j] + matchmat[k, "ID2"]  
+          id1 <- cumpatterns[i] + matchmat[k, "ID1"]  
+          id2 <- cumpatterns[j] + matchmat[k, "ID2"]  
           pattern.match.result[id1, id2] <- 1         
-	        pattern.match.result[id2, id1] <- 1
+          pattern.match.result[id2, id1] <- 1
         }        
       }
     }
