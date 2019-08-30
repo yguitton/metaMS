@@ -232,8 +232,27 @@ runGC <- function(files,
            SessionInfo = sessionInfo())
     }
   }else{
-    error_message="No results for these files..."
-    print(error_message)
-    stop(error_message)
+    peaktable <- data.frame(Name = 1,
+                            Class = 1,
+                            rt.sd = 1,
+                            rt = 1)[FALSE,]
+    result <- matrix(0, 0, length(allSamples.msp))
+    colnames(result) <- names(allSamples.msp)
+    if (returnXset) {
+      list(PeakTable = cbind(data.frame(peaktable),
+             data.frame(result)),
+           PseudoSpectra = NULL,
+           settings = settings,
+           xset = allSamples,
+           annotation = allSam.matches$annotation,
+           samples.msp = allSamples.msp,
+           SessionInfo = sessionInfo())
+    } else {
+      list(PeakTable = cbind(data.frame(peaktable),
+             data.frame(result)),
+           PseudoSpectra = NULL,
+           settings = settings,
+           SessionInfo = sessionInfo())
+    }
   }
 }
