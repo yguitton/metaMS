@@ -48,6 +48,10 @@ matchSamples2Samples <- function(xset.msp.scaled,
     if(class(xset.work) == "matrix"){
       xset.work <- as.list(as.data.frame(xset.work))
     }
+    #To correct issue when 1 unkn only in noannot.idx (make a list and not a list of list)
+    if(unique(lengths(noannot.idx)) == 1){
+      xset.work <- lapply(xset.work, function(x) list(x))
+    }
   }
 
   ## do the matching: a simple double loop over all unassigned patterns
