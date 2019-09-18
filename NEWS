@@ -1,3 +1,9 @@
+Version 1.21.4
+  * Pull request accepted bug correction in annotation pipeline
+
+Version 1.21.2
+  * change Maintainer
+  
 Version 1.9.1
   * removed a bug in construct.msp which took a data.frame as the
   second argument where the documentation was claiming it could handle
