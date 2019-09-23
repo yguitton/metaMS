@@ -170,7 +170,9 @@ matchSamples2Samples <- function(xset.msp.scaled,
                             function(x)
                             x[!x[,"pattern"] == 0,])
   
-  list(annotations = mapply(rbind, new.annotations, annotations,
+  #I probably have to switch new.annotatoins and annotations
+  #Because I obtain an error when the first file has no annotation...
+  list(annotations = mapply(rbind, annotations, new.annotations,
            SIMPLIFY = FALSE),
        unknowns = pspc.DB)
 }
