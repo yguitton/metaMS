@@ -40,18 +40,18 @@ matchSamples2Samples <- function(xset.msp.scaled,
                           xset.msp.scaled,
                           annotations)
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
-    if(class(noannot.idx) == "matrix"){
-      noannot.idx <- as.list(as.data.frame(noannot.idx))
-    }
+    #if(class(noannot.idx) == "matrix"){
+    #  noannot.idx <- as.list(as.data.frame(noannot.idx))
+    #}
     xset.work <- mapply(function(x, y) x[y], xset.msp.scaled, noannot.idx)
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
-    if(class(xset.work) == "matrix"){
-      xset.work <- as.list(as.data.frame(xset.work))
-    }
+    #if(class(xset.work) == "matrix"){
+    #  xset.work <- as.list(as.data.frame(xset.work))
+    #}
     #To correct issue when 1 unkn only in noannot.idx (make a list and not a list of list)
-    if(unique(lengths(noannot.idx)) == 1){
-      xset.work <- lapply(xset.work, function(x) list(x))
-    }
+    #if(unique(lengths(noannot.idx)) == 1){
+    #  xset.work <- lapply(xset.work, function(x) list(x))
+    #}
   }
 
   ## do the matching: a simple double loop over all unassigned patterns
@@ -59,7 +59,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
   cumpatterns <- c(0, cumsum(sapply(xset.work, length)))
   names(cumpatterns) <-  NULL
   
-  pattern.match.result <- Matrix::Matrix(0, npatterns, npatterns, sparse = TRUE)
+  pattern.match.result <- Matrix(0, npatterns, npatterns, sparse = TRUE)
   for (i in 1:(length(xset.work) - 1)) {
     for (j in (i+1):length(xset.work)) {
       matchmat <- match.unannot.patterns(xset.work[[i]],
