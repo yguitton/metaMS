@@ -9,7 +9,7 @@
 ## New version, Aug 13, now working with the new annotation object
 
 getAnnotationMat <- function(exp.msp, pspectra, allMatches) {
-  allAnnotations <- sort(unique(unlist(lapply(allMatches$annotations,
+  allAnnotations <- sort(unique(unlist(sapply(allMatches$annotations,
                                               function(x) x[,"annotation"]))))
   allAnnotations <- c(allAnnotations[allAnnotations > 0],
                       rev(allAnnotations[allAnnotations < 0]))

@@ -183,7 +183,7 @@ runGC <- function(files,
   }
 
   #Add this if because when you obtain no result, there was an error during "sweep" function for ann.df2
-  if(sum(sapply(allSam.matches$annotations,nrow)) > 0){
+  #if(sum(sapply(allSam.matches$annotations,nrow)) > 0){
     
     printString("Formatting results")
     
@@ -231,28 +231,28 @@ runGC <- function(files,
            settings = settings,
            SessionInfo = sessionInfo())
     }
-  }else{
-    peaktable <- data.frame(Name = 1,
-                            Class = 1,
-                            rt.sd = 1,
-                            rt = 1)[FALSE,]
-    result <- matrix(0, 0, length(allSamples.msp))
-    colnames(result) <- names(allSamples.msp)
-    if (returnXset) {
-      list(PeakTable = cbind(data.frame(peaktable),
-             data.frame(result)),
-           PseudoSpectra = NULL,
-           settings = settings,
-           xset = allSamples,
-           annotation = allSam.matches$annotation,
-           samples.msp = allSamples.msp,
-           SessionInfo = sessionInfo())
-    } else {
-      list(PeakTable = cbind(data.frame(peaktable),
-             data.frame(result)),
-           PseudoSpectra = NULL,
-           settings = settings,
-           SessionInfo = sessionInfo())
-    }
-  }
+  #}else{
+  #  peaktable <- data.frame(Name = 1,
+  #                          Class = 1,
+  #                          rt.sd = 1,
+  #                          rt = 1)[FALSE,]
+  #  result <- matrix(0, 0, length(allSamples.msp))
+  #  colnames(result) <- names(allSamples.msp)
+  #  if (returnXset) {
+  #    list(PeakTable = cbind(data.frame(peaktable),
+  #           data.frame(result)),
+  #         PseudoSpectra = NULL,
+  #         settings = settings,
+  #         xset = allSamples,
+  #         annotation = allSam.matches$annotation,
+  #         samples.msp = allSamples.msp,
+  #         SessionInfo = sessionInfo())
+  #  } else {
+  #    list(PeakTable = cbind(data.frame(peaktable),
+  #           data.frame(result)),
+  #         PseudoSpectra = NULL,
+  #         settings = settings,
+  #         SessionInfo = sessionInfo())
+  #  }
+  #}
 }
