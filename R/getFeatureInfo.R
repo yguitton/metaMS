@@ -8,7 +8,7 @@ getFeatureInfo <- function(stdDB, allMatches, sampleList) {
   signif.rt.sd <- 4
   signif.RI <- 0
   
-  allAnnotations <- sort(unique(unlist(lapply(allMatches$annotations,
+  allAnnotations <- sort(unique(unlist(sapply(allMatches$annotations,
                                               function(x) x[,"annotation"]))))
   allAnnotations <- c(allAnnotations[allAnnotations > 0],
                       rev(allAnnotations[allAnnotations < 0]))
