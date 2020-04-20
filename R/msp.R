@@ -327,12 +327,12 @@ to.msp <- function(object, file = NULL,
 
 SearchNIST<-function(mspfile=NULL, savepath=NULL){
   
-  #library
-  if("tcltk" %in% rownames(installed.packages()) == FALSE) {install.packages("tcltk")}
-  require(tcltk)
   
   #create a local output directory
-  savepath<-tclvalue(tkchooseDirectory(initialdir=getwd(), title="Please, select your Saving directory"))
+  if (is.null(savepath)){
+    savepath<-choose.dir(default=getwd(), caption="Please, select your Saving directory")
+  }
+  
   setwd(savepath)
   st<-strsplit(date(), " ")[[1]]
   stBis<-strsplit(st[4], ":")[[1]]
@@ -344,6 +344,7 @@ SearchNIST<-function(mspfile=NULL, savepath=NULL){
   if (is.null(mspfile)==TRUE) {
     rm(mspfile)
   }
+  
   #System Check 
   if ((Sys.info()["sysname"])!="Windows"){
     cat("Sorry, this function only works on Windows. Your OS is not Windows.\n")
@@ -353,7 +354,6 @@ SearchNIST<-function(mspfile=NULL, savepath=NULL){
   {
     #Search for MSSEARCH location should be c:/nist/mssearch
     if (file.exists(file.path("C:", "Windows","win.ini"))==TRUE){
-      #nistcheck<-pmatch("[NISTMS]", readLines("win.ini"))
       nistpath<-readLines(file.path("C:", "Windows","win.ini"))[pmatch("Path32", readLines(file.path("C:", "Windows","win.ini")))]
       if(is.na(nistpath)!=TRUE){
         nistpath<-file.path(unlist(strsplit(nistpath, split="="))[2])
@@ -363,8 +363,7 @@ SearchNIST<-function(mspfile=NULL, savepath=NULL){
         nistpath<-readLines(file.path("C:", "Windows","win.ini"))[pmatch("Path16", readLines(file.path("C:", "Windows","win.ini")))]
         print("Your NIST MS program version is <2.0 or impossible to detect NIST")
         if(is.na(nistpath)){
-          require(tcltk)
-          nistpath<-tclvalue(tkchooseDirectory(initialdir=getwd(), title="Please, select the MS SEARCH directory, should be c:/nist/mssearch/"))
+          nistpath<-choose.dir(default=getwd(), caption="Please, select the MS SEARCH directory, should be c:/nist/mssearch/")
           print(nistpath)
         }
       }
@@ -372,8 +371,7 @@ SearchNIST<-function(mspfile=NULL, savepath=NULL){
       
     }
     if (file.exists(file.path("C:", "Windows","win.ini"))==FALSE){
-      require(tcltk)
-      nistpath<-tclvalue(tkchooseDirectory(initialdir=getwd(), title="Please, select the MS SEARCH directory, should be c:/nist/mssearch/"))
+      nistpath<-choose.dir(default=getwd(), caption="Please, select the MS SEARCH directory, should be c:/nist/mssearch/")
     }
     if(file.exists(file.path(nistpath,"AUTOIMP.MSD"))==TRUE){
       firstlocatorpath<-file.path(nistpath,"AUTOIMP.MSD")
@@ -381,7 +379,6 @@ SearchNIST<-function(mspfile=NULL, savepath=NULL){
     }
     if(file.exists(file.path(nistpath,"AUTOIMP.MSD"))==FALSE){
       #create AUTIMP.MSD file
-      #secondlocatorpath<-paste(nistpath,"FILESPEC.FIL", sep="")
       secondlocatorpath<-"FILESPEC.FIL"
       zz<-file(file.path(nistpath,"AUTOIMP.MSD"))
       cat(secondlocatorpath, file = zz, sep = "\n")
@@ -391,12 +388,10 @@ SearchNIST<-function(mspfile=NULL, savepath=NULL){
     if(file.exists(file.path(nistpath,"SRCREADY.TXT"))==TRUE){
       unlink(file.path(nistpath,"SRCREADY.TXT"))
     }
-    #create FILSPEC.FIL
     
+    #create FILSPEC.FIL
     if(exists("mspfile")==FALSE){
-      require(tcltk)
-      mspfile<-tk_choose.files(default=paste(getwd(),"/*.msp",sep=""),caption="Please, select the MSP file", multi=FALSE, filters=matrix(c("your msp file","*.msp"),ncol=2))
-      #zz<-file(paste(nistpath,"FILESPEC.FIL", sep=""), "w")
+      mspfile<-choose.files(default=paste(getwd(),"/*.msp",sep=""),caption="Please, select the MSP file", multi=FALSE, filters=matrix(c("your msp file","*.msp"),ncol=2))
       zz<-file("FILESPEC.FIL", "w")
       cat(paste(file.path(mspfile),"Overwrite",sep=" "), file = zz, sep = "\n")
       cat(paste(23,62789), file = zz, sep = "\n")
