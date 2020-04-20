@@ -6,6 +6,7 @@
 \alias{filter.msp}
 \alias{xset2msp}
 \alias{to.msp}
+\alias{SearchNIST}
 \title{Functions to handle msp-type objects (GC-MS)}
 \description{
   Functions to construct, read, write and filter so-called msp
@@ -24,6 +25,7 @@ xset2msp(xsetList, settings)
 to.msp(object, file = NULL, settings = NULL, ndigit = 0, 
        minfeat, minintens, intensity = c("maxo", "into"),
        secs2mins = TRUE)
+SearchNIST(mspfile=NULL, savepath=NULL)
 }
 \arguments{
   \item{spectra}{a list of two-column or three-column numerical
