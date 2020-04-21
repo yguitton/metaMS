@@ -24,4 +24,9 @@
   last column is always "rt". 
 }
 \author{Ron Wehrens}
+\examples{
+## Example of results
+  data(GCresults) ## pre-compiled results
+  GCresults$PeakTable
+}
 \keyword{manip}
