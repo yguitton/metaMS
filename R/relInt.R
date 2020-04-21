@@ -22,7 +22,7 @@ relInt <- function(pat, refpat) {
             ## if the robust estimator breaks down, we use the regular one... this sometimes happens when the two vectors are really very
             ## similar
             relI <- try(coef(lmrob(expI ~ DBI))[2], silent = TRUE)
-            if (is(relI) == "try-error") 
+            if (is(relI)[1] == "try-error") 
                 relI <- coef(lm(expI ~ DBI, weights = sqrt(common.masses)))[2]
             ## relI <- coef(rlm(expI ~ DBI, weights = sqrt(common.masses), method = 'MM', acc = 1))[2] ## high breakdown point...
         }
