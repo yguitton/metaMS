@@ -260,7 +260,7 @@ to.msp <- function(object, file = NULL,
     intensity <- match.arg(intensity)
   }
   
-  if (class(object) == "xsAnnotate") { ## CAMERA annotation object
+  if (is(object)[1] == "xsAnnotate") { ## CAMERA annotation object
     allpks <- object@groupInfo
     minI <- minintens * max(allpks[, intensity])
     tooSmall <- which(allpks[, intensity] < minI)
