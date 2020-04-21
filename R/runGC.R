@@ -7,7 +7,7 @@ runGC <- function(files, xset, settings, rtrange = NULL, DB = NULL, removeArtefa
         if (missing(xset)) 
             stop("Either 'files' or 'xset' should be given")
         
-        if (is(xset) == "xcmsSet") 
+        if (is(xset)[1] == "xcmsSet") 
             stop("xset should be a list of CAMERA-grouped xcmsSet objects, see man page")
         
         xset.l <- xset
