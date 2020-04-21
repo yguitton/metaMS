@@ -43,6 +43,6 @@ match.unannot.patterns(msp1, msp2, settings)
 \examples{
 ## Example of settings
   data(FEMsettings)
-  TSQXLS.GC@betweenSamples.rtdiff
+  metaSetting(object = TSQXLS.GC, field= "betweenSamples")
 }
 \keyword{manip}

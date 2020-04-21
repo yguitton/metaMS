@@ -33,6 +33,6 @@
 \examples{
 ## Example of settings
   data(FEMsettings)
-  TSQXLS.GC@match2DB.rtdiff
+  metaSetting(object = TSQXLS.GC, field= "match2DB")
 }
 \keyword{manip}
