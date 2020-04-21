@@ -22,7 +22,7 @@ construct.msp <- function(spectra, extra.info) {
     extra.info$rt.sd <- round(sapply(spectra, function(x) sd(x[,3])), 4)
   }
 
-  lapply(1:length(spectra),
+  lapply(seq_len(length(spectra)),
          function(ii) 
            c(lapply(extra.info, "[", ii),
              list(pspectrum = spectra[[ii]][,1:2])))
@@ -52,7 +52,7 @@ write.msp <- function(msp, file, newFile = TRUE) {
     pspec <- msp[[i]]$pspectrum
     nI <- nrow(pspec)
     cat("Num Peaks:", nI, file = file, append = TRUE)
-    for (j in 1:nI) {
+    for (j in seq_len(nI)) {
       if ((j-1) %% 5 == 0) cat("\n", file = file, append = TRUE)
       cat(" ", pspec[j,1], " ", pspec[j,2], ";",
           sep = "", file = file, append = TRUE)
@@ -224,7 +224,7 @@ read.msp <- function(file, only.org = FALSE,
   }
   
   
-  lapply(1:length(starts),
+  lapply(seq_len(length(starts)),
          function(i)
          read.compound(huhn[starts[i]:ends[i]], noNumbers = noNumbers))
 }
@@ -270,7 +270,7 @@ to.msp <- function(object, file = NULL,
   } else { ## a peak table
     minI <- minintens * max(object[, intensity])
     allpks <- object[object[, intensity] >= minI,]
-    pspectra <- split(1:nrow(allpks), allpks[,"rt"])
+    pspectra <- split(seq_len(nrow(allpks)), allpks[,"rt"])
   }
   
   ## remove all spectra with less than minfeat peaks
@@ -279,7 +279,7 @@ to.msp <- function(object, file = NULL,
 
   if (!is.null(file)) {
     if (length(pspectra) > 0) {
-      for (i in 1:length(pspectra)) {
+      for (i in seq_len(length(pspectra))) {
         ## maximum of 1000 features per file
         ofile <- paste(file, "_", ceiling(i / 1000), ".txt", sep = "")
         newfile <- (i %% 1000) == 1
@@ -292,7 +292,7 @@ to.msp <- function(object, file = NULL,
         cat("Name: grp ", i, " (rt: ", mean(pks[,"rt"]), ")", sep = "",
             file = ofile, append = !newfile)
         cat("\nNum Peaks:", nrow(pks), file = ofile, append = TRUE)
-        for (ii in 1:nrow(pks)) 
+        for (ii in seq_len(nrow(pks))) 
           cat("\n(",
               round(pks[ii, "mz"], ndigit), "\t",
               round(pks[ii, intensity], ndigit), ")",
