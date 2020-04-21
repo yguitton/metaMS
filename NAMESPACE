@@ -10,13 +10,13 @@ importFrom(Matrix, Matrix)
 importFrom("graphics", "legend", "lines", "plot")
 importFrom("stats", "aggregate", "approx", "coef", "cutree", "dist",
            "hclust", "lm", "median", "predict")
-importFrom("capture.output", "read.table", "sessionInfo")
+importFrom("utils","capture.output", "read.table", "sessionInfo")
 
 ## Export all functions that could be useful for users. Not only the
 ## two toplevel functions runGC and runLC, but also those functions one
 ## layer lower in abstraction level.
 export(runGC, runLC, peakDetection, matchExpSpec,
-      msp, addRI, treat.DB, matchSamples2DB, matchSamples2Samples,
+      write.msp, addRI, treat.DB, matchSamples2DB, matchSamples2Samples,
        constructExpPseudoSpectra, getFeatureInfo, getAnnotationMat,
        AnnotateTable, plotPseudoSpectrum, processStandards,
        alignmentLC, runCAMERA, getAnnotationLC, getPeakTable,
