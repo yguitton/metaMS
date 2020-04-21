@@ -87,6 +87,9 @@ SearchNIST(mspfile=NULL, savepath=NULL)
   keyword is always \dQuote{Num Peaks}, and should be followed by the list of
   mz-I combinations.
 }
+\value{
+    Most of the functions here create msp files.
+}
 \author{Ron Wehrens}
 \examples{
 data("threeStdsDB")
