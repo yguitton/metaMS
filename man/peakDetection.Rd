@@ -31,6 +31,6 @@ peakDetection(files, settings, rtrange = NULL, mzrange= NULL,
 \examples{
 ## Example of settings
   data(FEMsettings)
-  TSQXLS.GC@PeakPicking
+  metaSetting(object = TSQXLS.GC, field= "PeakPicking")
 }
 \keyword{manip}
