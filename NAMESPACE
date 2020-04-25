@@ -16,9 +16,11 @@ importFrom("utils","capture.output", "read.table", "sessionInfo")
 ## two toplevel functions runGC and runLC, but also those functions one
 ## layer lower in abstraction level.
 export(runGC, runLC, peakDetection, matchExpSpec,
-      read.msp,write.msp,to.msp, addRI, treat.DB, matchSamples2DB, matchSamples2Samples,
+       write.msp, construct.msp, filter.msp, read.msp, to.msp,
+       addRI, treat.DB, matchSamples2DB, matchSamples2Samples,
        constructExpPseudoSpectra, getFeatureInfo, getAnnotationMat,
-       AnnotateTable, plotPseudoSpectrum, processStandards,
+       AnnotateFeature, AnnotateTable,
+       plotPseudoSpectrum, processStandards,
        alignmentLC, runCAMERA, getAnnotationLC, getPeakTable,
        createSTDdbGC, createSTDdbLC, readStdInfo,
        generateStdDBGC, generateStdDBLC,
