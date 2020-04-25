@@ -23,7 +23,6 @@ jobs:
         - testthat
         - knitr
         - roxygen2
-        - magick
         - S4Vectors
       before_install:
         - mkdir -p ~/.R
@@ -46,13 +45,9 @@ jobs:
         - travis_wait 10 R CMD build --no-build-vignettes --no-manual .
         - travis_wait 40 R CMD check --as-cran --no-build-vignettes --no-vignettes --no-manual --no-codoc --no-examples xcms*tar.gz
       before_script: rm -rf vignettes
-      r_packages:
-        - magick
       name: "tests"
     - r_build_args:
       r_check_args: --as-cran --no-build-vignettes --no-codoc --no-examples --no-tests
-      r_packages:
-        - magick
       install: skip
       name: "vignettes"
     - stage: "CodeCov"
