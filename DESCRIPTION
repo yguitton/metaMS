@@ -18,3 +18,4 @@ Description: MS-based metabolomics data processing and compound
 URL: https://github.com/yguitton/metaMS
 License: GPL (>= 2)
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
+RoxygenNote: 7.1.0
