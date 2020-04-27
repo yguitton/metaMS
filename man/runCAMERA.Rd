@@ -44,5 +44,9 @@ runCAMERA(xset, chrom = c("LC", "GC"), settings, polarity, quick = TRUE)
   An annotated xcmsSet object (an object of class CAMERA).}
 \seealso{\code{\link{annotate}}, \code{\link{groupFWHM}}}
 \author{Ron Wehrens and Pietro Franceschi}
-
+\examples{
+## Example of results
+  data(LCresults) ## pre-compiled results
+  LCresults$PeakTable
+}
 \keyword{manip}

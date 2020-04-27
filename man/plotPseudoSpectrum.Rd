@@ -18,6 +18,9 @@ plotPseudoSpectrum(psspc, ...)
   \item{\dots}{Additional graphical parameters.}
 }
 \details{A stick spectrum is shown on the graphical device.}
+\value{
+    A three column matrix m/z and Intensity and Retention time.
+}
 \author{Ron Wehrens}
 \examples{
 data("threeStdsDB")

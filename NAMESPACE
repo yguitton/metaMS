@@ -1,15 +1,16 @@
 ## load specific functions from tools and robustbase
-import(BiocGenerics)
+import(BiocGenerics, except=relist)
 import(methods)
 import(xcms, except=plot)
 import(CAMERA)
+import(utils)
 importFrom(tools, file_ext, list_files_with_exts, file_path_sans_ext)
 importFrom(robustbase, lmrob)
 importFrom(Matrix, Matrix)
 importFrom("graphics", "legend", "lines", "plot")
 importFrom("stats", "aggregate", "approx", "coef", "cutree", "dist",
            "hclust", "lm", "median", "predict")
-importFrom("utils", "capture.output", "read.table", "sessionInfo")
+importFrom("utils","capture.output", "read.table", "sessionInfo")
 
 ## Export all functions that could be useful for users. Not only the
 ## two toplevel functions runGC and runLC, but also those functions one
