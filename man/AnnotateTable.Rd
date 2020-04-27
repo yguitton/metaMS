@@ -97,5 +97,10 @@ automatic annotations in liquid chromatography/mass spectrometry based
 metabolomics". Rapid Communications in Mass Spectrometry, 27(21), 2425
 (2013).}
 \author{Pietro Franceschi}
+\examples{
+## Example of results
+  data(GCresults) ## pre-compiled results
+  GCresults$PeakTable
+}
 \keyword{manip}
 

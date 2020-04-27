@@ -30,4 +30,9 @@
 }
 \author{Ron Wehrens}
 \seealso{\code{\link{matchSamples2DB}}, \code{\link{matchSamples2Samples}}}
+\examples{
+## Example of results
+  data(GCresults) ## pre-compiled results
+  GCresults$PseudoSpectra
+}
 \keyword{manip}

@@ -28,4 +28,9 @@ peakDetection(files, settings, rtrange = NULL, mzrange= NULL,
 }
 \value{Either an xcmsSet object, or a list of one-sample xcmsSet objects.}
 \author{Ron Wehrens and Pietro Franceschi}
+\examples{
+## Example of settings
+  data(FEMsettings)
+  metaSetting(object = TSQXLS.GC, field= "PeakPicking")
+}
 \keyword{manip}
