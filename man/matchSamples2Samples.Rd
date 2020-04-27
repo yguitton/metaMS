@@ -40,4 +40,9 @@ match.unannot.patterns(msp1, msp2, settings)
   factors (only for those combinations that satisfy the criteria on
   retention time (index) and match factor).}
 \author{Ron Wehrens}
+\examples{
+## Example of settings
+  data(FEMsettings)
+  metaSetting(object = TSQXLS.GC, field= "betweenSamples")
+}
 \keyword{manip}

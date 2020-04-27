@@ -1,3 +1,9 @@
+Version 1.25.0
+  * NEW function SearchNIST added (Only Windows OS)
+  
+Version 1.21.5
+  * Reformating after BiocCheck
+  
 Version 1.21.4
   * Pull request accepted bug correction in annotation pipeline
 
