@@ -16,5 +16,8 @@ printInfo(...)
   \item{\dots}{Text strings. These will be concatenated inside the function.}
   \item{screenwidth}{Width of the text field.}
 }
+\value{
+    A string to print.
+}
 \author{Ron Wehrens and Pietro Franceschi}
 \keyword{print}

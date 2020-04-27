@@ -51,4 +51,9 @@ getAnnotationLC(xs, settings, DB, errf)
 \seealso{
   \code{\link{AnnotateTable}}, \code{\link{LCDBtest}}, \code{\link{FEMsettings}}
 }
+\examples{
+## Example of results
+  data(LCresults) ## pre-compiled results
+  LCresults$PeakTable
+}
 \keyword{manip}

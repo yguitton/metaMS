@@ -22,7 +22,7 @@ construct.msp <- function(spectra, extra.info) {
     extra.info$rt.sd <- round(sapply(spectra, function(x) sd(x[,3])), 4)
   }
 
-  lapply(1:length(spectra),
+  lapply(seq_len(length(spectra)),
          function(ii) 
            c(lapply(extra.info, "[", ii),
              list(pspectrum = spectra[[ii]][,1:2])))
@@ -52,7 +52,7 @@ write.msp <- function(msp, file, newFile = TRUE) {
     pspec <- msp[[i]]$pspectrum
     nI <- nrow(pspec)
     cat("Num Peaks:", nI, file = file, append = TRUE)
-    for (j in 1:nI) {
+    for (j in seq_len(nI)) {
       if ((j-1) %% 5 == 0) cat("\n", file = file, append = TRUE)
       cat(" ", pspec[j,1], " ", pspec[j,2], ";",
           sep = "", file = file, append = TRUE)
@@ -224,7 +224,7 @@ read.msp <- function(file, only.org = FALSE,
   }
   
   
-  lapply(1:length(starts),
+  lapply(seq_len(length(starts)),
          function(i)
          read.compound(huhn[starts[i]:ends[i]], noNumbers = noNumbers))
 }
@@ -260,7 +260,7 @@ to.msp <- function(object, file = NULL,
     intensity <- match.arg(intensity)
   }
   
-  if (class(object) == "xsAnnotate") { ## CAMERA annotation object
+  if (is(object)[1] == "xsAnnotate") { ## CAMERA annotation object
     allpks <- object@groupInfo
     minI <- minintens * max(allpks[, intensity])
     tooSmall <- which(allpks[, intensity] < minI)
@@ -270,7 +270,7 @@ to.msp <- function(object, file = NULL,
   } else { ## a peak table
     minI <- minintens * max(object[, intensity])
     allpks <- object[object[, intensity] >= minI,]
-    pspectra <- split(1:nrow(allpks), allpks[,"rt"])
+    pspectra <- split(seq_len(nrow(allpks)), allpks[,"rt"])
   }
   
   ## remove all spectra with less than minfeat peaks
@@ -279,7 +279,7 @@ to.msp <- function(object, file = NULL,
 
   if (!is.null(file)) {
     if (length(pspectra) > 0) {
-      for (i in 1:length(pspectra)) {
+      for (i in seq_len(length(pspectra))) {
         ## maximum of 1000 features per file
         ofile <- paste(file, "_", ceiling(i / 1000), ".txt", sep = "")
         newfile <- (i %% 1000) == 1
@@ -292,7 +292,7 @@ to.msp <- function(object, file = NULL,
         cat("Name: grp ", i, " (rt: ", mean(pks[,"rt"]), ")", sep = "",
             file = ofile, append = !newfile)
         cat("\nNum Peaks:", nrow(pks), file = ofile, append = TRUE)
-        for (ii in 1:nrow(pks)) 
+        for (ii in seq_len(nrow(pks))) 
           cat("\n(",
               round(pks[ii, "mz"], ndigit), "\t",
               round(pks[ii, intensity], ndigit), ")",
@@ -318,3 +318,115 @@ to.msp <- function(object, file = NULL,
   }
 }
 
+## SearchNIST is a function added to assist user accessing their own copy of NIST database
+## starting from a MSP file created by to.msp function
+## The fucntion will help creating the connection between R and NIST mass spectral library search tool on Windows OS
+## Require NIST MS (Mass Spectral) Search Program Version 2.0 or higher AND Windows OS
+## Please remove AUTOIMP.MSD file from C:\NISTMS\MSSEARCH before first launch
+# GUITTON Yann - 2015 Laberca
+
+SearchNIST<-function(mspfile=NULL, savepath=NULL){
+  
+  
+  #create a local output directory
+  if (is.null(savepath)){
+    savepath<-choose.dir(default=getwd(), caption="Please, select your Saving directory")
+  }
+  
+  setwd(savepath)
+  st<-strsplit(date(), " ")[[1]]
+  stBis<-strsplit(st[4], ":")[[1]]
+  Hour<-paste(stBis[1], stBis[2], stBis[3], sep="-")
+  Date<-paste(st[1], st[2], st[3], Hour, sep="_")
+  Mypath<-paste("output_SearchNIST", "_", "result", Date, sep="")
+  dir.create(Mypath)
+  
+  if (is.null(mspfile)==TRUE) {
+    rm(mspfile)
+  }
+  
+  #System Check 
+  if ((Sys.info()["sysname"])!="Windows"){
+    cat("Sorry, this function only works on Windows. Your OS is not Windows.\n")
+    
+  }
+  else
+  {
+    #Search for MSSEARCH location should be c:/nist/mssearch
+    if (file.exists(file.path("C:", "Windows","win.ini"))==TRUE){
+      nistpath<-readLines(file.path("C:", "Windows","win.ini"))[pmatch("Path32", readLines(file.path("C:", "Windows","win.ini")))]
+      if(is.na(nistpath)!=TRUE){
+        nistpath<-file.path(unlist(strsplit(nistpath, split="="))[2])
+        
+      }
+      if(is.na(nistpath)){
+        nistpath<-readLines(file.path("C:", "Windows","win.ini"))[pmatch("Path16", readLines(file.path("C:", "Windows","win.ini")))]
+        print("Your NIST MS program version is <2.0 or impossible to detect NIST")
+        if(is.na(nistpath)){
+          nistpath<-choose.dir(default=getwd(), caption="Please, select the MS SEARCH directory, should be c:/nist/mssearch/")
+          print(nistpath)
+        }
+      }
+      
+      
+    }
+    if (file.exists(file.path("C:", "Windows","win.ini"))==FALSE){
+      nistpath<-choose.dir(default=getwd(), caption="Please, select the MS SEARCH directory, should be c:/nist/mssearch/")
+    }
+    if(file.exists(file.path(nistpath,"AUTOIMP.MSD"))==TRUE){
+      firstlocatorpath<-file.path(nistpath,"AUTOIMP.MSD")
+      secondlocatorpath<-file.path(readLines(file.path(firstlocatorpath)))
+    }
+    if(file.exists(file.path(nistpath,"AUTOIMP.MSD"))==FALSE){
+      #create AUTIMP.MSD file
+      secondlocatorpath<-"FILESPEC.FIL"
+      zz<-file(file.path(nistpath,"AUTOIMP.MSD"))
+      cat(secondlocatorpath, file = zz, sep = "\n")
+      close(zz)
+      firstlocatorpath<-file.path(nistpath,"AUTOIMP.MSD")
+    }
+    if(file.exists(file.path(nistpath,"SRCREADY.TXT"))==TRUE){
+      unlink(file.path(nistpath,"SRCREADY.TXT"))
+    }
+    
+    #create FILSPEC.FIL
+    if(exists("mspfile")==FALSE){
+      mspfile<-choose.files(default=paste(getwd(),"/*.msp",sep=""),caption="Please, select the MSP file", multi=FALSE, filters=matrix(c("your msp file","*.msp"),ncol=2))
+      zz<-file("FILESPEC.FIL", "w")
+      cat(paste(file.path(mspfile),"Overwrite",sep=" "), file = zz, sep = "\n")
+      cat(paste(23,62789), file = zz, sep = "\n")
+      close(zz)
+    }
+    if(exists("mspfile")==TRUE){
+      
+      #zz<-file(paste(nistpath,"FILESPEC.FIL", sep=""), "w")
+      zz<-file("FILESPEC.FIL", "w")
+      cat(paste(file.path(mspfile),"Overwrite",sep=" "), file = zz, sep = "\n")
+      cat(paste(23,62789), file = zz, sep = "\n")
+      close(zz)
+    }
+    code<-paste(file.path(nistpath,"nistms$.exe"), " /Instrument /par=2", sep="")
+    #system("c:/nist05/mssearch/nistms$.exe /Instrument /par=2")
+    system(code)
+    stopflag=FALSE
+    print("Please wait...")
+    Sys.sleep(3)
+    
+    while(stopflag==FALSE){
+      
+      if(file.exists(file.path(nistpath,"SRCREADY.TXT"))==TRUE){
+        stopflag=TRUE
+        print("Done")
+        
+      }
+      
+      
+      
+    }
+    file.copy(file.path(nistpath,"SRCRESLT.TXT"),file.path(Mypath,"ResultsFromNIST.txt"))
+    print(paste("A file called ResultsFromNIST.txt has been generated in ", Mypath, sep=" "))
+    #a parser for that file is needed
+    #clean unused files from directories needed
+  }#end else system check
+  
+}#end function
