@@ -4,7 +4,6 @@ language: r
 r: bioc-devel
 cache:
   packages: true
-sudo: required
 warnings_are_errors: true
 
 addons:
@@ -43,7 +42,7 @@ jobs:
     - install: skip
       script:
         - travis_wait 10 R CMD build --no-build-vignettes --no-manual .
-        - travis_wait 40 R CMD check --as-cran --no-build-vignettes --no-vignettes --no-manual --no-codoc --no-examples xcms*tar.gz
+        - travis_wait 40 R CMD check --as-cran --no-build-vignettes --no-vignettes --no-manual --no-codoc --no-examples metaMS*tar.gz
       before_script: rm -rf vignettes
       name: "tests"
     - r_build_args:
@@ -56,8 +55,7 @@ jobs:
         - R CMD INSTALL .
         - travis_wait 40 Rscript -e 'covr::codecov()'
       name: "codecov"
-      on:
-        branch: master
+      
 
 # In general the r-travis script automatically dump the logs after failure but
 # because of a bug in travis the output is often truncated. See
