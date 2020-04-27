@@ -1,7 +1,7 @@
 Package: metaMS
 Type: Package
 Title: MS-based metabolomics annotation pipeline
-Version: 1.22.0
+Version: 1.25.0
 Authors@R: c(person("Ron", "Wehrens", role = "aut", comment =
         c("author of GC-MS part", "Initial Maintainer"), email = "ron.wehrens@gmail.com"),
         person("Pietro", "Franceschi", role = "aut", comment = "author
