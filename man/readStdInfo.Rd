@@ -21,6 +21,9 @@ readStdInfo(stdInfo, InputDir, sep = "", dec = ".", ...)
   database), the function checks whether some input files are
   unavailable, and whether some data files are not used. In the first
   case, an error is returned, in the second case a warning.}
+\value{
+    A data.frame  
+}
 \examples{
 if (require(metaMSdata)) {
   ## this will lead to the completed version of the R object that is also
