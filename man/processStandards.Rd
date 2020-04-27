@@ -22,4 +22,9 @@
 }
 \author{Ron Wehrens and Pietro Franceschi}
 \seealso{\code{\link{xcmsSet}}, \code{\link{runCAMERA}}}
+\examples{
+## Example of results
+  data(GCresults) ## pre-compiled results
+  GCresults$PeakTable
+}
 \keyword{manip}

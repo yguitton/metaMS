@@ -3,6 +3,7 @@
 \alias{Synapt.RP}
 \alias{Synapt.NP}
 \alias{TSQXLS.GC}
+\alias{Orbitrap.RP}
 \docType{data}
 \title{Example settings for \code{metaMS}}
 \description{Examples of settings needed for functions \code{runLC} and

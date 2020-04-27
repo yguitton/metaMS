@@ -75,6 +75,7 @@ generateStdDBGC(totalXset, settings, extDB = NULL, manualDB = NULL,
 \author{Ron Wehrens}
 \seealso{\code{\link{processStandards}}, \code{\link{generateStdDBGC}}}
 \examples{
+  data(threeStdsNIST)  ## provides object smallDB, excerpt from NIST DB
   \dontrun{
 if (require(metaMSdata)) {
   ## Sitation A: create a DB of standards.

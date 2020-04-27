@@ -40,4 +40,9 @@ Integration of areas of missing peaks is performed depending on the \code{fillPe
 \seealso{\code{\link{FEMsettings}}}
 \value{A grouped and rt-aligned \code{xcmsSet} object.}
 \author{Ron Wehrens and Pietro Franceschi}
+\examples{
+## Example of results
+  data(LCresults) ## pre-compiled results
+  LCresults$PeakTable
+}
 \keyword{manip}
