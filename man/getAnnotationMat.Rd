@@ -29,4 +29,9 @@ relInt(pat, refpat)
   \code{relInt}, which simply returns one number.
 }
 \author{Ron Wehrens}
+\examples{
+## Example of results
+  data(GCresults) ## pre-compiled results
+  GCresults$PeakTable
+}
 \keyword{manip}

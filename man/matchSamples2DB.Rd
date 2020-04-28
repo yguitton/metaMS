@@ -30,4 +30,9 @@
   in function \code{annotations2tab}.
 }
 \author{Ron Wehrens}
+\examples{
+## Example of settings
+  data(FEMsettings)
+  metaSetting(object = TSQXLS.GC, field= "match2DB")
+}
 \keyword{manip}

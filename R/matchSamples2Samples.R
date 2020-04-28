@@ -39,9 +39,13 @@ matchSamples2Samples <- function(xset.msp.scaled,
                           which(!(1:length(x)) %in% y[,"pattern"] ),
                           xset.msp.scaled,
                           annotations)
+    #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
+   
     xset.work <- mapply(function(x, y) x[y], xset.msp.scaled, noannot.idx)
+    #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
+    
   }
-  
+
   ## do the matching: a simple double loop over all unassigned patterns
   npatterns <- sum(sapply(xset.work, length))
   cumpatterns <- c(0, cumsum(sapply(xset.work, length)))
@@ -55,10 +59,11 @@ matchSamples2Samples <- function(xset.msp.scaled,
                                          settings = settings)
       if (length(matchmat) > 0) {
         for (k in 1:nrow(matchmat)) {
-	id1 <- cumpatterns[i] + matchmat[k, "ID1"]  
-	id2 <- cumpatterns[j] + matchmat[k, "ID2"]  
-        pattern.match.result[id1, id2] <- 1         
-	pattern.match.result[id2, id1] <- 1}        
+          id1 <- cumpatterns[i] + matchmat[k, "ID1"]  
+          id2 <- cumpatterns[j] + matchmat[k, "ID2"]  
+          pattern.match.result[id1, id2] <- 1         
+          pattern.match.result[id2, id1] <- 1
+        }        
       }
     }
   }
@@ -157,6 +162,8 @@ matchSamples2Samples <- function(xset.msp.scaled,
                             function(x)
                             x[!x[,"pattern"] == 0,])
   
+  #I probably have to switch new.annotatoins and annotations
+  #Because I obtain an error when the first file has no annotation...
   list(annotations = mapply(rbind, annotations, new.annotations,
            SIMPLIFY = FALSE),
        unknowns = pspc.DB)

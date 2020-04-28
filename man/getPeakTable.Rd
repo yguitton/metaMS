@@ -32,9 +32,14 @@ getPeakTable(xs, intval = "into")
   A data frame with the intensity for each feature (rows) in all the
   samples (columns). Each feature is identified by its m/z value and
   retention time (in minutes). If the \code{xs} object is of class
-  CMAERA, the results of the camera annotation (isotope, adduct,
+  CAMERA, the results of the camera annotation (isotope, adduct,
   pcgroup) are included in the table.  
 }
 \author{Pietro Franceschi}
+\examples{
+## Example of results
+  data(LCresults) ## pre-compiled results
+  LCresults$PeakTable
+}
 \keyword{manip}
 
