@@ -70,5 +70,4 @@ matchSamples2DB <- function(xset.msp, DB, settings, quick) {
     })
     
     list(annotations = mapply(annotations2tab, annotations, match.results, SIMPLIFY = FALSE))
->>>>>>> 3e8b0d680c97cb05de59685882e0b69512842b18
 }
