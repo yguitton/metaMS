@@ -36,24 +36,24 @@ matchSamples2Samples <- function(xset.msp.scaled,
   } else {
     ## throw out those patterns that already have an annotation
     noannot.idx <- mapply(function(x, y)
-                          which(!(1:length(x)) %in% y[,"pattern"] ),
-                          xset.msp.scaled,
-                          annotations)
+      which(!(1:length(x)) %in% y[,"pattern"] ),
+      xset.msp.scaled,
+      annotations)
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
-    if(is(noannot.idx) == "matrix"){
+    if(is(noannot.idx)[1] == "matrix"){
       noannot.idx <- as.list(as.data.frame(noannot.idx))
     }
     xset.work <- mapply(function(x, y) x[y], xset.msp.scaled, noannot.idx)
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
-    if(is(xset.work) == "matrix"){
+    if(is(xset.work)[1] == "matrix"){
       xset.work <- as.list(as.data.frame(xset.work))
     }
     #To correct issue when 1 unkn only in noannot.idx (make a list and not a list of list)
     if(unique(lengths(noannot.idx[1])) == 1){
-      xset.work <- lapply(xset.work, function(x) list(x))
+      xset.work <- lapply(xset.work[1], function(x) list(x))
     }
   }
-
+  
   ## do the matching: a simple double loop over all unassigned patterns
   npatterns <- sum(sapply(xset.work, length))
   cumpatterns <- c(0, cumsum(sapply(xset.work, length)))
@@ -75,12 +75,12 @@ matchSamples2Samples <- function(xset.msp.scaled,
       }
     }
   }
-
+  
   ## simply take the first unclustered pattern and add all non-zeros
   ## un the corresponding row of the data matrix as the initial
   ## cluster - add all other non-clustered numbers in the new cluster
   ## members to the list until there is no more growth
-
+  
   grow.clust <- function(seed, pmr) 
     unique(c(unlist(apply(pmr[seed,,drop = FALSE],
                           1,
@@ -105,7 +105,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
       current.cl <- current.cl + 1
     }
   }
-
+  
   ## check for minimal cluster size - for a meaningful value should be
   ## at least 2...
   minsize <- max(2,
@@ -132,7 +132,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
     pspc.DB <- vector(nclus, mode = "list")
     new.annotations <- lapply(xset.work,
                               function(x)
-                              makeAnnotation(nclus))
+                                makeAnnotation(nclus))
     
     for (cl in 1:nclus) {
       p.idx <- which(pmr.classes == cl)
@@ -145,7 +145,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
       
       ## the first one with the most matches is taken as the typical pattern
       central.idx <-
-          which.max(Matrix::rowSums(pattern.match.result[p.idx, p.idx]))
+        which.max(Matrix::rowSums(pattern.match.result[p.idx, p.idx]))
       fullspec.idx <- noannot.idx[[ sample.idx[central.idx] ]][[ spec.idx[central.idx] ]]
       pspc.DB[[ cl ]] <-              ## store this pseudospectrum!
         xset.msp[[ sample.idx[central.idx] ]][[ fullspec.idx ]]
@@ -156,7 +156,7 @@ matchSamples2Samples <- function(xset.msp.scaled,
       ## We use negative numbers for the annotation
       ## of the known unknowns, to distinguish them from the annotations
       ## from the real DB
-
+      
       for (ii in seq(along = sample.idx)) {
         fullspec.idx <- noannot.idx[[ sample.idx[ii] ]][[ spec.idx[ii] ]]
         new.annotations[[ sample.idx[ii] ]][cl, "pattern"] <- fullspec.idx
@@ -164,16 +164,16 @@ matchSamples2Samples <- function(xset.msp.scaled,
       }
     }
   }
-
+  
   ## now clean the new annotations and return the combined lists
   new.annotations <- lapply(new.annotations,
                             function(x)
-                            x[!x[,"pattern"] == 0,])
+                              x[!x[,"pattern"] == 0,])
   
   #I probably have to switch new.annotatoins and annotations
   #Because I obtain an error when the first file has no annotation...
   list(annotations = mapply(rbind, new.annotations, annotations,
-           SIMPLIFY = FALSE),
+                            SIMPLIFY = FALSE),
        unknowns = pspc.DB)
 }
 
@@ -184,16 +184,16 @@ match.unannot.patterns <- function(msp1, msp2, settings) {
   maxdiff <- ifelse(settings$timeComparison == "rt",
                     settings$rtdiff,
                     settings$RIdiff)
-      
+  
   rt1 <- sapply(msp1, function(x) mean(x[,settings$timeComparison]))
   rt2 <- sapply(msp2, function(x) mean(x[,settings$timeComparison]))
-
+  
   msp.rtdiffs <- abs(outer(rt1, rt2, "-"))
   close.idx <- which(msp.rtdiffs < maxdiff, arr.ind = TRUE)
   if (length(close.idx) > 0) {
     X1 <- msp1[close.idx[,1]]
     X2 <- msp2[close.idx[,2]]
-
+    
     matchfactors <- mapply(mzmatch, X1, X2)
     if (any(good.idx <- matchfactors > settings$simthresh)) {
       cbind(ID1 = close.idx[good.idx,1],
@@ -208,4 +208,3 @@ match.unannot.patterns <- function(msp1, msp2, settings) {
     NULL
   }
 }
-
