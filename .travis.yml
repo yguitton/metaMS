@@ -49,12 +49,7 @@ jobs:
       r_check_args: --as-cran --no-build-vignettes --no-codoc --no-examples --no-tests
       install: skip
       name: "vignettes"
-    - stage: "CodeCov"
-      install: skip
-      script:
-        - R CMD INSTALL .
-        - travis_wait 40 Rscript -e 'covr::codecov()'
-      name: "codecov"
+    
       
 
 # In general the r-travis script automatically dump the logs after failure but
