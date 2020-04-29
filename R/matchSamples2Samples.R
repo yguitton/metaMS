@@ -39,19 +39,13 @@ matchSamples2Samples <- function(xset.msp.scaled,
       which(!(1:length(x)) %in% y[,"pattern"] ),
       xset.msp.scaled,
       annotations)
-    
-    #debug
-    print(is(noannot.idx)[1])
-    
+
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
     if(is(noannot.idx)[1] == "matrix"){
       noannot.idx <- as.list(as.data.frame(noannot.idx))
     }
     xset.work <- mapply(function(x, y) x[y], xset.msp.scaled, noannot.idx)
-    
-    #debug
-    print(is(xset.work)[1])
-    
+
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
     if(is(xset.work)[1] == "matrix"){
       xset.work <- as.list(as.data.frame(xset.work))
