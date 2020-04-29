@@ -1,7 +1,7 @@
 Package: metaMS
 Type: Package
 Title: MS-based metabolomics annotation pipeline
-Version: 1.25.0
+Version: 1.25.1
 Authors@R: c(person("Ron", "Wehrens", role = "aut", comment =
         c("author of GC-MS part", "Initial Maintainer"), email = "ron.wehrens@gmail.com"),
         person("Pietro", "Franceschi", role = "aut", comment = "author
@@ -18,4 +18,5 @@ Description: MS-based metabolomics data processing and compound
 URL: https://github.com/yguitton/metaMS
 License: GPL (>= 2)
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
+Encoding: UTF-8
 RoxygenNote: 7.1.0
