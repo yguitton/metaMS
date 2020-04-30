@@ -41,13 +41,13 @@ matchSamples2Samples <- function(xset.msp.scaled,
       annotations)
 
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
-    if(is(noannot.idx)[1] == "matrix"){
+    if("matrix" %in% is(noannot.idx)){
       noannot.idx <- as.list(as.data.frame(noannot.idx))
     }
     xset.work <- mapply(function(x, y) x[y], xset.msp.scaled, noannot.idx)
 
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
-    if(is(xset.work)[1] == "matrix"){
+    if("matrix" %in% is(xset.work)){
       xset.work <- as.list(as.data.frame(xset.work))
     }
     #To correct issue when 1 unkn only in noannot.idx (make a list and not a list of list)
