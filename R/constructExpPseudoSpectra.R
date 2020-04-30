@@ -5,7 +5,7 @@
 constructExpPseudoSpectra <- function(allMatches, standardsDB) {
     allAnnotations <- sort(unique(unlist(sapply(allMatches$annotations, function(x) x[, "annotation"]))))
     
-    stdDB <- lapply(allAnnotations[allAnnotations > 0], function(x) c(standardsDB[[x]], list(DB.idx = x)))
+    stdDB <- sapply(allAnnotations[allAnnotations > 0], function(x) c(standardsDB[[x]], list(DB.idx = x)))
     
     if (min(allAnnotations) < 0) {
         ## write known unknowns

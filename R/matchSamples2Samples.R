@@ -41,19 +41,19 @@ matchSamples2Samples <- function(xset.msp.scaled,
       annotations)
 
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
-    if(is(noannot.idx)[1] == "matrix"){
-      noannot.idx <- as.list(as.data.frame(noannot.idx))
-    }
+   # if("matrix" %in% is(noannot.idx)){
+   #   noannot.idx <- as.list(as.data.frame(noannot.idx))
+   # }
     xset.work <- mapply(function(x, y) x[y], xset.msp.scaled, noannot.idx)
 
     #ADD this due to an issue where col with same length output a matrix... and that was a problem for next things
-    if(is(xset.work)[1] == "matrix"){
-      xset.work <- as.list(as.data.frame(xset.work))
-    }
+    #if("matrix" %in% is(xset.work)){
+     # xset.work <- as.list(as.data.frame(xset.work))
+    #}
     #To correct issue when 1 unkn only in noannot.idx (make a list and not a list of list)
-    if(unique(lengths(noannot.idx[1])) == 1){
-      xset.work <- lapply(xset.work[1], function(x) list(x))
-    }
+    #if(unique(lengths(noannot.idx[1])) == 1){
+    #  xset.work <- lapply(xset.work[1], function(x) list(x))
+    #}
   }
   
   ## do the matching: a simple double loop over all unassigned patterns
@@ -210,4 +210,3 @@ match.unannot.patterns <- function(msp1, msp2, settings) {
     NULL
   }
 }
-
