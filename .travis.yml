@@ -1,7 +1,8 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-r: bioc-devel
+r: 
+    - devel
 cache:
   packages: true
 warnings_are_errors: true
