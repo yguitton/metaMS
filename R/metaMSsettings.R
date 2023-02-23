@@ -23,6 +23,7 @@ metaMSsettings <-
                  ## chromatography
                  DBconstruction = representation(
                      minfeat = "numeric",                     # both
+                     ndigits = "numeric",                     # both
                      rttol = "numeric",                       # LC
                      mztol = "numeric",                       # LC
                      minintens = "numeric",                   # LC
