@@ -250,12 +250,13 @@ read.msp <- function(file, only.org = FALSE,
 ## individual arguments (and has precedence over these, too).
 
 to.msp <- function(object, file = NULL,
-                   settings = NULL, ndigit = 0, minfeat, minintens,
+                   settings = NULL, minfeat, minintens,
                    intensity = c("maxo", "into"), secs2mins = TRUE) {
   if (!is.null(settings)) {
     intensity <- settings$intensityMeasure
     minfeat <- settings$minfeat
     minintens <- settings$minintens
+    ndigit <- settings$ndigits
   } else {
     intensity <- match.arg(intensity)
   }
