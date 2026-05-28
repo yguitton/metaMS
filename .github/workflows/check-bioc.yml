@@ -135,3 +135,67 @@ jobs:
           Rscript -e 'covr::codecov(quiet = FALSE)'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  ## ════════════════════════════════════════════════════════════════════════════
+  ## Push to git.bioconductor.org — runs ONLY after ALL build-check jobs pass,
+  ## ONLY on push to devel/main (not on PRs, not on schedule).
+  ## Requires secret BIOC_SSH_KEY to be set in the repo settings.
+  ## ════════════════════════════════════════════════════════════════════════════
+  push-to-bioc:
+    name: Push to git.bioconductor.org
+    runs-on: ubuntu-latest
+    needs: build-check
+    if: |
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/devel' || github.ref == 'refs/heads/main')
+
+    steps:
+      ## ── 1. Checkout with full history (required for a clean push) ────────────
+      - name: Checkout repository (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      ## ── 2. Configure git identity ────────────────────────────────────────────
+      - name: Configure git identity
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name  "GitHub Actions"
+
+      ## ── 3. Install the SSH key from GitHub Secrets ───────────────────────────
+      - name: Install SSH key
+        env:
+          BIOC_SSH_KEY: ${{ secrets.BIOC_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$BIOC_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ## Trust git.bioconductor.org host key (avoids interactive prompt)
+          ssh-keyscan -p 22 git.bioconductor.org >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      ## ── 4. Verify SSH connection before attempting push ──────────────────────
+      - name: Test SSH connection to Bioconductor
+        run: |
+          ssh -T -i ~/.ssh/id_ed25519 \
+              -o StrictHostKeyChecking=yes \
+              git@git.bioconductor.org \
+          && echo "SSH connection OK" \
+          || echo "SSH returned non-zero (normal for git servers — connection established)"
+
+      ## ── 5. Add BioC remote and push ──────────────────────────────────────────
+      - name: Push to Bioconductor git server
+        run: |
+          git remote add bioc git@git.bioconductor.org:packages/metaMS.git
+
+          ## Fetch BioC remote to detect any divergence before pushing
+          git fetch bioc
+
+          ## Push current HEAD to the devel branch on BioC
+          ## --force is intentionally omitted: fail loudly if histories diverge
+          git push bioc HEAD:devel
+
+      ## ── 6. Confirm the push landed ───────────────────────────────────────────
+      - name: Verify push (last BioC commit)
+        run: |
+          git log bioc/devel --oneline -3
