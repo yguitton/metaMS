@@ -1,0 +1,137 @@
+name: R-CMD-check-bioc
+
+## Triggers: all pushes and PRs on devel; weekly schedule to catch upstream breakage
+on:
+  push:
+    branches:
+      - devel
+      - main
+      - 'RELEASE_**'
+  pull_request:
+    branches:
+      - devel
+      - main
+  schedule:
+    ## Every Monday at 07:00 UTC — catches upstream BioC devel breakage early
+    - cron: '0 7 * * 1'
+  workflow_dispatch: {}   # allow manual re-runs from the Actions tab
+
+## Cancel in-progress runs on the same branch/PR to save minutes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-check:
+    name: ${{ matrix.config.os }} / BioC ${{ matrix.config.bioc }}
+    runs-on: ${{ matrix.config.os }}
+
+    strategy:
+      fail-fast: false   # keep going so you see failures on all platforms
+      matrix:
+        config:
+          ## ── Primary target: devel (BioC 3.24, R 4.6) on Linux ──────────────
+          - os: ubuntu-latest
+            bioc: 'devel'
+
+          ## ── Release smoke-test: BioC 3.23 (current release) on Linux ───────
+          - os: ubuntu-latest
+            bioc: 'release'
+
+          ## ── Cross-platform: devel on macOS ──────────────────────────────────
+          - os: macos-latest
+            bioc: 'devel'
+
+          ## ── Cross-platform: devel on Windows ────────────────────────────────
+          - os: windows-latest
+            bioc: 'devel'
+
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      ## Increase this value to bust the dependency cache when needed
+      CACHE_VERSION: 1
+
+    steps:
+      ## ── 1. Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      ## ── 2. Install R + initialise BiocManager for the requested BioC version
+      - name: Setup Bioconductor (${{ matrix.config.bioc }})
+        uses: grimbough/bioc-actions/setup-bioc@v1
+        with:
+          bioc-version: ${{ matrix.config.bioc }}
+
+      ## ── 3. Install pandoc (needed for vignettes) ────────────────────────────
+      - name: Setup pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
+      ## ── 4. Cache downloaded BioC annotation / data packages ─────────────────
+      - name: Cache Bioconductor data packages
+        uses: grimbough/bioc-actions/use-bioc-caches@v1
+        with:
+          cache-version: ${{ env.CACHE_VERSION }}
+
+      ## ── 5. Cache installed R packages (speeds up subsequent runs ~5-10×) ────
+      - name: Cache R library
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: |
+            ${{ env.CACHE_VERSION }}-${{ runner.os }}-bioc-${{ matrix.config.bioc }}-${{ hashFiles('DESCRIPTION') }}
+          restore-keys: |
+            ${{ env.CACHE_VERSION }}-${{ runner.os }}-bioc-${{ matrix.config.bioc }}-
+
+      ## ── 6. Install system dependencies (Linux only) ─────────────────────────
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+            libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
+            libgit2-dev qpdf
+
+      ## ── 7. Install R package dependencies ───────────────────────────────────
+      - name: Install package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::rcmdcheck
+            any::BiocCheck
+            any::covr
+          needs: check
+
+      ## ── 8. Build, install and R CMD check (emulates the BioC Build System) ──
+      - name: Build, install and check
+        id: build-install-check
+        uses: grimbough/bioc-actions/build-install-check@v1
+
+      ## ── 9. Run BiocCheck (Bioconductor-specific policy checks) ───────────────
+      - name: Run BiocCheck
+        uses: grimbough/bioc-actions/run-BiocCheck@v1
+        with:
+          ## Treat these BiocCheck issues as errors (CI will fail)
+          arguments: '--no-check-bioc-help'
+          error-on: 'error'
+
+      ## ── 10. Upload check artefacts on failure ────────────────────────────────
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: check-results-${{ runner.os }}-bioc${{ matrix.config.bioc }}
+          path: |
+            *.Rcheck/
+            !*.Rcheck/00_pkg_src/
+          retention-days: 14
+
+      ## ── 11. Code coverage (devel / Linux only, avoids duplicate uploads) ────
+      - name: Compute code coverage
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.bioc == 'devel'
+        run: |
+          Rscript -e 'covr::codecov(quiet = FALSE)'
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
